@@ -60,7 +60,7 @@ public class ValidationUtils {
     }
 
     public static void validatePhone(String mobile) {
-        validateNumeric(mobile, "Phone number");
+//        validateNumeric(mobile, "Phone number");
         validateLength(mobile, Default.MIN_PHONE_LENGTH, Default.MAX_PHONE_LENGTH, "Phone number");
     }
 
