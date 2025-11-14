@@ -1,7 +1,7 @@
 package com.resustainability.aakri.service;
 
-import com.resustainability.aakri.entity.AdminEntity;
-import com.resustainability.aakri.repository.AdminRepository;
+import com.resustainability.aakri.entity.backend.AdminUser;
+import com.resustainability.aakri.repository.AdminUserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,17 +13,17 @@ import java.util.List;
 
 @Service
 public class AdminService {
-    private final AdminRepository adminRepository;
+    private final AdminUserRepository adminUserRepository;
 
     @Autowired
     public AdminService(
-            AdminRepository adminRepository
+            AdminUserRepository adminUserRepository
     ) {
-        this.adminRepository = adminRepository;
+        this.adminUserRepository = adminUserRepository;
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public List<AdminEntity> findAll() {
-        return adminRepository.findAll();
+    public List<AdminUser> findAll() {
+        return adminUserRepository.findAll();
     }
 }

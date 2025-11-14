@@ -1,7 +1,7 @@
 package com.resustainability.aakri.controller;
 
 import com.resustainability.aakri.dto.commons.APIResponse;
-import com.resustainability.aakri.entity.UserEntity;
+import com.resustainability.aakri.entity.backend.Customer;
 import com.resustainability.aakri.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class UserController {
     }
 
     @GetMapping("/list")
-    public APIResponse<List<UserEntity>> list() {
+    public APIResponse<List<Customer>> list() {
         return new APIResponse<>(
                 userService.findAll()
         );

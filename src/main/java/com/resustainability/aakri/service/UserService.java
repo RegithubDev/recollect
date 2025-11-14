@@ -1,7 +1,7 @@
 package com.resustainability.aakri.service;
 
-import com.resustainability.aakri.entity.UserEntity;
-import com.resustainability.aakri.repository.UserRepository;
+import com.resustainability.aakri.entity.backend.Customer;
+import com.resustainability.aakri.repository.CustomerRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,22 +14,22 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-    private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
 
     @Autowired
     public UserService(
-            UserRepository userRepository
+            CustomerRepository customerRepository
     ) {
-        this.userRepository = userRepository;
+        this.customerRepository = customerRepository;
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public Optional<UserEntity> findByPhoneNumber(String phoneNumber) {
-        return userRepository.findByPhoneNumber(phoneNumber);
+    public Optional<Customer> findByPhoneNumber(String phoneNumber) {
+        return customerRepository.findByPhoneNumber(phoneNumber);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public List<UserEntity> findAll() {
-        return userRepository.findAll();
+    public List<Customer> findAll() {
+        return customerRepository.findAll();
     }
 }

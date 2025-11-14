@@ -1,7 +1,6 @@
 package com.resustainability.aakri.commons;
 
-import com.resustainability.aakri.entity.UserEntity;
-
+import com.resustainability.aakri.entity.backend.Customer;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -18,15 +17,15 @@ public class JwtUtil {
     private static final long ACCESS_EXPIRATION = 1000 * 60 * 60; // 1 hour
     private static final long REFRESH_EXPIRATION = 1000L * 60 * 60 * 24 * 7; // 7 days
 
-    public String generateAccessToken(UserEntity user) {
+    public String generateAccessToken(Customer user) {
         return generateToken(user, ACCESS_EXPIRATION);
     }
 
-    public String generateRefreshToken(UserEntity user) {
+    public String generateRefreshToken(Customer user) {
         return generateToken(user, REFRESH_EXPIRATION);
     }
 
-    public String generateToken(UserEntity user, long expiration) {
+    public String generateToken(Customer user, long expiration) {
         final Map<String, Object> claims = Map.of(
                 "user_id", user.getId(),
                 "database", "kerala_db",

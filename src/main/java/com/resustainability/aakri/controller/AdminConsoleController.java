@@ -1,7 +1,7 @@
 package com.resustainability.aakri.controller;
 
 import com.resustainability.aakri.dto.commons.APIResponse;
-import com.resustainability.aakri.entity.AdminEntity;
+import com.resustainability.aakri.entity.backend.AdminUser;
 import com.resustainability.aakri.service.AdminService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class AdminConsoleController {
     }
 
     @GetMapping("/list")
-    public APIResponse<List<AdminEntity>> list() {
+    public APIResponse<List<AdminUser>> list() {
         return new APIResponse<>(
                 adminService.findAll()
         );

@@ -3,8 +3,8 @@ package com.resustainability.aakri.service;
 import com.resustainability.aakri.commons.JwtUtil;
 import com.resustainability.aakri.commons.ValidationUtils;
 import com.resustainability.aakri.dto.request.LoginViaPhoneNumberRequest;
-import com.resustainability.aakri.entity.UserEntity;
 import com.resustainability.aakri.dto.response.CustomerTokenResponse;
+import com.resustainability.aakri.entity.backend.Customer;
 import com.resustainability.aakri.exception.BadCredentialsException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,19 +27,19 @@ public class AuthService {
     public CustomerTokenResponse loginViaPhoneNumber(LoginViaPhoneNumberRequest request) {
         ValidationUtils.validateRequestBody(request);
 
-        final UserEntity user = userService
+        final Customer customer = userService
                 .findByPhoneNumber(request.phoneNumber())
                 .orElseThrow(BadCredentialsException::new);
 
         return new CustomerTokenResponse(
                 "Success",
                 true,
-                user.isActive(),
-                jwtUtil.generateAccessToken(user),
-                jwtUtil.generateRefreshToken(user),
-                user.getFullName(),
-                user.getEmail(),
-                user.getUserType()
+                customer.getActive(),
+                jwtUtil.generateAccessToken(customer),
+                jwtUtil.generateRefreshToken(customer),
+                customer.getFullName(),
+                customer.getEmail(),
+                customer.getUserType()
         );
     }
 }
