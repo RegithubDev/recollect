@@ -14,6 +14,7 @@ public interface IAdminUserResponse {
     Boolean getIsDeleted();
     LocalDateTime getLastLogin();
     LocalDateTime getDateJoined();
+
     Long getRoleId();
     String getRoleName();
     Boolean getRoleActive();

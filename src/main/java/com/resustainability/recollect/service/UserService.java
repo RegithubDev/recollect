@@ -1,5 +1,8 @@
 package com.resustainability.recollect.service;
 
+import com.resustainability.recollect.dto.pagination.Pager;
+import com.resustainability.recollect.dto.pagination.SearchCriteria;
+import com.resustainability.recollect.dto.response.ICustomerResponse;
 import com.resustainability.recollect.entity.backend.Customer;
 import com.resustainability.recollect.repository.CustomerRepository;
 
@@ -9,7 +12,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,7 +31,12 @@ public class UserService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public List<Customer> findAll() {
-        return customerRepository.findAll();
+    public Pager<ICustomerResponse> list(SearchCriteria searchCriteria) {
+        return Pager.of(
+                customerRepository.findAllPaged(
+                        searchCriteria.getQ(),
+                        searchCriteria.toPageRequest()
+                )
+        );
     }
 }

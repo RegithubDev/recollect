@@ -6,6 +6,7 @@ public class Default {
 
     public static final String EMPTY = "";
     public static final String ALL = "all";
+    public static final String SUCCESS = "Success";
     public static final String ROLE_PREFIX = "ROLE_";
     public static final String HEADER_API_KEY = "x-api-key";
     public static final String HEADER_X_FORWARDED_FOR = "X-Forwarded-For";

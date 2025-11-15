@@ -1,13 +1,13 @@
 package com.resustainability.recollect.controller;
 
 import com.resustainability.recollect.dto.commons.APIResponse;
-import com.resustainability.recollect.entity.backend.Customer;
+import com.resustainability.recollect.dto.pagination.Pager;
+import com.resustainability.recollect.dto.pagination.SearchCriteria;
+import com.resustainability.recollect.dto.response.ICustomerResponse;
 import com.resustainability.recollect.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/recollect/v1/user")
@@ -20,9 +20,11 @@ public class UserController {
     }
 
     @GetMapping("/list")
-    public APIResponse<List<Customer>> list() {
+    public APIResponse<Pager<ICustomerResponse>> list(
+            @ModelAttribute SearchCriteria searchCriteria
+    ) {
         return new APIResponse<>(
-                userService.findAll()
+                userService.list(searchCriteria)
         );
     }
 }

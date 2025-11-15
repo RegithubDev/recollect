@@ -1,5 +1,6 @@
 package com.resustainability.recollect.controller;
 
+import com.resustainability.recollect.commons.Default;
 import com.resustainability.recollect.dto.commons.APIResponse;
 import com.resustainability.recollect.dto.request.LoginViaPhoneNumberRequest;
 import com.resustainability.recollect.dto.response.CustomerTokenResponse;
@@ -23,7 +24,8 @@ public class AuthController {
             @RequestBody(required = false) LoginViaPhoneNumberRequest request
     ) {
         return new APIResponse<>(
-                authService.loginViaPhoneNumber(request)
+                authService.loginViaPhoneNumber(request),
+                Default.SUCCESS
         );
     }
 }

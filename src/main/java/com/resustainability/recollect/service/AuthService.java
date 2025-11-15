@@ -32,7 +32,6 @@ public class AuthService {
                 .orElseThrow(BadCredentialsException::new);
 
         return new CustomerTokenResponse(
-                "Success",
                 true,
                 customer.getActive(),
                 jwtUtil.generateAccessToken(customer),
