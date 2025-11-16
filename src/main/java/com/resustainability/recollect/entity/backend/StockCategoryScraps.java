@@ -11,11 +11,11 @@ public class StockCategoryScraps {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stockcategory_id", nullable = false)
     private StockCategory stockCategory;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "scraptype_id", nullable = false)
     private ScrapType scrapType;
 }

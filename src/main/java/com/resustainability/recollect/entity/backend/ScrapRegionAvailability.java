@@ -22,7 +22,7 @@ public class ScrapRegionAvailability {
     @Column(name = "remaining_slots", nullable = false)
     private Integer remainingSlots;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "scrap_region_id", nullable = false)
     private ScrapRegion scrapRegion;
 }

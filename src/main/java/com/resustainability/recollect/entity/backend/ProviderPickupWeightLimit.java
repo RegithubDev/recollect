@@ -14,7 +14,7 @@ public class ProviderPickupWeightLimit {
     @Column(name = "weight_limit", nullable = false)
     private Double weightLimit;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id", nullable = false)
     private Provider provider;
 }

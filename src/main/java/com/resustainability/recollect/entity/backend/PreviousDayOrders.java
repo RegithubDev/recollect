@@ -28,7 +28,7 @@ public class PreviousDayOrders {
     @Column(name = "bio_scheduled_order_count", nullable = false)
     private Integer bioScheduledOrderCount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "district_id")
     private District district;
 }

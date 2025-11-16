@@ -23,15 +23,15 @@ public class BwgOrderCart {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "biowaste_type_id")
     private BioWasteType bioWasteType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bwg_order_id", nullable = false)
     private BwgOrders bwgOrder;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "scrap_type_id")
     private ScrapType scrapType;
 

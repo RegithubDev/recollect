@@ -29,11 +29,11 @@ public class DjangoAdminLog {
     @Column(name = "change_message", nullable = false, columnDefinition = "LONGTEXT")
     private String changeMessage;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "content_type_id")
     private DjangoContentType contentType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private Customer user;
 

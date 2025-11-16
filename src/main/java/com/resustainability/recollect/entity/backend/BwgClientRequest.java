@@ -44,7 +44,7 @@ public class BwgClientRequest {
     @Column(name = "verification_status", nullable = false, length = 10)
     private String verificationStatus;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "state_id")
     private State state;
 

@@ -23,7 +23,7 @@ public class District {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "state_id", nullable = false)
     private State state;
 }

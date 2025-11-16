@@ -35,11 +35,11 @@ public class BwgOrderUsedBag {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bag_id", nullable = false)
     private BwgBagPrice bag;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     private CompleteOrders order;
 }

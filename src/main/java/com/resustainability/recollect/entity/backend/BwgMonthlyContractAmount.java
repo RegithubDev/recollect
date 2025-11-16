@@ -16,7 +16,7 @@ public class BwgMonthlyContractAmount {
     @Column(name = "contract_amount")
     private Double contractAmount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false)
     private BwgClient client;
 

@@ -14,11 +14,11 @@ public class BwgScrapPrice {
     @Column(name = "scrap_price", nullable = false)
     private Double scrapPrice;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "scrap_type_id", nullable = false)
     private ScrapType scrapType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false)
     private BwgClient client;
 }

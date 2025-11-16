@@ -22,11 +22,11 @@ public class WardAvailability {
     @Column(name = "remaining_slots", nullable = false)
     private Integer remainingSlots;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "localbody_limit_id", nullable = false)
     private LocalBodyLimit localbodyLimit;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ward_id", nullable = false)
     private Ward ward;
 }

@@ -34,11 +34,11 @@ public class ProviderCashCollectionLog {
     @Column(name = "change_date", nullable = false)
     private LocalDateTime changeDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cash_collection_id")
     private ProviderCashCollection cashCollection;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "done_by_id")
     private Provider doneBy;
 }

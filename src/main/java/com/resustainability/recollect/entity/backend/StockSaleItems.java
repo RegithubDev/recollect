@@ -17,11 +17,11 @@ public class StockSaleItems {
     @Column(name = "rate", nullable = false)
     private Double rate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "scrap_type_id", nullable = false)
     private ScrapType scrapType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stock_sale_id", nullable = false)
     private StockSale stockSale;
 }

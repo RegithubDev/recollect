@@ -14,7 +14,7 @@ public class ProviderAuthentication {
     @Column(name = "otp", length = 6)
     private String otp;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id", nullable = false)
     private Provider provider;
 }

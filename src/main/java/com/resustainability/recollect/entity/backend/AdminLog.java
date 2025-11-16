@@ -28,7 +28,7 @@ public class AdminLog {
     @Column(name = "access_time", nullable = false)
     private LocalDateTime accessTime;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private AdminUser user;
 }

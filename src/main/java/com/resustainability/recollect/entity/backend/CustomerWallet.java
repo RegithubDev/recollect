@@ -14,7 +14,7 @@ public class CustomerWallet {
     @Column(name = "balance", nullable = false)
     private Double balance;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 }

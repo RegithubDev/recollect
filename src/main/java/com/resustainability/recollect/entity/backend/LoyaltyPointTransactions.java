@@ -31,7 +31,7 @@ public class LoyaltyPointTransactions {
     @Column(name = "done_by", length = 100)
     private String doneBy;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 }

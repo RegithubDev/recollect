@@ -14,11 +14,11 @@ public class PickupVehicleDistrict {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "district_id")
     private District district;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vehicle_id")
     private PickupVehicle vehicle;
 }

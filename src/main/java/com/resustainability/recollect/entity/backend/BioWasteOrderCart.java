@@ -14,11 +14,11 @@ public class BioWasteOrderCart {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "biowaste_order_id", nullable = false)
     private BioWasteOrders biowasteOrder;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "biowaste_type_id", nullable = false)
     private BioWasteType biowasteType;
 }

@@ -61,11 +61,11 @@ public class EmployeeInfo {
     @Column(name = "ifsc_code", length = 20)
     private String ifscCode;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "district_id")
     private District district;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "state_id")
     private State state;
 }

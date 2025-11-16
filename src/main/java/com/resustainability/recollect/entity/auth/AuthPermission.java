@@ -20,7 +20,7 @@ public class AuthPermission {
     @Column(nullable = false, length = 255)
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "content_type_id", nullable = false)
     private DjangoContentType contentType;
 

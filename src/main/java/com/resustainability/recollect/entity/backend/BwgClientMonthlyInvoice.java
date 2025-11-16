@@ -26,7 +26,7 @@ public class BwgClientMonthlyInvoice {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false)
     private BwgClient client;
 

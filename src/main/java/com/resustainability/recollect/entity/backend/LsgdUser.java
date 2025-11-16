@@ -48,7 +48,7 @@ public class LsgdUser {
     @Column(name = "email", length = 254)
     private String email;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lsgd_role_id")
     private AdminRole adminRole;
 }

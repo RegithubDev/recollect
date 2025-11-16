@@ -17,7 +17,7 @@ public class ProviderAddOrderLimit {
     @Column(name = "current_limit", nullable = false)
     private Integer currentLimit;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id", nullable = false)
     private Provider provider;
 }

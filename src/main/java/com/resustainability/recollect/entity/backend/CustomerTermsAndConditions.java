@@ -19,7 +19,7 @@ public class CustomerTermsAndConditions {
     @Column(name = "signed_date", nullable = false)
     private LocalDateTime signedDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 }

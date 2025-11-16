@@ -19,7 +19,7 @@ public class OrderVisibility {
     @Column(name = "end_time")
     private LocalTime endTime;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "district_id", nullable = false)
     private District district;
 }

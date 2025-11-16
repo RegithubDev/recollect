@@ -28,7 +28,7 @@ public class ProviderLocationTrack {
     @Column(name = "device_model", length = 100)
     private String deviceModel;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id", nullable = false)
     private Provider provider;
 

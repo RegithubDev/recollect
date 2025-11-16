@@ -26,7 +26,7 @@ public class ProviderServiceLocationFlag {
     @Column(name = "all_wards", nullable = false)
     private Boolean allWards;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id", nullable = false)
     private Provider provider;
 }

@@ -14,7 +14,7 @@ public class FirebaseToken {
     @Column(name = "token", nullable = false, columnDefinition = "LONGTEXT")
     private String token;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 }

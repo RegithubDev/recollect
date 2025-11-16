@@ -58,18 +58,18 @@ public class ScrapMoneyTransactions {
     @Column(name = "transaction_date")
     private LocalDateTime transactionDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_method_id")
     private CustomerPaymentMethods paymentMethod;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
     @Column(name = "payout_type", nullable = false, length = 100)
     private String payoutType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
     private BwgClient client;
 }

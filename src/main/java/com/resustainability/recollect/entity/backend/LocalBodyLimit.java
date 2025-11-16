@@ -25,7 +25,7 @@ public class LocalBodyLimit {
     @Column(name = "remaining_slots", nullable = false)
     private Integer remainingSlots;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "localbody_id", nullable = false)
     private LocalBody localbody;
 }

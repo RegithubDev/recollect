@@ -35,11 +35,11 @@ public class CustomerPaymentMethods {
     @Column(name = "is_verified", nullable = false)
     private Boolean isVerified;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
     private BwgClient client;
 }

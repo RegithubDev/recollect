@@ -14,7 +14,7 @@ public class ProviderCashLimit {
     @Column(name = "cash_limit", nullable = false)
     private Double cashLimit;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id", nullable = false)
     private Provider provider;
 }

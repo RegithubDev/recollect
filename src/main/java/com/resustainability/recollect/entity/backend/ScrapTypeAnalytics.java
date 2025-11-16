@@ -25,15 +25,15 @@ public class ScrapTypeAnalytics {
     @Column(name = "order_count", nullable = false)
     private Integer orderCount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "district_id")
     private District district;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "scrap_type_id", nullable = false)
     private ScrapType scrapType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "state_id")
     private State state;
 }

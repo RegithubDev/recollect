@@ -20,7 +20,7 @@ public class AdminSubSection {
     @Column(name = "role_active", nullable = false)
     private Boolean roleActive;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
     private AdminRole role;
 }

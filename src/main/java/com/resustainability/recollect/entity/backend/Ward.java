@@ -29,7 +29,7 @@ public class Ward {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "localbody_id", nullable = false)
     private LocalBody localbody;
 }

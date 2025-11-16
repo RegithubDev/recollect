@@ -19,11 +19,11 @@ public class DroppedOrder {
     @Column(name = "drop_date", nullable = false)
     private LocalDateTime dropDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     private CompleteOrders order;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reason_id")
     private OrderDropReason reason;
 }

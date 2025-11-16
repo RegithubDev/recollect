@@ -25,15 +25,15 @@ public class BioWasteTypeAnalytics {
     @Column(name = "order_count", nullable = false)
     private Integer orderCount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "biowaste_type_id", nullable = false)
     private BioWasteType biowasteType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "district_id")
     private District district;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "state_id")
     private State state;
 }

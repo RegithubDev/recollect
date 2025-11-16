@@ -19,7 +19,7 @@ public class PerDayCustomerScrapMoneyTransaction {
     @Column(name = "transaction_date", nullable = false)
     private LocalDate transactionDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 }

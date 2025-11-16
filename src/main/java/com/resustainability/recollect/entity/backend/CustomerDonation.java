@@ -19,7 +19,7 @@ public class CustomerDonation {
     @Column(name = "donation_amount", nullable = false)
     private Double donationAmount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 }

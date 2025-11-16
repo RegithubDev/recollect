@@ -14,7 +14,7 @@ public class ProviderDevice {
     @Column(name = "device_id", length = 100)
     private String deviceId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id", nullable = false)
     private Provider provider;
 }

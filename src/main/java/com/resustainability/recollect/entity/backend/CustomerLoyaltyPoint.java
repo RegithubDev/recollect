@@ -14,7 +14,7 @@ public class CustomerLoyaltyPoint {
     @Column(name = "points", nullable = false)
     private Double points;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 }

@@ -23,7 +23,7 @@ public class BwgBagPrice {
     @Column(name = "bag_sgst", nullable = false)
     private Double bagSgst;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false)
     private BwgClient client;
 }

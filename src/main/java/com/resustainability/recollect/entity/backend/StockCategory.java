@@ -14,7 +14,7 @@ public class StockCategory {
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "district_id")
     private District district;
 }

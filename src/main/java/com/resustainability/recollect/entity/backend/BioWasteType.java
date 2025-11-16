@@ -20,7 +20,7 @@ public class BioWasteType {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "biowaste_category_id", nullable = false)
     private BioWasteCategory biowasteCategory;
 }

@@ -14,11 +14,11 @@ public class CustomerScrapMoney {
     @Column(name = "scrap_money", nullable = false)
     private Double scrapMoney;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
     private BwgClient client;
 }
