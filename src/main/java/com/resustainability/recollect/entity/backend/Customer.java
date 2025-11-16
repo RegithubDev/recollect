@@ -74,10 +74,13 @@ public class Customer {
     @JoinColumn(name = "ward_id")
     private Ward ward;
 
+    @Column(name = "token_at")
+    private LocalDateTime tokenAt;
+
     public Customer() {
     }
 
-    public Customer(Long id, String password, LocalDateTime lastLogin, Boolean isSuperuser, Boolean isStaff, Boolean isActive, LocalDateTime dateJoined, String fullName, String otp, String phoneNumber, String email, String userType, String platform, Boolean isDeleted, District district, ScrapRegion scrapRegion, State state, Ward ward) {
+    public Customer(Long id, String password, LocalDateTime lastLogin, Boolean isSuperuser, Boolean isStaff, Boolean isActive, LocalDateTime dateJoined, String fullName, String otp, String phoneNumber, String email, String userType, String platform, Boolean isDeleted, District district, ScrapRegion scrapRegion, State state, Ward ward, LocalDateTime tokenAt) {
         this.id = id;
         this.password = password;
         this.lastLogin = lastLogin;
@@ -96,6 +99,7 @@ public class Customer {
         this.scrapRegion = scrapRegion;
         this.state = state;
         this.ward = ward;
+        this.tokenAt = tokenAt;
     }
 
     @Override
@@ -253,5 +257,13 @@ public class Customer {
 
     public void setWard(Ward ward) {
         this.ward = ward;
+    }
+
+    public LocalDateTime getTokenAt() {
+        return tokenAt;
+    }
+
+    public void setTokenAt(LocalDateTime tokenAt) {
+        this.tokenAt = tokenAt;
     }
 }

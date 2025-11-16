@@ -1,7 +1,9 @@
 package com.resustainability.recollect.exception;
 
-public class InvalidSessionException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class InvalidSessionException extends BaseException {
     public InvalidSessionException() {
-        super();
+        super(HttpStatus.FORBIDDEN, "Session ended: Your session has expired or was terminated. Please sign in to continue.");
     }
 }

@@ -3,7 +3,7 @@ package com.resustainability.recollect.controller;
 import com.resustainability.recollect.commons.Default;
 import com.resustainability.recollect.dto.commons.APIResponse;
 import com.resustainability.recollect.dto.request.LoginViaPhoneNumberRequest;
-import com.resustainability.recollect.dto.response.CustomerTokenResponse;
+import com.resustainability.recollect.dto.response.TokenResponse;
 import com.resustainability.recollect.service.AuthService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class AuthController {
     }
 
     @PostMapping("/get-customer-token")
-    public APIResponse<CustomerTokenResponse> loginViaPhoneNumber(
+    public APIResponse<TokenResponse> loginViaPhoneNumber(
             @RequestBody(required = false) LoginViaPhoneNumberRequest request
     ) {
         return new APIResponse<>(

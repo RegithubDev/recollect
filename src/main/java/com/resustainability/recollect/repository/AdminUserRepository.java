@@ -1,6 +1,7 @@
 package com.resustainability.recollect.repository;
 
 import com.resustainability.recollect.dto.response.IAdminUserResponse;
+import com.resustainability.recollect.dto.response.IUserContext;
 import com.resustainability.recollect.entity.backend.AdminUser;
 
 import org.springframework.data.domain.Page;
@@ -10,8 +11,60 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface AdminUserRepository extends JpaRepository<AdminUser, Long> {
+    @Query("""
+        SELECT
+            u.id AS id,
+            u.username AS username,
+            u.fullName AS fullName,
+            u.phoneNumber AS phoneNumber,
+            u.email AS email,
+            u.tokenAt AS tokenAt,
+            u.isSuperuser AS isSuperuser,
+            u.isStaff AS isStaff,
+            u.isActive AS isActive,
+            u.isDeleted AS isDeleted,
+    
+            false AS isCustomer,
+            true AS isAdmin,
+    
+            r.id AS roleId,
+            r.roleName AS roleName,
+            r.isActive AS roleActive
+        FROM AdminUser u
+        LEFT JOIN u.adminRole r
+        WHERE u.username = :username
+    """)
+    Optional<IUserContext> loadUserByUsername(@Param("username") String username);
+
+    @Query("""
+        SELECT
+            u.id AS id,
+            u.username AS username,
+            u.fullName AS fullName,
+            u.phoneNumber AS phoneNumber,
+            u.email AS email,
+            u.tokenAt AS tokenAt,
+            u.isSuperuser AS isSuperuser,
+            u.isStaff AS isStaff,
+            u.isActive AS isActive,
+            u.isDeleted AS isDeleted,
+    
+            false AS isCustomer,
+            true AS isAdmin,
+ 
+            r.id AS roleId,
+            r.roleName AS roleName,
+            r.isActive AS roleActive
+        FROM AdminUser u
+        LEFT JOIN u.adminRole r
+        WHERE u.id = :id
+    """)
+    Optional<IUserContext> loadUserById(@Param("id") Long id);
+
     @Query("""
         SELECT
             u.id AS id,

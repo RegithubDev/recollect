@@ -1,44 +1,130 @@
 package com.resustainability.recollect.commons;
 
-import com.resustainability.recollect.entity.backend.Customer;
+import com.resustainability.recollect.exception.JwtException;
+import com.resustainability.recollect.exception.UnauthorizedException;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
+import javax.crypto.SecretKey;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Map;
+import java.util.function.Function;
 
 @Component
 public class JwtUtil {
-    private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private static final long ACCESS_EXPIRATION = 1000 * 60 * 60; // 1 hour
-    private static final long REFRESH_EXPIRATION = 1000L * 60 * 60 * 24 * 7; // 7 days
+    private static final long DEFAULT_EXPIRATION = 1000L * 60 * 60 * 24 * 7; // 7 days
 
-    public String generateAccessToken(Customer user) {
-        return generateToken(user, ACCESS_EXPIRATION);
+    private final String secretKey;
+    private final String jwtClaimName;
+
+    @Autowired
+    public JwtUtil(
+            @Value("${app.jwt.secretKey}") String secretKey,
+            @Value("${app.jwt.claimName}") String jwtClaimName
+    ) {
+        this.secretKey = secretKey;
+        this.jwtClaimName = jwtClaimName;
     }
 
-    public String generateRefreshToken(Customer user) {
-        return generateToken(user, REFRESH_EXPIRATION);
-    }
-
-    public String generateToken(Customer user, long expiration) {
-        final Map<String, Object> claims = Map.of(
-                "user_id", user.getId(),
-                "database", "kerala_db",
-                "state", "Kerala"
+    public String generateToken(String username, LocalDateTime tokenAt) {
+        return generateToken(
+                username,
+                tokenAt,
+                DEFAULT_EXPIRATION
         );
-        return generateToken(claims, expiration);
     }
 
-    public String generateToken(Map<String, Object> claims, long expiration) {
-        return Jwts.builder()
-                .setClaims(claims)
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(SECRET_KEY)
+    public String generateToken(String username, LocalDateTime tokenAt, long expiry) {
+        return generateToken(
+                username,
+                Map.of(
+                        jwtClaimName, tokenAt.atZone(ZoneId.systemDefault()).toEpochSecond(),
+                        "database", "kerala_db",
+                        "state", "Kerala"
+                ),
+                expiry
+        );
+    }
+
+    public String generateToken(String subject, Map<String, Object> claims, Long expiry) {
+        JwtBuilder.BuilderClaims builderClaims = Jwts.builder()
+                .claims()
+                .add(claims)
+                .subject(subject)
+                .issuedAt(new Date());
+
+        if (null != expiry) {
+            builderClaims.expiration(new Date(System.currentTimeMillis() + expiry));
+        }
+
+        return builderClaims.and()
+                .signWith(getKey())
                 .compact();
+    }
+
+    public boolean validateToken(String token, UserDetails userDetails) {
+        return !isTokenExpired(token) && extractSubject(token).equals(userDetails.getUsername());
+    }
+
+    public String extractSubject(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    public Long extractUAT(String token) {
+        return extractClaim(token, claims -> claims.get(jwtClaimName, Long.class));
+    }
+
+    public String extractToken(String authorizationValue) {
+        if (StringUtils.isNotBlank(authorizationValue) && isBearer(authorizationValue)) {
+            return authorizationValue.substring(7);
+        }
+
+        throw new UnauthorizedException();
+    }
+
+    public boolean isBearer(String authorizationValue) {
+        return authorizationValue.startsWith("Bearer ");
+    }
+
+    private Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimResolver.apply(claims);
+    }
+
+    private Claims extractAllClaims(String token) {
+        try {
+            return Jwts.parser()
+                    .verifyWith(getKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (Exception exception) {
+            throw new JwtException(exception.getMessage());
+        }
+    }
+
+    private boolean isTokenExpired(String token) {
+        Date date = extractExpiration(token);
+        return null != date && date.before(new Date());
+    }
+
+    private SecretKey getKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 }

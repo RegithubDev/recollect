@@ -1,6 +1,7 @@
 package com.resustainability.recollect.repository;
 
 import com.resustainability.recollect.dto.response.ICustomerResponse;
+import com.resustainability.recollect.dto.response.IUserContext;
 import com.resustainability.recollect.entity.backend.Customer;
 
 import org.springframework.data.domain.Page;
@@ -14,6 +15,58 @@ import java.util.Optional;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
+    @Query("""
+        SELECT
+            c.id AS id,
+            c.phoneNumber AS username,
+            c.fullName AS fullName,
+            c.phoneNumber AS phoneNumber,
+            c.email AS email,
+            c.userType AS userType,
+            c.tokenAt AS tokenAt,
+            c.isSuperuser AS isSuperuser,
+            c.isStaff AS isStaff,
+            c.isActive AS isActive,
+            c.isDeleted AS isDeleted,
+    
+            true AS isCustomer,
+            false AS isAdmin,
+    
+            c.district.id AS districtId,
+            c.state.id AS stateId,
+            c.scrapRegion.id AS scrapRegionId,
+            c.ward.id AS wardId
+        FROM Customer c
+        WHERE c.phoneNumber = :username
+    """)
+    Optional<IUserContext> loadUserByUsername(@Param("username") String username);
+
+    @Query("""
+        SELECT
+            c.id AS id,
+            c.phoneNumber AS username,
+            c.fullName AS fullName,
+            c.phoneNumber AS phoneNumber,
+            c.email AS email,
+            c.userType AS userType,
+            c.tokenAt AS tokenAt,
+            c.isSuperuser AS isSuperuser,
+            c.isStaff AS isStaff,
+            c.isActive AS isActive,
+            c.isDeleted AS isDeleted,
+    
+            true AS isCustomer,
+            false AS isAdmin,
+    
+            c.district.id AS districtId,
+            c.state.id AS stateId,
+            c.scrapRegion.id AS scrapRegionId,
+            c.ward.id AS wardId
+        FROM Customer c
+        WHERE c.id = :id
+    """)
+    Optional<IUserContext> loadUserById(@Param("id") Long id);
+
     @Query("""
         SELECT c
         FROM Customer c
@@ -54,7 +107,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     
             lb.id AS localBodyId,
             lb.localBodyName AS localBodyName
-    
+
         FROM Customer c
         LEFT JOIN c.district d
         LEFT JOIN d.state s

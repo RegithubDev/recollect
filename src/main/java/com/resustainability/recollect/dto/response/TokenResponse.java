@@ -1,10 +1,8 @@
 package com.resustainability.recollect.dto.response;
 
-public record CustomerTokenResponse(
-        boolean isExisting,
+public record TokenResponse(
         boolean isActive,
-        String accessToken,
-        String refreshToken,
+        String token,
         String fullName,
         String email,
         String userType
