@@ -3,6 +3,7 @@ package com.resustainability.recollect.entity.django;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = DjangoSession.TABLE_NAME)
@@ -26,6 +27,19 @@ public class DjangoSession {
         this.sessionKey = sessionKey;
         this.sessionData = sessionData;
         this.expireDate = expireDate;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        DjangoSession entity = (DjangoSession) object;
+        return Objects.equals(sessionKey, entity.sessionKey);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sessionKey);
     }
 
     public String getSessionKey() {

@@ -2,6 +2,8 @@ package com.resustainability.recollect.entity.django;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(
         name = DjangoCeleryResultsChordCounter.TABLE_NAME,
@@ -32,6 +34,19 @@ public class DjangoCeleryResultsChordCounter {
         this.groupId = groupId;
         this.subTasks = subTasks;
         this.count = count;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        DjangoCeleryResultsChordCounter entity = (DjangoCeleryResultsChordCounter) object;
+        return Objects.equals(id, entity.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public Integer getId() {

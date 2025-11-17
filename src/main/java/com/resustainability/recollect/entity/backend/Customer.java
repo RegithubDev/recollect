@@ -106,8 +106,8 @@ public class Customer {
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
-        Customer customer = (Customer) object;
-        return Objects.equals(id, customer.id);
+        Customer entity = (Customer) object;
+        return Objects.equals(id, entity.id);
     }
 
     @Override

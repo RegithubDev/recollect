@@ -3,6 +3,7 @@ package com.resustainability.recollect.entity.django;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = DjangoMigrations.TABLE_NAME)
@@ -30,6 +31,19 @@ public class DjangoMigrations {
         this.app = app;
         this.name = name;
         this.applied = applied;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        DjangoMigrations entity = (DjangoMigrations) object;
+        return Objects.equals(id, entity.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public Long getId() {

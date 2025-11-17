@@ -2,6 +2,8 @@ package com.resustainability.recollect.entity.django;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(
         name = DjangoContentType.TABLE_NAME,
@@ -29,6 +31,19 @@ public class DjangoContentType {
         this.id = id;
         this.appLabel = appLabel;
         this.model = model;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        DjangoContentType entity = (DjangoContentType) object;
+        return Objects.equals(id, entity.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public Integer getId() {

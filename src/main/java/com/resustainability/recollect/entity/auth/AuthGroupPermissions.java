@@ -2,6 +2,8 @@ package com.resustainability.recollect.entity.auth;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(
         name = AuthGroupPermissions.TABLE_NAME,
@@ -30,6 +32,19 @@ public class AuthGroupPermissions {
         this.id = id;
         this.group = group;
         this.permission = permission;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        AuthGroupPermissions entity = (AuthGroupPermissions) object;
+        return Objects.equals(id, entity.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public Long getId() {

@@ -3,6 +3,7 @@ package com.resustainability.recollect.entity.django;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(
@@ -83,6 +84,19 @@ public class DjangoCeleryResultsTaskResult {
         this.dateCreated = dateCreated;
         this.periodicTaskName = periodicTaskName;
         this.dateStarted = dateStarted;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        DjangoCeleryResultsTaskResult entity = (DjangoCeleryResultsTaskResult) object;
+        return Objects.equals(id, entity.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public Integer getId() {

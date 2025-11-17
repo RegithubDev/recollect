@@ -87,8 +87,8 @@ public class AdminUser {
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
-        AdminUser adminUser = (AdminUser) object;
-        return Objects.equals(id, adminUser.id);
+        AdminUser entity = (AdminUser) object;
+        return Objects.equals(id, entity.id);
     }
 
     @Override

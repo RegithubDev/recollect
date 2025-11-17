@@ -1,9 +1,11 @@
 package com.resustainability.recollect.entity.django;
 
 import com.resustainability.recollect.entity.backend.Customer;
+
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = DjangoAdminLog.TABLE_NAME)
@@ -48,6 +50,19 @@ public class DjangoAdminLog {
         this.changeMessage = changeMessage;
         this.contentType = contentType;
         this.user = user;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        DjangoAdminLog entity = (DjangoAdminLog) object;
+        return Objects.equals(id, entity.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public Integer getId() {

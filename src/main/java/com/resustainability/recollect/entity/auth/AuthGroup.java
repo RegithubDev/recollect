@@ -2,6 +2,8 @@ package com.resustainability.recollect.entity.auth;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = AuthGroup.TABLE_NAME)
 public class AuthGroup {
@@ -19,6 +21,19 @@ public class AuthGroup {
     public AuthGroup(Integer id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        AuthGroup entity = (AuthGroup) object;
+        return Objects.equals(id, entity.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public Integer getId() {
