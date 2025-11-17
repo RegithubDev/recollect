@@ -1,5 +1,6 @@
 package com.resustainability.recollect.controller;
 
+import com.resustainability.recollect.commons.Default;
 import com.resustainability.recollect.dto.commons.APIResponse;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
@@ -35,5 +36,13 @@ public class CustomerController {
         return new APIResponse<>(
                 customerService.getById(customerId)
         );
+    }
+
+    @DeleteMapping("/delete/{customerId}")
+    public APIResponse<Void> deleteById(
+            @PathVariable(value = "customerId", required = false) Long customerId
+    ) {
+        customerService.deleteById(customerId);
+        return new APIResponse<>(Default.SUCCESS_DELETE_USER);
     }
 }

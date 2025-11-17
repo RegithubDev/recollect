@@ -13,11 +13,11 @@ public record APIResponse<T> (
         this(null, message, null);
     }
 
-    public APIResponse(String error, T data) {
-        this(data, null, error);
+    public APIResponse(String message, T data) {
+        this(data, message, null);
     }
 
-    public APIResponse(T data, String message) {
-        this(data, message, null);
+    public APIResponse(T data, String error) {
+        this(data, null, error);
     }
 }

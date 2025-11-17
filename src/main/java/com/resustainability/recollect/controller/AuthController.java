@@ -24,8 +24,8 @@ public class AuthController {
             @RequestBody(required = false) LoginViaPhoneNumberRequest request
     ) {
         return new APIResponse<>(
-                authService.loginViaPhoneNumber(request),
-                Default.SUCCESS
+                Default.SUCCESS,
+                authService.loginViaPhoneNumber(request)
         );
     }
 }
