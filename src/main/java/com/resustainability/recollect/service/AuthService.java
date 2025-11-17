@@ -6,40 +6,33 @@ import com.resustainability.recollect.dto.request.LoginViaPhoneNumberRequest;
 import com.resustainability.recollect.dto.response.TokenResponse;
 import com.resustainability.recollect.entity.backend.Customer;
 import com.resustainability.recollect.exception.BadCredentialsException;
-import com.resustainability.recollect.repository.CustomerRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 @Service
 public class AuthService {
-    private final CustomerRepository customerRepository;
-    private final UserService userService;
+    private final CustomerService customerService;
     private final JwtUtil jwtUtil;
 
     @Autowired
     public AuthService(
-            CustomerRepository customerRepository,
-            UserService userService,
+            CustomerService customerService,
             JwtUtil jwtUtil
     ) {
-        this.customerRepository = customerRepository;
-        this.userService = userService;
+        this.customerService = customerService;
         this.jwtUtil = jwtUtil;
     }
 
     public TokenResponse loginViaPhoneNumber(LoginViaPhoneNumberRequest request) {
         ValidationUtils.validateRequestBody(request);
 
-        final Customer customer = userService
+        final Customer customer = customerService
                 .findByPhoneNumber(request.phoneNumber())
                 .orElseThrow(BadCredentialsException::new);
 
         if (null == customer.getTokenAt()) {
-            customer.setTokenAt(LocalDateTime.now());
-            customerRepository.save(customer);
+            customerService.refreshTokenAtById(customer.getId());
         }
 
         return new TokenResponse(

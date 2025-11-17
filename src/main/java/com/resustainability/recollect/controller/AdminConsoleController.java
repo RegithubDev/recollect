@@ -4,7 +4,7 @@ import com.resustainability.recollect.dto.commons.APIResponse;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.response.IAdminUserResponse;
-import com.resustainability.recollect.service.AdminService;
+import com.resustainability.recollect.service.AdminUserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/recollect/v1/admin-console")
 public class AdminConsoleController {
-    private final AdminService adminService;
+    private final AdminUserService adminUserService;
 
     @Autowired
-    public AdminConsoleController(AdminService adminService) {
-        this.adminService = adminService;
+    public AdminConsoleController(AdminUserService adminUserService) {
+        this.adminUserService = adminUserService;
     }
 
     @GetMapping("/list")
@@ -24,7 +24,7 @@ public class AdminConsoleController {
             @ModelAttribute SearchCriteria searchCriteria
     ) {
         return new APIResponse<>(
-                adminService.listAdminUsers(searchCriteria)
+                adminUserService.listAdminUsers(searchCriteria)
         );
     }
 
@@ -33,7 +33,7 @@ public class AdminConsoleController {
             @PathVariable(value = "adminUserId", required = false) Long adminUserId
     ) {
         return new APIResponse<>(
-                adminService.getById(adminUserId)
+                adminUserService.getById(adminUserId)
         );
     }
 }

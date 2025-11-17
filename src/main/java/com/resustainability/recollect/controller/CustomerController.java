@@ -4,7 +4,7 @@ import com.resustainability.recollect.dto.commons.APIResponse;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.response.ICustomerResponse;
-import com.resustainability.recollect.service.UserService;
+import com.resustainability.recollect.service.CustomerService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/recollect/v1/customer")
 public class CustomerController {
-    private final UserService userService;
+    private final CustomerService customerService;
 
 	@Autowired
-    public CustomerController(UserService userService) {
-        this.userService = userService;
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
     }
 
     @GetMapping("/list")
@@ -24,7 +24,16 @@ public class CustomerController {
             @ModelAttribute SearchCriteria searchCriteria
     ) {
         return new APIResponse<>(
-                userService.listCustomers(searchCriteria)
+                customerService.listCustomers(searchCriteria)
+        );
+    }
+
+    @GetMapping("/details/{customerId}")
+    public APIResponse<ICustomerResponse> getById(
+            @PathVariable(value = "customerId", required = false) Long customerId
+    ) {
+        return new APIResponse<>(
+                customerService.getById(customerId)
         );
     }
 }

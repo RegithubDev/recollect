@@ -15,11 +15,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class AdminService {
+public class AdminUserService {
     private final AdminUserRepository adminUserRepository;
 
     @Autowired
-    public AdminService(
+    public AdminUserService(
             AdminUserRepository adminUserRepository
     ) {
         this.adminUserRepository = adminUserRepository;
