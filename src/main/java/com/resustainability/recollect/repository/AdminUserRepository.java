@@ -96,4 +96,26 @@ public interface AdminUserRepository extends JpaRepository<AdminUser, Long> {
             @Param("searchTerm") String searchTerm,
             Pageable pageable
     );
+
+    @Query("""
+        SELECT
+            u.id AS id,
+            u.username AS username,
+            u.fullName AS fullName,
+            u.phoneNumber AS phoneNumber,
+            u.email AS email,
+            u.isSuperuser AS isSuperuser,
+            u.isStaff AS isStaff,
+            u.isActive AS isActive,
+            u.isDeleted AS isDeleted,
+            u.lastLogin AS lastLogin,
+            u.dateJoined AS dateJoined,
+            r.id AS roleId,
+            r.roleName AS roleName,
+            r.isActive AS roleActive
+        FROM AdminUser u
+        LEFT JOIN u.adminRole r
+        WHERE u.id = :adminUserId
+    """)
+    Optional<IAdminUserResponse> findByAdminUserId(@Param("adminUserId") Long adminUserId);
 }

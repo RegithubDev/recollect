@@ -7,10 +7,7 @@ import com.resustainability.recollect.dto.response.IAdminUserResponse;
 import com.resustainability.recollect.service.AdminService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/recollect/v1/admin-console")
@@ -27,7 +24,16 @@ public class AdminConsoleController {
             @ModelAttribute SearchCriteria searchCriteria
     ) {
         return new APIResponse<>(
-                adminService.list(searchCriteria)
+                adminService.listAdminUsers(searchCriteria)
+        );
+    }
+
+    @GetMapping("/details/{adminUserId}")
+    public APIResponse<IAdminUserResponse> getById(
+            @PathVariable(value = "adminUserId", required = false) Long adminUserId
+    ) {
+        return new APIResponse<>(
+                adminService.getById(adminUserId)
         );
     }
 }

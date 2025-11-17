@@ -10,12 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/recollect/v1/user")
-public class UserController {
+@RequestMapping("/recollect/v1/customer")
+public class CustomerController {
     private final UserService userService;
 
 	@Autowired
-    public UserController(UserService userService) {
+    public CustomerController(UserService userService) {
         this.userService = userService;
     }
 
@@ -24,7 +24,7 @@ public class UserController {
             @ModelAttribute SearchCriteria searchCriteria
     ) {
         return new APIResponse<>(
-                userService.list(searchCriteria)
+                userService.listCustomers(searchCriteria)
         );
     }
 }

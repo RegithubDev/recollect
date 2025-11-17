@@ -51,25 +51,20 @@ public class ValidationUtils {
         request.validate();
     }
 
-    public static void validateName(String name) {
-        validateLength(name, Default.MIN_DEFAULT_LENGTH, Default.MAX_DEFAULT_LENGTH, "Name");
+    public static void validateUserId(Long id) {
+        validateNonNegative(id, "User ID");
     }
 
-    public static void validateEmail(String email) {
-        validateLength(email, Default.MIN_DEFAULT_LENGTH, Default.MAX_DEFAULT_LENGTH, "Email");
+    public static void validateName(String value) {
+        validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_DEFAULT_LENGTH, "Name");
     }
 
-    public static void validatePhone(String mobile) {
-//        validateNumeric(mobile, "Phone number");
-        validateLength(mobile, Default.MIN_PHONE_LENGTH, Default.MAX_PHONE_LENGTH, "Phone number");
+    public static void validateEmail(String value) {
+        validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_DEFAULT_LENGTH, "Email");
     }
 
-    public static void validatePassword(String password) {
-        validateLength(password, Default.MIN_PASSWORD_LENGTH, Default.MAX_PASSWORD_LENGTH, "Password");
-    }
-
-    public static void validateOtp(String otp) {
-        validateNumeric(otp, "OTP");
-        validateLength(otp, Default.MIN_MAX_OTP_LENGTH, Default.MIN_MAX_OTP_LENGTH, "OTP");
+    public static void validatePhone(String value) {
+//        validateNumeric(value, "Phone number");
+        validateLength(value, Default.MIN_PHONE_LENGTH, Default.MAX_PHONE_LENGTH, "Phone number");
     }
 }

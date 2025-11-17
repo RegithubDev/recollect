@@ -31,7 +31,7 @@ public class UserService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public Pager<ICustomerResponse> list(SearchCriteria searchCriteria) {
+    public Pager<ICustomerResponse> listCustomers(SearchCriteria searchCriteria) {
         return Pager.of(
                 customerRepository.findAllPaged(
                         searchCriteria.getQ(),
