@@ -109,6 +109,7 @@ public class SecurityConfiguration {
                         "/swagger-ui/**",
                         (actuatorEndpoint + "/**"),
                         (swaggerUiEndpoint + "/**"),
+                        swaggerApiDocsEndpoint,
                         (swaggerApiDocsEndpoint + "/**")
                 ).permitAll().anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
