@@ -35,6 +35,10 @@ public class CustomerService {
         return customerRepository.findByPhoneNumber(phoneNumber);
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public int refreshLastLoginAtById(Long customerId) {
+        return customerRepository.updateLastLoginAtById(customerId, LocalDateTime.now());
+    }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public int refreshTokenAtById(Long customerId) {

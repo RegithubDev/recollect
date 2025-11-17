@@ -191,4 +191,15 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
             @Param("id") Long id,
             @Param("tokenAt") LocalDateTime tokenAt
     );
+
+    @Modifying(clearAutomatically = true)
+    @Query("""
+        UPDATE Customer c
+        SET c.lastLogin = :lastLogin
+        WHERE c.id = :id
+    """)
+    int updateLastLoginAtById(
+            @Param("id") Long id,
+            @Param("lastLogin") LocalDateTime lastLogin
+    );
 }
