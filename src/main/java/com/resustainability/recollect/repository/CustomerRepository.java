@@ -78,6 +78,17 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     @Query("""
         SELECT
+        CASE WHEN COUNT(c) > 0
+            THEN true
+            ELSE false
+        END
+        FROM Customer c
+        WHERE c.phoneNumber = :phone
+    """)
+    boolean existsByPhoneNumber(@Param("phone") String phoneNumber);
+
+    @Query("""
+        SELECT
             c.id AS id,
             c.lastLogin AS lastLogin,
             c.isSuperuser AS isSuperuser,

@@ -4,6 +4,8 @@ import com.resustainability.recollect.commons.Default;
 import com.resustainability.recollect.dto.commons.APIResponse;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
+import com.resustainability.recollect.dto.request.AddCustomerRequest;
+import com.resustainability.recollect.dto.request.UpdateCustomerRequest;
 import com.resustainability.recollect.dto.response.ICustomerResponse;
 import com.resustainability.recollect.service.CustomerService;
 
@@ -36,6 +38,22 @@ public class CustomerController {
         return new APIResponse<>(
                 customerService.getById(customerId)
         );
+    }
+
+    @PutMapping("/add")
+    public APIResponse<Void> add(
+            @RequestBody(required = false) AddCustomerRequest request
+    ) {
+        customerService.add(request);
+        return new APIResponse<>(Default.SUCCESS_ADD_USER);
+    }
+
+    @PutMapping("/update")
+    public APIResponse<Void> update(
+            @RequestBody(required = false) UpdateCustomerRequest request
+    ) {
+        customerService.update(request);
+        return new APIResponse<>(Default.SUCCESS_UPDATE_USER_DETAILS);
     }
 
     @DeleteMapping("/delete/{customerId}")

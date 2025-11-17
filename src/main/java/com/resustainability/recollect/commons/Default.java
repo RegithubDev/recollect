@@ -25,6 +25,10 @@ public class Default {
     public static final String ERROR_NOT_FOUND_POSITION = "Position not found";
     public static final String ERROR_NOT_FOUND_DEPARTMENT = "Department not found";
     public static final String ERROR_NOT_FOUND_USER = "User not found";
+    public static final String ERROR_NOT_FOUND_DISTRICT = "District not found";
+    public static final String ERROR_NOT_FOUND_SCRAP_REGION = "Scrap region not found";
+    public static final String ERROR_NOT_FOUND_STATE = "State not found";
+    public static final String ERROR_NOT_FOUND_WARD = "Ward not found";
     public static final String ERROR_NOT_FOUND_EMPLOYEE = "Employee not found";
     public static final String ERROR_NOT_FOUND_JOB = "Job not found";
     public static final String ERROR_NOT_FOUND_ORG = "Org not found";
@@ -40,10 +44,10 @@ public class Default {
     public static final String SUCCESS_FORGOT_PASSWORD_REQUEST_INIT = "An email has been sent to your address containing OTP to reset your password.";
     public static final String SUCCESS_FORGOT_PASSWORD_OTP_VERIFY = "OTP verification successful. You may now proceed to update your password.";
     public static final String SUCCESS_FORGOT_PASSWORD_RESET = "Your password has been reset successfully. Please proceed to log in.";
-    public static final String SUCCESS_ADD_EMPLOYEE = "Employee created.";
+    public static final String SUCCESS_ADD_USER = "User created.";
     public static final String SUCCESS_ADD_TASK = "Task created.";
     public static final String SUCCESS_UPDATE_PROFILE_DETAILS = "Your profile details have been updated successfully.";
-    public static final String SUCCESS_UPDATE_USER_DETAILS = "User profile details have been updated successfully.";
+    public static final String SUCCESS_UPDATE_USER_DETAILS = "User details have been updated successfully.";
     public static final String SUCCESS_UPDATE_TASK_DETAILS = "Task details have been updated successfully.";
     public static final String SUCCESS_UPDATED_NOTICE = "Notice updated";
     public static final String SUCCESS_UPDATE_USER_STATUS = "User status updated.";
@@ -64,13 +68,14 @@ public class Default {
     public static final int MAX_DEFAULT_LENGTH = 250;
     public static final int MIN_DEFAULT_LENGTH = 2;
 
-    public static final int MAX_STATUS_LENGTH = 50;
-    public static final int MAX_NOTE_LENGTH = 500;
+    public static final int MAX_20_LENGTH = 20;
+    public static final int MAX_50_LENGTH = 50;
+    public static final int MAX_500_LENGTH = 500;
     public static final int MIN_MAX_OTP_LENGTH = 4;
 
     public static final int MIN_PHONE_LENGTH = 9;
     public static final int MAX_PHONE_LENGTH = 16;
 
     public static final int MIN_PASSWORD_LENGTH = 6;
-    public static final int MAX_PASSWORD_LENGTH = 64;
+    public static final int MAX_PASSWORD_LENGTH = 128;
 }

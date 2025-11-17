@@ -5,10 +5,13 @@ import com.resustainability.recollect.commons.StringUtils;
 import com.resustainability.recollect.commons.ValidationUtils;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
+import com.resustainability.recollect.dto.request.AddCustomerRequest;
+import com.resustainability.recollect.dto.request.UpdateCustomerRequest;
 import com.resustainability.recollect.dto.response.ICustomerResponse;
 import com.resustainability.recollect.entity.backend.Customer;
+import com.resustainability.recollect.exception.DataAlreadyExistException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
-import com.resustainability.recollect.repository.CustomerRepository;
+import com.resustainability.recollect.repository.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,12 +25,24 @@ import java.util.Optional;
 @Service
 public class CustomerService {
     private final CustomerRepository customerRepository;
+    private final DistrictRepository districtRepository;
+    private final ScrapRegionRepository scrapRegionRepository;
+    private final StateRepository stateRepository;
+    private final WardRepository wardRepository;
 
     @Autowired
     public CustomerService(
-            CustomerRepository customerRepository
+            CustomerRepository customerRepository,
+            DistrictRepository districtRepository,
+            ScrapRegionRepository scrapRegionRepository,
+            StateRepository stateRepository,
+            WardRepository wardRepository
     ) {
         this.customerRepository = customerRepository;
+        this.districtRepository = districtRepository;
+        this.scrapRegionRepository = scrapRegionRepository;
+        this.stateRepository = stateRepository;
+        this.wardRepository = wardRepository;
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
@@ -61,6 +76,136 @@ public class CustomerService {
         return customerRepository
                 .findByCustomerId(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_USER));
+    }
+
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public void add(AddCustomerRequest request) {
+        ValidationUtils.validateRequestBody(request);
+
+        if (customerRepository.existsByPhoneNumber(request.phoneNumber())) {
+            throw new DataAlreadyExistException(
+                    String.format("Customer with (%s) already exists", request.phoneNumber())
+            );
+        }
+
+        if (null != request.districtId() && !districtRepository.existsById(request.districtId())) {
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_DISTRICT);
+        }
+
+        if (null != request.scrapRegionId() && !scrapRegionRepository.existsById(request.scrapRegionId())) {
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_SCRAP_REGION);
+        }
+
+        if (null != request.stateId() && !stateRepository.existsById(request.stateId())) {
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_STATE);
+        }
+
+        if (null != request.wardId() && !wardRepository.existsById(request.wardId())) {
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_WARD);
+        }
+
+        customerRepository.save(
+                new Customer(
+                        null,
+                        Default.EMPTY,
+                        null,
+                        Boolean.TRUE.equals(request.isSuperuser()),
+                        Boolean.TRUE.equals(request.isStaff()),
+                        true,
+                        request.dateJoined(),
+                        request.name(),
+                        null,
+                        request.phoneNumber(),
+                        request.email(),
+                        request.userType(),
+                        request.platform(),
+                        false,
+                        null != request.districtId() ? districtRepository.getReferenceById(request.districtId()) : null,
+                        null != request.scrapRegionId() ? scrapRegionRepository.getReferenceById(request.scrapRegionId()) : null,
+                        null != request.stateId() ? stateRepository.getReferenceById(request.stateId()) : null,
+                        null != request.wardId() ? wardRepository.getReferenceById(request.wardId()) : null,
+                        LocalDateTime.now()
+                )
+        );
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public void update(UpdateCustomerRequest request) {
+        ValidationUtils.validateRequestBody(request);
+
+        final ICustomerResponse customer = customerRepository
+                .findByCustomerId(request.id())
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_USER));
+
+        final Customer entity = customerRepository
+                .findById(request.id())
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_USER));
+
+        final boolean hasPhoneUpdated = !customer.getPhoneNumber().equalsIgnoreCase(request.phoneNumber());
+        final boolean hasDistrictUpdated = !customer.getDistrictId().equals(request.districtId());
+        final boolean hasScrapRegionUpdated = !customer.getScrapRegionId().equals(request.scrapRegionId());
+        final boolean hasStateUpdated = !customer.getStateId().equals(request.stateId());
+        final boolean hasWardUpdated = !customer.getWardId().equals(request.wardId());
+
+        if (hasPhoneUpdated && customerRepository.existsByPhoneNumber(request.phoneNumber())) {
+            throw new DataAlreadyExistException(
+                    String.format("Customer with (%s) already exists", request.phoneNumber())
+            );
+        }
+
+        if (hasDistrictUpdated) {
+            if (null == request.districtId()) {
+                entity.setDistrict(null);
+            } else if (!districtRepository.existsById(request.districtId())) {
+                throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_DISTRICT);
+            } else {
+                entity.setDistrict(districtRepository.getReferenceById(request.districtId()));
+            }
+        }
+
+        if (hasScrapRegionUpdated) {
+            if (null == request.scrapRegionId()) {
+                entity.setScrapRegion(null);
+            } else if (!scrapRegionRepository.existsById(request.scrapRegionId())) {
+                throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_SCRAP_REGION);
+            } else {
+                entity.setScrapRegion(scrapRegionRepository.getReferenceById(request.scrapRegionId()));
+            }
+        }
+
+        if (hasStateUpdated) {
+            if (null == request.stateId()) {
+                entity.setState(null);
+            } else if (!stateRepository.existsById(request.stateId())) {
+                throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_STATE);
+            } else {
+                entity.setState(stateRepository.getReferenceById(request.stateId()));
+            }
+        }
+
+        if (hasWardUpdated) {
+            if (null == request.wardId()) {
+                entity.setWard(null);
+            } else if (!wardRepository.existsById(request.wardId())) {
+                throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_WARD);
+            } else {
+                entity.setWard(wardRepository.getReferenceById(request.wardId()));
+            }
+        }
+
+        entity.setFullName(request.name());
+        entity.setPhoneNumber(request.phoneNumber());
+        entity.setEmail(request.email());
+        entity.setUserType(request.userType());
+        entity.setPlatform(request.platform());
+        entity.setSuperuser(Boolean.TRUE.equals(request.isSuperuser()));
+        entity.setStaff(Boolean.TRUE.equals(request.isStaff()));
+        entity.setActive(Boolean.TRUE.equals(request.isActive()));
+        entity.setDeleted(Boolean.TRUE.equals(request.isDeleted()));
+        entity.setDateJoined(request.dateJoined());
+
+        customerRepository.save(entity);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)

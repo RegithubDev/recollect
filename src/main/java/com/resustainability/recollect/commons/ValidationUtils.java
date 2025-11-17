@@ -4,6 +4,8 @@ import com.resustainability.recollect.dto.commons.RequestBodyValidator;
 import com.resustainability.recollect.exception.InvalidDataException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
 
+import java.time.LocalDateTime;
+
 public class ValidationUtils {
     private ValidationUtils() {}
 
@@ -56,15 +58,27 @@ public class ValidationUtils {
     }
 
     public static void validateName(String value) {
-        validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_DEFAULT_LENGTH, "Name");
+        validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_50_LENGTH, "Name");
+    }
+
+    public static void validatePhone(String value) {
+//        validateNumeric(value, "Phone number");
+        validateLength(value, Default.MIN_PHONE_LENGTH, Default.MAX_PHONE_LENGTH, "Phone number");
     }
 
     public static void validateEmail(String value) {
         validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_DEFAULT_LENGTH, "Email");
     }
 
-    public static void validatePhone(String value) {
-//        validateNumeric(value, "Phone number");
-        validateLength(value, Default.MIN_PHONE_LENGTH, Default.MAX_PHONE_LENGTH, "Phone number");
+    public static void validateUserType(String value) {
+        validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_20_LENGTH, "User type");
+    }
+
+    public static void validatePlatform(String value) {
+        validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_20_LENGTH, "Platform");
+    }
+
+    public static void validateDateJoined(LocalDateTime value) {
+        validateRequired(value, "Date joined");
     }
 }
