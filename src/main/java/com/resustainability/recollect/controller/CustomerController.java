@@ -40,7 +40,7 @@ public class CustomerController {
         );
     }
 
-    @PutMapping("/add")
+    @PostMapping("/add")
     public APIResponse<Void> add(
             @RequestBody(required = false) AddCustomerRequest request
     ) {
