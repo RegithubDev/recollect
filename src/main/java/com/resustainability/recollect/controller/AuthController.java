@@ -2,6 +2,7 @@ package com.resustainability.recollect.controller;
 
 import com.resustainability.recollect.commons.Default;
 import com.resustainability.recollect.dto.commons.APIResponse;
+import com.resustainability.recollect.dto.request.LoginViaCredentialsRequest;
 import com.resustainability.recollect.dto.request.LoginViaPhoneNumberRequest;
 import com.resustainability.recollect.dto.response.TokenResponse;
 import com.resustainability.recollect.service.AuthService;
@@ -26,6 +27,16 @@ public class AuthController {
         return new APIResponse<>(
                 Default.SUCCESS,
                 authService.loginViaPhoneNumber(request)
+        );
+    }
+
+    @PostMapping("/get-admin-token")
+    public APIResponse<TokenResponse> loginViaCredentials(
+            @RequestBody(required = false) LoginViaCredentialsRequest request
+    ) {
+        return new APIResponse<>(
+                Default.SUCCESS,
+                authService.loginViaCredentials(request)
         );
     }
 }

@@ -32,8 +32,8 @@ public class UserPrincipal implements UserDetails {
 
         return Stream
                 .of(
-                        user.getIsAdmin() ? Role.ADMIN.name() : null,
-                        user.getIsCustomer() ? Role.CUSTOMER.name() : null,
+                        Boolean.TRUE.equals(user.getIsAdmin()) ? Role.ADMIN.name() : null,
+                        Boolean.TRUE.equals(user.getIsCustomer()) ? Role.CUSTOMER.name() : null,
                         Boolean.TRUE.equals(user.getRoleActive()) && StringUtils.isNotBlank(user.getRoleName()) ? user.getRoleName() : null
                 )
                 .filter(StringUtils::isNotBlank)

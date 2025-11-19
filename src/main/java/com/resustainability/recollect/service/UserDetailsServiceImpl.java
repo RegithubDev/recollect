@@ -2,6 +2,7 @@ package com.resustainability.recollect.service;
 
 import com.resustainability.recollect.commons.Default;
 import com.resustainability.recollect.commons.StringUtils;
+import com.resustainability.recollect.commons.ValidationUtils;
 import com.resustainability.recollect.dto.response.IUserContext;
 import com.resustainability.recollect.entity.principal.UserPrincipal;
 import com.resustainability.recollect.exception.UnauthorizedException;
@@ -9,7 +10,6 @@ import com.resustainability.recollect.repository.AdminUserRepository;
 import com.resustainability.recollect.repository.CustomerRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -54,14 +54,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         final IUserContext user = customerRepository
                 .loadUserByUsername(username)
+                .filter(usr -> !Boolean.TRUE.equals(usr.getIsDeleted()))
                 .orElseGet(() -> adminUserRepository
                         .loadUserByUsername(username)
+                        .filter(usr -> !Boolean.TRUE.equals(usr.getIsDeleted()))
                         .orElseThrow(() -> new UsernameNotFoundException(Default.ERROR_NOT_FOUND_USER))
                 );
 
-        if (!Boolean.TRUE.equals(user.getIsActive())) {
-            throw new AuthenticationServiceException(Default.ERROR_ACCOUNT_DISABLED);
-        }
+        ValidationUtils.validateUserActiveStatus(user::getIsActive);
 
         return user;
     }

@@ -70,12 +70,10 @@ public class Default {
 
     public static final int MAX_20_LENGTH = 20;
     public static final int MAX_50_LENGTH = 50;
+    public static final int MAX_150_LENGTH = 150;
     public static final int MAX_500_LENGTH = 500;
     public static final int MIN_MAX_OTP_LENGTH = 4;
 
     public static final int MIN_PHONE_LENGTH = 9;
-    public static final int MAX_PHONE_LENGTH = 16;
-
-    public static final int MIN_PASSWORD_LENGTH = 6;
-    public static final int MAX_PASSWORD_LENGTH = 128;
+    public static final int MAX_PHONE_LENGTH = 36;
 }

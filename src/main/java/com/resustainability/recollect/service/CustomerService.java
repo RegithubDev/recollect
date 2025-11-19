@@ -47,16 +47,19 @@ public class CustomerService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Optional<Customer> findByPhoneNumber(String phoneNumber) {
+        ValidationUtils.validatePhone(phoneNumber);
         return customerRepository.findByPhoneNumber(phoneNumber);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public int refreshLastLoginAtById(Long customerId) {
+        ValidationUtils.validateUserId(customerId);
         return customerRepository.updateLastLoginAtById(customerId, LocalDateTime.now());
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public int refreshTokenAtById(Long customerId) {
+        ValidationUtils.validateUserId(customerId);
         return customerRepository.updateTokenAtById(customerId, LocalDateTime.now());
     }
 

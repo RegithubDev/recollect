@@ -7,10 +7,12 @@ import com.resustainability.recollect.dto.response.IAdminUserResponse;
 import com.resustainability.recollect.service.AdminUserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/recollect/v1/admin-console")
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminConsoleController {
     private final AdminUserService adminUserService;
 

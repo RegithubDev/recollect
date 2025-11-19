@@ -10,10 +10,12 @@ import com.resustainability.recollect.dto.response.ICustomerResponse;
 import com.resustainability.recollect.service.CustomerService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/recollect/v1/customer")
+@PreAuthorize("hasRole('ADMIN')")
 public class CustomerController {
     private final CustomerService customerService;
 

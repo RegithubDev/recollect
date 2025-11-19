@@ -7,10 +7,12 @@ import com.resustainability.recollect.entity.backend.AdminUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -66,6 +68,17 @@ public interface AdminUserRepository extends JpaRepository<AdminUser, Long> {
     Optional<IUserContext> loadUserById(@Param("id") Long id);
 
     @Query("""
+        SELECT u
+        FROM AdminUser u
+        WHERE u.username = :username
+        AND u.plainPassword = :password
+    """)
+    Optional<AdminUser> findByUsernameAndPassword(
+            @Param("username") String username,
+            @Param("password") String password
+    );
+
+    @Query("""
         SELECT
             u.id AS id,
             u.username AS username,
@@ -118,4 +131,26 @@ public interface AdminUserRepository extends JpaRepository<AdminUser, Long> {
         WHERE u.id = :adminUserId
     """)
     Optional<IAdminUserResponse> findByAdminUserId(@Param("adminUserId") Long adminUserId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("""
+        UPDATE AdminUser u
+        SET u.tokenAt = :tokenAt
+        WHERE u.id = :id
+    """)
+    int updateTokenAtById(
+            @Param("id") Long id,
+            @Param("tokenAt") LocalDateTime tokenAt
+    );
+
+    @Modifying(clearAutomatically = true)
+    @Query("""
+        UPDATE AdminUser u
+        SET u.lastLogin = :lastLogin
+        WHERE u.id = :id
+    """)
+    int updateLastLoginAtById(
+            @Param("id") Long id,
+            @Param("lastLogin") LocalDateTime lastLogin
+    );
 }

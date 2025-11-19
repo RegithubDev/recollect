@@ -3,8 +3,10 @@ package com.resustainability.recollect.commons;
 import com.resustainability.recollect.dto.commons.RequestBodyValidator;
 import com.resustainability.recollect.exception.InvalidDataException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
+import org.springframework.security.authentication.AuthenticationServiceException;
 
 import java.time.LocalDateTime;
+import java.util.function.BooleanSupplier;
 
 public class ValidationUtils {
     private ValidationUtils() {}
@@ -70,6 +72,14 @@ public class ValidationUtils {
         validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_DEFAULT_LENGTH, "Email");
     }
 
+    public static void validateUsername(String value) {
+        validateLength(value, 0, Default.MAX_150_LENGTH, "Username");
+    }
+
+    public static void validatePassword(String value) {
+        validateRequired(value, "Password");
+    }
+
     public static void validateUserType(String value) {
         validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_20_LENGTH, "User type");
     }
@@ -80,5 +90,11 @@ public class ValidationUtils {
 
     public static void validateDateJoined(LocalDateTime value) {
         validateRequired(value, "Date joined");
+    }
+
+    public static void validateUserActiveStatus(BooleanSupplier isActive) {
+        if (!Boolean.TRUE.equals(isActive.getAsBoolean())) {
+            throw new AuthenticationServiceException(Default.ERROR_ACCOUNT_DISABLED);
+        }
     }
 }
