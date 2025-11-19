@@ -19,11 +19,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Optional;
-
 @Service
 public class CountryService {
-    private final String suffixFolderName = "country";
+    private static final String FOLDER_NAME = "country";
+
     private final UploadService uploadService;
     private final CountryRepository countryRepository;
 
@@ -118,7 +117,7 @@ public class CountryService {
         }
 
         final String filePath = uploadService
-                .upload(suffixFolderName, file);
+                .upload(FOLDER_NAME, file);
 
         if (0 == countryRepository.updateCountryImageById(countryId, filePath)) {
             uploadService.remove(filePath);

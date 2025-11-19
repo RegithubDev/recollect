@@ -3,6 +3,8 @@ package com.resustainability.recollect.service;
 import com.resustainability.recollect.commons.FileUtils;
 import com.resustainability.recollect.commons.IdGenerator;
 import com.resustainability.recollect.commons.StringUtils;
+import com.resustainability.recollect.commons.ValidationUtils;
+import com.resustainability.recollect.exception.InvalidDataException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,14 +45,14 @@ public class UploadService {
     }
 
     private void validate(MultipartFile file) {
-        if (null == file || file.isEmpty()) throw new IllegalArgumentException("Empty file");
+        ValidationUtils.validateMultipart(file);
         final String type = file.getContentType();
-        if (StringUtils.isBlank(type)) throw new IllegalArgumentException("Invalid content");
+        if (StringUtils.isBlank(type)) throw new InvalidDataException("Invalid content");
         if (!type.equals("image/png") &&
             !type.equals("image/jpeg") &&
             !type.equals("image/jpg") &&
             !type.equals("image/webp")) {
-            throw new IllegalArgumentException("Unsupported type");
+            throw new InvalidDataException("Unsupported type");
         }
     }
 
@@ -71,7 +73,7 @@ public class UploadService {
         try {
             Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            throw new IllegalStateException("Write failed", e);
+            throw new InvalidDataException(e, "Write failed");
         }
     }
 
