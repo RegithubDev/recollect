@@ -31,10 +31,13 @@ public class ServiceCategory {
     @Column(name = "is_disabled", nullable = false)
     private Boolean isDisabled;
 
+    @Column(name = "url")
+    private String url;
+
     public ServiceCategory() {
     }
 
-    public ServiceCategory(Long id, String serviceName, String serviceTitle, String serviceSubtitle, String icon, Boolean isActive, Boolean isDisabled) {
+    public ServiceCategory(Long id, String serviceName, String serviceTitle, String serviceSubtitle, String icon, Boolean isActive, Boolean isDisabled, String url) {
         this.id = id;
         this.serviceName = serviceName;
         this.serviceTitle = serviceTitle;
@@ -42,6 +45,7 @@ public class ServiceCategory {
         this.icon = icon;
         this.isActive = isActive;
         this.isDisabled = isDisabled;
+        this.url = url;
     }
 
     @Override
@@ -111,5 +115,13 @@ public class ServiceCategory {
 
     public void setDisabled(Boolean disabled) {
         isDisabled = disabled;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

@@ -19,7 +19,8 @@ public interface ServiceCategoryRepository extends JpaRepository<ServiceCategory
             sc.serviceSubtitle AS subtitle,
             sc.icon AS icon,
             sc.isActive AS isActive,
-            sc.isDisabled AS isDisabled
+            sc.isDisabled AS isDisabled,
+            sc.url AS url
         FROM ServiceCategory sc
         WHERE sc.isActive = true
         AND sc.isDisabled = false

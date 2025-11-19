@@ -8,4 +8,5 @@ public interface IServiceCategoryResponse {
     String getIcon();
     Boolean getIsActive();
     Boolean getIsDisabled();
+    String getUrl();
 }
