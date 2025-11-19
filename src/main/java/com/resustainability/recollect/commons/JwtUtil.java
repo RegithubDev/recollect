@@ -90,7 +90,7 @@ public class JwtUtil {
             return authorizationValue.substring(7);
         }
 
-        throw new UnauthorizedException();
+        throw new UnauthorizedException(true);
     }
 
     public boolean isBearer(String authorizationValue) {

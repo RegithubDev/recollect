@@ -41,7 +41,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         final IUserContext user = loadUser(username);
 
         if (null == user || null == user.getTokenAt() || null != uat && uat != user.getTokenAt().atZone(ZoneId.systemDefault()).toEpochSecond()) {
-            throw new UnauthorizedException();
+            throw new UnauthorizedException(true);
         }
 
         return new UserPrincipal(user);
