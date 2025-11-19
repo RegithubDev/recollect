@@ -20,6 +20,7 @@ public class Default {
 
     public static final String ERROR_INVALID_SHEET_ROW = "Row numbers must be >= 1";
     public static final String ERROR_ACCOUNT_DISABLED = "Your account has been disabled. Please contact support for assistance";
+    public static final String ERROR_UNABLE_TO_UPLOAD = "Upload failed. Retry shortly";
     public static final String ERROR_EMPTY_REQUEST_BODY = "Request cannot be empty";
     public static final String ERROR_EMPTY_MULTIPART = "File cannot be empty";
     public static final String ERROR_NOT_FOUND_POSITION = "Position not found";
@@ -61,15 +62,9 @@ public class Default {
     public static final String EXECUTOR_MAIL = "mailTaskExecutor";
     public static final String EXECUTOR_ASYNC = "asyncTaskExecutor";
 
-    public static final String FALLBACK_ASSIGNEE_NAME = "%s (Assignee)";
-    public static final String FALLBACK_MANAGER_NAME = "%s (Manager)";
-
-    public static final String FILENAME_EXPORT_ATTENDANCE_CALENDAR = "Attendance Calendar (%s - %s)";
-    public static final String FILENAME_EXPORT_PAYROLL = "Payroll (%s - %s)";
-
     public static final String QUERY_SQL_SERVER_RESET_SEED = "DBCC CHECKIDENT ('[%s]', RESEED, 0)";
 
-    private static final long MAX_IMAGE_FILE_SIZE = 5L * 1024L * 1024L; // 5MB
+    public static final long MAX_IMAGE_FILE_SIZE = 5L * 1024L * 1024L; // 5MB
 
     public static final int MAX_DEFAULT_LENGTH = 250;
     public static final int MIN_DEFAULT_LENGTH = 2;

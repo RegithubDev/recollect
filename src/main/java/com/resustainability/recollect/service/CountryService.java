@@ -17,17 +17,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class CountryService {
+    private final String suffixFolderName = "country";
+    private final UploadService uploadService;
     private final CountryRepository countryRepository;
 
     @Autowired
     public CountryService(
+            UploadService uploadService,
             CountryRepository countryRepository
     ) {
+        this.uploadService = uploadService;
         this.countryRepository = countryRepository;
     }
 
@@ -101,5 +106,39 @@ public class CountryService {
         if (0 == countryRepository.deleteCountryById(countryId)) {
             throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_COUNTRY);
         }
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public String uploadImage(Long countryId, MultipartFile file) {
+        ValidationUtils.validateId(countryId);
+        ValidationUtils.validateMultipartSize(file, Default.MAX_IMAGE_FILE_SIZE);
+
+        if (!countryRepository.existsById(countryId)) {
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_COUNTRY);
+        }
+
+        final String filePath = uploadService
+                .upload(suffixFolderName, file);
+
+        if (0 == countryRepository.updateCountryImageById(countryId, filePath)) {
+            uploadService.remove(filePath);
+            throw new ResourceNotFoundException(Default.ERROR_UNABLE_TO_UPLOAD);
+        }
+
+        return filePath;
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public String removeImage(Long countryId) {
+        ValidationUtils.validateId(countryId);
+
+        final String filePath = countryRepository
+                .findCountryImageById(countryId)
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_COUNTRY));
+
+        uploadService.remove(filePath);
+        countryRepository.updateCountryImageById(countryId, null);
+
+        return filePath;
     }
 }

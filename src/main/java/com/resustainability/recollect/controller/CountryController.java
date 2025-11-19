@@ -10,8 +10,10 @@ import com.resustainability.recollect.dto.response.ICountryResponse;
 import com.resustainability.recollect.service.CountryService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/recollect/v1/country")
@@ -50,6 +52,14 @@ public class CountryController {
         return new APIResponse<>(Default.SUCCESS_ADD_COUNTRY);
     }
 
+    @PostMapping(value = "/upload-file/{countryId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+        public APIResponse<String> uploadImage(
+            @PathVariable(value = "countryId", required = false) Long countryId,
+            @RequestParam(value = "file", required = false) MultipartFile file
+    ) {
+        return new APIResponse<>(countryService.uploadImage(countryId, file));
+    }
+
     @PutMapping("/update")
     public APIResponse<Void> update(
             @RequestBody(required = false) UpdateCountryRequest request
@@ -64,5 +74,12 @@ public class CountryController {
     ) {
         countryService.deleteById(countryId);
         return new APIResponse<>(Default.SUCCESS_DELETE_COUNTRY);
+    }
+
+    @DeleteMapping(value = "/remove-file/{countryId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public APIResponse<String> removeImage(
+            @PathVariable(value = "countryId", required = false) Long countryId
+    ) {
+        return new APIResponse<>(countryService.removeImage(countryId));
     }
 }

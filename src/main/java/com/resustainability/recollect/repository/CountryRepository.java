@@ -60,6 +60,24 @@ public interface CountryRepository extends JpaRepository<Country, Long> {
     """)
     boolean existsByCode(@Param("code") String code);
 
+    @Query("""
+        SELECT c.countryImage
+        FROM Country c
+        WHERE c.id = :id
+    """)
+    Optional<String> findCountryImageById(@Param("id") Long countryId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("""
+        UPDATE Country c
+        SET c.countryImage = :filePath
+        WHERE c.id = :id
+    """)
+    int updateCountryImageById(
+            @Param("id") Long countryId,
+            @Param("filePath") String filePath
+    );
+
     @Modifying(clearAutomatically = true)
     @Query("""
         UPDATE Country c

@@ -27,7 +27,7 @@ public class ValidationUtils {
 
     public static void validateMultipart(MultipartFile file) {
         if (null == file || file.isEmpty()) {
-            throw new InvalidDataException("File is required");
+            throw new InvalidDataException(Default.ERROR_EMPTY_MULTIPART);
         }
     }
 
