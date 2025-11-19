@@ -25,6 +25,7 @@ public class Default {
     public static final String ERROR_NOT_FOUND_POSITION = "Position not found";
     public static final String ERROR_NOT_FOUND_DEPARTMENT = "Department not found";
     public static final String ERROR_NOT_FOUND_USER = "User not found";
+    public static final String ERROR_NOT_FOUND_COUNTRY = "Country not found";
     public static final String ERROR_NOT_FOUND_DISTRICT = "District not found";
     public static final String ERROR_NOT_FOUND_SCRAP_REGION = "Scrap region not found";
     public static final String ERROR_NOT_FOUND_STATE = "State not found";
@@ -45,13 +46,16 @@ public class Default {
     public static final String SUCCESS_FORGOT_PASSWORD_OTP_VERIFY = "OTP verification successful. You may now proceed to update your password.";
     public static final String SUCCESS_FORGOT_PASSWORD_RESET = "Your password has been reset successfully. Please proceed to log in.";
     public static final String SUCCESS_ADD_USER = "User created.";
+    public static final String SUCCESS_ADD_COUNTRY = "Country created.";
     public static final String SUCCESS_ADD_TASK = "Task created.";
     public static final String SUCCESS_UPDATE_PROFILE_DETAILS = "Your profile details have been updated successfully.";
     public static final String SUCCESS_UPDATE_USER_DETAILS = "User details have been updated successfully.";
+    public static final String SUCCESS_UPDATE_COUNTRY_DETAILS = "Country details have been updated successfully.";
     public static final String SUCCESS_UPDATE_TASK_DETAILS = "Task details have been updated successfully.";
     public static final String SUCCESS_UPDATED_NOTICE = "Notice updated";
     public static final String SUCCESS_UPDATE_USER_STATUS = "User status updated.";
     public static final String SUCCESS_DELETE_USER = "All done! The account's been deleted.";
+    public static final String SUCCESS_DELETE_COUNTRY = "All done! The country's been deleted.";
     public static final String SUCCESS_DELETE_TASK = "All done! The task's been deleted.";
 
     public static final String EXECUTOR_MAIL = "mailTaskExecutor";
@@ -68,6 +72,7 @@ public class Default {
     public static final int MAX_DEFAULT_LENGTH = 250;
     public static final int MIN_DEFAULT_LENGTH = 2;
 
+    public static final int MAX_10_LENGTH = 10;
     public static final int MAX_20_LENGTH = 20;
     public static final int MAX_50_LENGTH = 50;
     public static final int MAX_150_LENGTH = 150;

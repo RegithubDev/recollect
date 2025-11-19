@@ -55,8 +55,16 @@ public class ValidationUtils {
         request.validate();
     }
 
+    public static void validateId(Long id) {
+        validateNonNegative(id, "ID");
+    }
+
     public static void validateUserId(Long id) {
         validateNonNegative(id, "User ID");
+    }
+
+    public static void validateCode(String value) {
+        validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_10_LENGTH, "Code");
     }
 
     public static void validateName(String value) {
