@@ -31,7 +31,7 @@ public interface ScrapCategoryRepository extends JpaRepository<ScrapCategory, Lo
         FROM backend_scrapcategory c
         JOIN backend_scraptype t
             ON t.scrap_category_id = c.id
-        LEFT JOIN backend_scraptypelocationandprice p
+        JOIN backend_scraptypelocationandprice p
             ON p.scrap_type_id = t.id
            AND p.district_id = :districtId
            AND p.is_active = 1

@@ -2,9 +2,10 @@ package com.resustainability.recollect.dto.response;
 
 import java.util.List;
 
-public record BioWasteCategoryResponse(
+public record ItemCategoryResponse(
         Long id,
         String category,
+        String subcategory,
         String icon,
-        List<BioWasteTypeResponse> types
+        List<ItemCategoryTypeResponse> types
 ) {}

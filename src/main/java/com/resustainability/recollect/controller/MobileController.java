@@ -1,9 +1,8 @@
 package com.resustainability.recollect.controller;
 
 import com.resustainability.recollect.dto.commons.APIResponse;
-import com.resustainability.recollect.dto.response.BioWasteCategoryResponse;
 import com.resustainability.recollect.dto.response.IServiceCategoryResponse;
-import com.resustainability.recollect.dto.response.ScrapCategoryResponse;
+import com.resustainability.recollect.dto.response.ItemCategoryResponse;
 import com.resustainability.recollect.service.MobileService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,14 +33,14 @@ public class MobileController {
     }
 
     @GetMapping("/list-bio-waste-categories")
-    public APIResponse<Collection<BioWasteCategoryResponse>> listBioWasteCategories() {
+    public APIResponse<Collection<ItemCategoryResponse>> listBioWasteCategories() {
         return new APIResponse<>(
                 mobileService.listBioWasteCategories()
         );
     }
 
     @GetMapping("/list-scrap-categories")
-    public APIResponse<Collection<ScrapCategoryResponse>> listScrapCategories() {
+    public APIResponse<Collection<ItemCategoryResponse>> listScrapCategories() {
         return new APIResponse<>(
                 mobileService.listScrapCategories()
         );

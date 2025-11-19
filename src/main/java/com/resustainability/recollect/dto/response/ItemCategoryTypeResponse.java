@@ -1,6 +1,6 @@
 package com.resustainability.recollect.dto.response;
 
-public record ScrapTypeResponse(
+public record ItemCategoryTypeResponse(
         Long id,
         String name,
         String icon,

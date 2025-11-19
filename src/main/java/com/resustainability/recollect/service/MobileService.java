@@ -2,7 +2,6 @@ package com.resustainability.recollect.service;
 
 import com.resustainability.recollect.commons.CollectionUtils;
 import com.resustainability.recollect.dto.response.*;
-import com.resustainability.recollect.exception.UnauthorizedException;
 import com.resustainability.recollect.repository.BioWasteCategoryRepository;
 import com.resustainability.recollect.repository.ScrapCategoryRepository;
 import com.resustainability.recollect.repository.ServiceCategoryRepository;
@@ -41,7 +40,7 @@ public class MobileService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public Collection<BioWasteCategoryResponse> listBioWasteCategories() {
+    public Collection<ItemCategoryResponse> listBioWasteCategories() {
         final List<IBioWasteCategoryTypeResponse> rows = bioWasteCategoryRepository
                 .findAllActiveCategoryTypes();
 
@@ -49,22 +48,28 @@ public class MobileService {
             return Collections.emptyList();
         }
 
-        final Map<Long, BioWasteCategoryResponse> categories = new LinkedHashMap<>();
+        final Map<Long, ItemCategoryResponse> categories = new LinkedHashMap<>();
 
         for (final IBioWasteCategoryTypeResponse r : rows) {
             categories.computeIfAbsent(
                     r.getCategoryId(),
-                    id -> new BioWasteCategoryResponse(
+                    id -> new ItemCategoryResponse(
                             id,
                             r.getCategoryName(),
+                            null,
                             r.getCategoryIcon(),
                             new ArrayList<>()
                     )
             ).types().add(
-                    new BioWasteTypeResponse(
+                    new ItemCategoryTypeResponse(
                             r.getTypeId(),
                             r.getTypeName(),
-                            r.getTypeIcon()
+                            r.getTypeIcon(),
+                            false,
+                            false,
+                            null,
+                            null,
+                            null
                     )
             );
         }
@@ -73,7 +78,7 @@ public class MobileService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public Collection<ScrapCategoryResponse> listScrapCategories() {
+    public Collection<ItemCategoryResponse> listScrapCategories() {
         final Long districtId = securityService
                 .getCurrentUser()
                 .map(IUserContext::getDistrictId)
@@ -86,12 +91,12 @@ public class MobileService {
             return Collections.emptyList();
         }
 
-        final Map<Long, ScrapCategoryResponse> categories = new LinkedHashMap<>();
+        final Map<Long, ItemCategoryResponse> categories = new LinkedHashMap<>();
 
         for (final IScrapCategoryTypeResponse r : rows) {
             categories.computeIfAbsent(
                     r.getCategoryId(),
-                    id -> new ScrapCategoryResponse(
+                    id -> new ItemCategoryResponse(
                             id,
                             r.getCategoryName(),
                             r.getSubcategoryName(),
@@ -99,7 +104,7 @@ public class MobileService {
                             new ArrayList<>()
                     )
             ).types().add(
-                    new ScrapTypeResponse(
+                    new ItemCategoryTypeResponse(
                             r.getTypeId(),
                             r.getTypeName(),
                             r.getTypeIcon(),
