@@ -37,13 +37,13 @@ public class AdminUserService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public int refreshTokenAtById(Long adminUserId) {
+    public int refreshLastLoginAtById(Long adminUserId) {
         ValidationUtils.validateUserId(adminUserId);
         return adminUserRepository.updateLastLoginAtById(adminUserId, LocalDateTime.now());
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public int refreshLastLoginAtById(Long adminUserId) {
+    public int refreshTokenAtById(Long adminUserId) {
         ValidationUtils.validateUserId(adminUserId);
         return adminUserRepository.updateTokenAtById(adminUserId, LocalDateTime.now());
     }
