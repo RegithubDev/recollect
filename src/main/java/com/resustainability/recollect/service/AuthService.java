@@ -8,8 +8,8 @@ import com.resustainability.recollect.dto.response.TokenResponse;
 import com.resustainability.recollect.entity.backend.AdminUser;
 import com.resustainability.recollect.entity.backend.Customer;
 import com.resustainability.recollect.exception.BadCredentialsException;
-
 import com.resustainability.recollect.tag.Role;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -57,7 +57,8 @@ public class AuthService {
                 customer.getActive(),
                 jwtUtil.generateToken(
                         customer.getPhoneNumber(),
-                        customer.getTokenAt()
+                        customer.getTokenAt(),
+                        false
                 ),
                 customer.getFullName(),
                 customer.getEmail(),

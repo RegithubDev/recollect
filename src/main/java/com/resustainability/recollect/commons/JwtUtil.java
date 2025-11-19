@@ -41,11 +41,19 @@ public class JwtUtil {
         return generateToken(
                 username,
                 tokenAt,
-                DEFAULT_EXPIRATION
+                true
         );
     }
 
-    public String generateToken(String username, LocalDateTime tokenAt, long expiry) {
+    public String generateToken(String username, LocalDateTime tokenAt, boolean expiry) {
+        return generateToken(
+                username,
+                tokenAt,
+                expiry ? DEFAULT_EXPIRATION : null
+        );
+    }
+
+    public String generateToken(String username, LocalDateTime tokenAt, Long expiry) {
         return generateToken(
                 username,
                 Map.of(
