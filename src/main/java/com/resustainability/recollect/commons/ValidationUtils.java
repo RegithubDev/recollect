@@ -4,6 +4,7 @@ import com.resustainability.recollect.dto.commons.RequestBodyValidator;
 import com.resustainability.recollect.exception.InvalidDataException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
 import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.function.BooleanSupplier;
@@ -14,6 +15,19 @@ public class ValidationUtils {
     public static void validateRequired(String value, String fieldName) {
         if (StringUtils.isBlank(value)) {
             throw new InvalidDataException(fieldName + " is required");
+        }
+    }
+
+    public static void validateMultipartSize(MultipartFile file, long size) {
+        validateMultipart(file);
+        if (file.getSize() > size) {
+            throw new IllegalArgumentException("File too large, try uploading " + FileUtils.byteCountToDisplaySize(size));
+        }
+    }
+
+    public static void validateMultipart(MultipartFile file) {
+        if (null == file || file.isEmpty()) {
+            throw new InvalidDataException("File is required");
         }
     }
 

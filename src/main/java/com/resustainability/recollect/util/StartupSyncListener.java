@@ -12,7 +12,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
@@ -34,7 +34,7 @@ public class StartupSyncListener implements ApplicationListener<ContextRefreshed
     public void onApplicationEvent(@NonNull ContextRefreshedEvent event) {
         if (alreadySynced.compareAndSet(false, true)) {
             FileUtils.ensureDirectory(
-                    Path.of(fileUploadPath)
+                    Paths.get(fileUploadPath)
             );
         }
     }

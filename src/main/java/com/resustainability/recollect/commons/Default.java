@@ -69,6 +69,8 @@ public class Default {
 
     public static final String QUERY_SQL_SERVER_RESET_SEED = "DBCC CHECKIDENT ('[%s]', RESEED, 0)";
 
+    private static final long MAX_IMAGE_FILE_SIZE = 5L * 1024L * 1024L; // 5MB
+
     public static final int MAX_DEFAULT_LENGTH = 250;
     public static final int MIN_DEFAULT_LENGTH = 2;
 
