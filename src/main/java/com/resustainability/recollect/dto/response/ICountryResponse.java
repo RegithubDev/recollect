@@ -7,4 +7,6 @@ public interface ICountryResponse {
     String getIcon();
     Boolean getIsActive();
     Boolean getIsDeleted();
+    
+    
 }
