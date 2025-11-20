@@ -55,7 +55,7 @@ public class CountryService {
 
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public void add(AddCountryRequest request) {
+    public Long add(AddCountryRequest request) {
         ValidationUtils.validateRequestBody(request);
 
         if (countryRepository.existsByCode(request.code())) {
@@ -64,7 +64,7 @@ public class CountryService {
             );
         }
 
-        countryRepository.save(
+        return countryRepository.save(
                 new Country(
                         null,
                         request.name(),
@@ -73,7 +73,7 @@ public class CountryService {
                         true,
                         false
                 )
-        );
+        ).getId();
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)

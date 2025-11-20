@@ -45,11 +45,13 @@ public class CountryController {
     }
 
     @PostMapping("/add")
-    public APIResponse<Void> add(
+    public APIResponse<Long> add(
             @RequestBody(required = false) AddCountryRequest request
     ) {
-        countryService.add(request);
-        return new APIResponse<>(Default.SUCCESS_ADD_COUNTRY);
+        return new APIResponse<>(
+                Default.SUCCESS_ADD_COUNTRY,
+                countryService.add(request)
+        );
     }
 
     @PostMapping(value = "/upload-file/{countryId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -57,7 +59,11 @@ public class CountryController {
             @PathVariable(value = "countryId", required = false) Long countryId,
             @RequestParam(value = "file", required = false) MultipartFile file
     ) {
-        return new APIResponse<>(countryService.uploadImage(countryId, file));
+        return new APIResponse<>(
+                countryService.uploadImage(countryId, file),
+                Default.SUCCESS,
+                null
+        );
     }
 
     @PutMapping("/update")
@@ -80,6 +86,10 @@ public class CountryController {
     public APIResponse<String> removeImage(
             @PathVariable(value = "countryId", required = false) Long countryId
     ) {
-        return new APIResponse<>(countryService.removeImage(countryId));
+        return new APIResponse<>(
+                countryService.removeImage(countryId),
+                Default.SUCCESS,
+                null
+        );
     }
 }
