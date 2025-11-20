@@ -76,7 +76,7 @@ public class CountryController {
         return new APIResponse<>(Default.SUCCESS_DELETE_COUNTRY);
     }
 
-    @DeleteMapping(value = "/remove-file/{countryId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @DeleteMapping(value = "/remove-file/{countryId}")
     public APIResponse<String> removeImage(
             @PathVariable(value = "countryId", required = false) Long countryId
     ) {
