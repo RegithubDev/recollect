@@ -81,9 +81,9 @@ public interface CountryRepository extends JpaRepository<Country, Long> {
     @Modifying(clearAutomatically = true)
     @Query("""
         UPDATE Country c
-        SET c.isActive = false,
-            c.isDeleted = true
+        SET c.isActive = :isActive,
+            c.isDeleted = :isDeleted
         WHERE c.id = :id
     """)
-    int deleteCountryById(@Param("id") Long countryId);
+    int deleteCountryById(@Param("id") Long countryId,@Param("isActive") boolean isActive, @Param("isDeleted") boolean isDeleted);
 }

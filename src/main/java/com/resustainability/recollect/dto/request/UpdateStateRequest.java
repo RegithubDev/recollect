@@ -9,8 +9,7 @@ public record UpdateStateRequest(
         String code,
         String name,
         Long countryId,
-        Boolean isActive,
-        Boolean isDeleted
+        Boolean isActive
 ) implements RequestBodyValidator {
 
     @Override

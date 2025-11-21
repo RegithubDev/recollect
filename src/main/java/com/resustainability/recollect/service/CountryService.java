@@ -100,9 +100,9 @@ public class CountryService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public void deleteById(Long countryId) {
+    public void deleteById(Long countryId, boolean value) {
         ValidationUtils.validateId(countryId);
-        if (0 == countryRepository.deleteCountryById(countryId)) {
+        if (0 == countryRepository.deleteCountryById(countryId,!value,value)) {
             throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_COUNTRY);
         }
     }

@@ -89,10 +89,13 @@ public interface StateRepository extends JpaRepository<State, Long> {
     @Modifying(clearAutomatically = true)
     @Query("""
         UPDATE State s
-        SET s.isActive = false,
-            s.isDeleted = true
+        SET s.isActive = :isActive,
+            s.isDeleted = :isDeleted
         WHERE s.id = :id
     """)
-    int deleteStateById(@Param("id") Long stateId);
+    int deleteStateById(@Param("id") Long stateId,@Param("isActive") boolean isActive, @Param("isDeleted") boolean isDeleted);
+    
+    
+    
 
 }

@@ -80,8 +80,16 @@ public class StateController {
     public APIResponse<Void> deleteById(
             @PathVariable(value = "stateId", required = false) Long stateId
     ) {
-        stateService.deleteById(stateId);
+        stateService.deleteById(stateId,true);
         return new APIResponse<>(Default.SUCCESS_DELETE_STATE);
+    }
+    
+    @DeleteMapping("/un-delete/{stateId}")
+    public APIResponse<Void> undeleteById(
+            @PathVariable(value = "stateId", required = false) Long stateId
+    ) {
+        stateService.deleteById(stateId,false);
+        return new APIResponse<>(Default.SUCCESS_UNDELETE_STATE);
     }
 
     @DeleteMapping("/remove-file/{stateId}")

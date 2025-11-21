@@ -49,17 +49,23 @@ public class Default {
     public static final String SUCCESS_ADD_USER = "User created.";
     public static final String SUCCESS_ADD_COUNTRY = "Country created.";
     public static final String SUCCESS_ADD_STATE = "State added successfully";
+    public static final String SUCCESS_ADD_DISTRICT = "District added successfully";
     public static final String SUCCESS_ADD_TASK = "Task created.";
     public static final String SUCCESS_UPDATE_PROFILE_DETAILS = "Your profile details have been updated successfully.";
     public static final String SUCCESS_UPDATE_USER_DETAILS = "User details have been updated successfully.";
     public static final String SUCCESS_UPDATE_COUNTRY_DETAILS = "Country details have been updated successfully.";
     public static final String SUCCESS_UPDATE_STATE_DETAILS = "State details updated successfully";
+    public static final String SUCCESS_UPDATE_COUNTRY_DISTRICT = "District details have been updated successfully.";
     public static final String SUCCESS_UPDATE_TASK_DETAILS = "Task details have been updated successfully.";
     public static final String SUCCESS_UPDATED_NOTICE = "Notice updated";
     public static final String SUCCESS_UPDATE_USER_STATUS = "User status updated.";
     public static final String SUCCESS_DELETE_USER = "All done! The account's been deleted.";
     public static final String SUCCESS_DELETE_COUNTRY = "All done! The country's been deleted.";
+    public static final String SUCCESS_UNDELETE_COUNTRY = "All done! The country's been restored.";
     public static final String SUCCESS_DELETE_STATE = "All done! The state's been deleted.";
+    public static final String SUCCESS_UNDELETE_STATE = "All done! The state's been restored.";
+    public static final String SUCCESS_DELETE_DISTRICT = "All done! The District's been deleted.";
+    public static final String SUCCESS_UNDELETE_DISTRICT = "All done! The District's been restored.";
     public static final String SUCCESS_DELETE_TASK = "All done! The task's been deleted.";
     
   
@@ -73,6 +79,8 @@ public class Default {
 
     public static final long MAX_IMAGE_FILE_SIZE = 5L * 1024L * 1024L; // 5MB
 
+    public static final long MAX_IMAGE_FILE_SIZE_PICKER_UPLOAD = 25L * 1024L * 1024L; // 5MB
+    
     public static final int MAX_DEFAULT_LENGTH = 250;
     public static final int MIN_DEFAULT_LENGTH = 2;
 
@@ -85,4 +93,5 @@ public class Default {
 
     public static final int MIN_PHONE_LENGTH = 9;
     public static final int MAX_PHONE_LENGTH = 36;
+	
 }

@@ -78,8 +78,16 @@ public class CountryController {
     public APIResponse<Void> deleteById(
             @PathVariable(value = "countryId", required = false) Long countryId
     ) {
-        countryService.deleteById(countryId);
+        countryService.deleteById(countryId, true);
         return new APIResponse<>(Default.SUCCESS_DELETE_COUNTRY);
+    }
+    
+    @DeleteMapping("/un-delete/{countryId}")
+    public APIResponse<Void> undeleteById(
+            @PathVariable(value = "countryId", required = false) Long countryId
+    ) {
+        countryService.deleteById(countryId, false);
+        return new APIResponse<>(Default.SUCCESS_UNDELETE_COUNTRY);
     }
 
     @DeleteMapping(value = "/remove-file/{countryId}")

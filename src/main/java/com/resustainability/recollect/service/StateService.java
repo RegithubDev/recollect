@@ -93,38 +93,7 @@ public class StateService {
         ).getId();
     }
 
-    // UPDATE STATE DETAILS
-//    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-//    public void update(UpdateStateRequest request) {
-//
-//        ValidationUtils.validateRequestBody(request);
-//
-//        final State entity = stateRepository
-//                .findById(request.id())
-//                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_STATE));
-//
-//        boolean hasCodeUpdated = !entity.getStateCode().equalsIgnoreCase(request.code());
-//
-//        if (hasCodeUpdated && stateRepository.existsByCode(request.code())) {
-//            throw new DataAlreadyExistException(
-//                    String.format("State with (%s) already exists", request.code())
-//            );
-//        }
-//
-//        entity.setStateCode(request.code());
-//        entity.setStateName(request.name());
-//        entity.setActive(Boolean.TRUE.equals(request.isActive()));
-//
-//        // If country change is allowed
-//        if (request.countryId() != null) {
-//            Country country = countryRepository.findById(request.countryId())
-//                    .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_COUNTRY));
-//            entity.setCountry(country);
-//        }
-//
-//        stateRepository.save(entity);
-//    }
-
+    
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void update(UpdateStateRequest request) {
 
@@ -144,22 +113,9 @@ public class StateService {
 
         entity.setStateCode(request.code());
         entity.setStateName(request.name());
+        entity.setActive(Boolean.TRUE.equals(request.isActive()));
 
-        if (Boolean.TRUE.equals(request.isActive())) {
-            entity.setActive(true);
-            entity.setDeleted(false);   // auto-reset
-        }
-
-        if (Boolean.FALSE.equals(request.isActive())) {
-            entity.setActive(false);
-            // do not force delete unless explicitly requested
-        }
-
-        if (request.isDeleted() != null && request.isDeleted()) {
-            entity.setDeleted(true);
-            entity.setActive(false);   // auto-reset
-        }
-
+        // If country change is allowed
         if (request.countryId() != null) {
             Country country = countryRepository.findById(request.countryId())
                     .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_COUNTRY));
@@ -170,11 +126,12 @@ public class StateService {
     }
 
 
+
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public void deleteById(Long stateId) {
+    public void deleteById(Long stateId, boolean value) {
         ValidationUtils.validateId(stateId);
 
-        if (0 == stateRepository.deleteStateById(stateId)) {
+        if (0 == stateRepository.deleteStateById(stateId, !value,value)) {
             throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_STATE);
         }
     }
