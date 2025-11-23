@@ -69,7 +69,7 @@ public class DistrictController {
 	            @RequestBody(required = false) UpdateDistrictRequest request
 	    ) {
 	        districtService.update(request);
-	        return new APIResponse<>(Default.SUCCESS_UPDATE_COUNTRY_DISTRICT);
+	        return new APIResponse<>(Default.SUCCESS_UPDATE_DISTRICT);
 	    }
 
 	    @DeleteMapping("/delete/{districtId}")

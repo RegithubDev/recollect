@@ -32,6 +32,7 @@ public class Default {
     public static final String ERROR_NOT_FOUND_SCRAP_REGION = "Scrap region not found";
     public static final String ERROR_NOT_FOUND_STATE = "State not found";
     public static final String ERROR_NOT_FOUND_WARD = "Ward not found";
+    public static final String ERROR_NOT_FOUND_LOCALBODY = "LocalBody not found";
     public static final String ERROR_NOT_FOUND_EMPLOYEE = "Employee not found";
     public static final String ERROR_NOT_FOUND_JOB = "Job not found";
     public static final String ERROR_NOT_FOUND_ORG = "Org not found";
@@ -51,6 +52,8 @@ public class Default {
     public static final String SUCCESS_ADD_COUNTRY = "Country created.";
     public static final String SUCCESS_ADD_STATE = "State added successfully";
     public static final String SUCCESS_ADD_DISTRICT = "District added successfully";
+    public static final String SUCCESS_ADD_LOCALBODY = "LocalBody added successfully";
+    public static final String SUCCESS_ADD_WARD = "Ward added successfully";
     public static final String SUCCESS_ADD_LOCALBODYTYPE = "LocalBodyType added successfully";
     public static final String SUCCESS_ADD_TASK = "Task created.";
     public static final String SUCCESS_UPDATE_PROFILE_DETAILS = "Your profile details have been updated successfully.";
@@ -58,7 +61,9 @@ public class Default {
     public static final String SUCCESS_UPDATE_COUNTRY_DETAILS = "Country details have been updated successfully.";
     public static final String SUCCESS_UPDATE_STATE_DETAILS = "State details updated successfully";
     public static final String SUCCESS_UPDATE_LOCALBODYTYPE = "LocalBodyType details updated successfully";
-    public static final String SUCCESS_UPDATE_COUNTRY_DISTRICT = "District details have been updated successfully.";
+    public static final String SUCCESS_UPDATE_DISTRICT = "District details have been updated successfully.";
+    public static final String SUCCESS_UPDATE_LOCALBODY = "LocalBody details have been updated successfully.";
+    public static final String SUCCESS_UPDATE_WARD = "Ward details have been updated successfully.";
     public static final String SUCCESS_UPDATE_TASK_DETAILS = "Task details have been updated successfully.";
     public static final String SUCCESS_UPDATED_NOTICE = "Notice updated";
     public static final String SUCCESS_UPDATE_USER_STATUS = "User status updated.";
@@ -69,6 +74,10 @@ public class Default {
     public static final String SUCCESS_UNDELETE_STATE = "All done! The state's been restored.";
     public static final String SUCCESS_DELETE_DISTRICT = "All done! The District's been deleted.";
     public static final String SUCCESS_UNDELETE_DISTRICT = "All done! The District's been restored.";
+    public static final String SUCCESS_DELETE_WARD = "All done! The Ward's been deleted.";
+    public static final String SUCCESS_UNDELETE_WARD = "All done! The Ward's been restored.";
+    public static final String SUCCESS_DELETE_LOCALBODY = "All done! The LocalBody's been deleted.";
+    public static final String SUCCESS_UNDELETE_LOCALBODY = "All done! The LocalBody's been restored.";
     public static final String SUCCESS_DELETE_LOCALBODYTYPE = "All done! The LocalBodyType's been deleted.";
     public static final String SUCCESS_UNDELETE_LOCALBODYTYPE = "All done! The LocalBodyType's been restored.";
     public static final String SUCCESS_DELETE_TASK = "All done! The task's been deleted.";
