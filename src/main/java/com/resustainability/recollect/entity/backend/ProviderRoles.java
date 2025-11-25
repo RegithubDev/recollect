@@ -19,4 +19,55 @@ public class ProviderRoles {
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
+    
+    
+    public ProviderRoles() {
+    	
+    }
+
+	public ProviderRoles(Long id, String roleName, Boolean isAdmin, Boolean isActive) {
+		super();
+		this.id = id;
+		this.roleName = roleName;
+		this.isAdmin = isAdmin;
+		this.isActive = isActive;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getRoleName() {
+		return roleName;
+	}
+
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
+
+	public Boolean getIsAdmin() {
+		return isAdmin;
+	}
+
+	public void setIsAdmin(Boolean isAdmin) {
+		this.isAdmin = isAdmin;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public static String getTableName() {
+		return TABLE_NAME;
+	}
+    
+    
 }
