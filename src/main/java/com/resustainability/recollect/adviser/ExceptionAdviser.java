@@ -20,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.orm.jpa.JpaSystemException;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -181,6 +182,12 @@ public class ExceptionAdviser {
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	@ExceptionHandler(AuthorizationDeniedException.class)
 	public APIResponse<Void> handleAuthorizationDeniedException(AuthorizationDeniedException exception) {
+		return defaultResponse(exception);
+	}
+
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ExceptionHandler(AuthenticationServiceException.class)
+	public APIResponse<Void> handleAuthenticationServiceException(AuthenticationServiceException exception) {
 		return defaultResponse(exception);
 	}
 
