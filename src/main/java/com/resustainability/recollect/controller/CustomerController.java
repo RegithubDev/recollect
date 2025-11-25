@@ -7,7 +7,9 @@ import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.AddCustomerRequest;
 import com.resustainability.recollect.dto.request.UpdateCustomerRequest;
 import com.resustainability.recollect.dto.response.ICustomerResponse;
+import com.resustainability.recollect.exception.UnauthorizedException;
 import com.resustainability.recollect.service.CustomerService;
+import com.resustainability.recollect.service.SecurityService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,10 +20,25 @@ import org.springframework.web.bind.annotation.*;
 @PreAuthorize("hasRole('ADMIN')")
 public class CustomerController {
     private final CustomerService customerService;
+    private final SecurityService securityService;
 
-	@Autowired
-    public CustomerController(CustomerService customerService) {
+    @Autowired
+    public CustomerController(
+            CustomerService customerService,
+            SecurityService securityService
+    ) {
         this.customerService = customerService;
+        this.securityService = securityService;
+    }
+
+    @GetMapping("/whoami")
+    public APIResponse<ICustomerResponse> self() {
+        final Long userId = securityService
+                .getCurrentUserId()
+                .orElseThrow(UnauthorizedException::new);
+        return new APIResponse<>(
+                customerService.getById(userId)
+        );
     }
 
     @GetMapping("/list")
