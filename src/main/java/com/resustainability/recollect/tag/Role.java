@@ -9,7 +9,8 @@ import java.util.stream.Stream;
 
 public enum Role {
 	CUSTOMER(0, "Customer"),
-	ADMIN(1, "Admin");
+	PROVIDER(1, "Provider"),
+	ADMIN(2, "Admin");
 
 	private final int ordinal;
 	private final String abbreviation;

@@ -2,6 +2,8 @@ package com.resustainability.recollect.entity.backend;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = ProviderRoles.TABLE_NAME)
 public class ProviderRoles {
@@ -19,55 +21,59 @@ public class ProviderRoles {
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
-    
-    
+
     public ProviderRoles() {
-    	
     }
 
-	public ProviderRoles(Long id, String roleName, Boolean isAdmin, Boolean isActive) {
-		super();
-		this.id = id;
-		this.roleName = roleName;
-		this.isAdmin = isAdmin;
-		this.isActive = isActive;
-	}
+    public ProviderRoles(Long id, String roleName, Boolean isAdmin, Boolean isActive) {
+        this.id = id;
+        this.roleName = roleName;
+        this.isAdmin = isAdmin;
+        this.isActive = isActive;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        ProviderRoles entity = (ProviderRoles) object;
+        return Objects.equals(id, entity.id);
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
-	public String getRoleName() {
-		return roleName;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setRoleName(String roleName) {
-		this.roleName = roleName;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Boolean getIsAdmin() {
-		return isAdmin;
-	}
+    public String getRoleName() {
+        return roleName;
+    }
 
-	public void setIsAdmin(Boolean isAdmin) {
-		this.isAdmin = isAdmin;
-	}
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
 
-	public Boolean getIsActive() {
-		return isActive;
-	}
+    public Boolean getAdmin() {
+        return isAdmin;
+    }
 
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
-	}
+    public void setAdmin(Boolean admin) {
+        isAdmin = admin;
+    }
 
-	public static String getTableName() {
-		return TABLE_NAME;
-	}
-    
-    
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
 }

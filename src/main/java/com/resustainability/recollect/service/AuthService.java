@@ -7,6 +7,7 @@ import com.resustainability.recollect.dto.request.LoginViaPhoneNumberRequest;
 import com.resustainability.recollect.dto.response.TokenResponse;
 import com.resustainability.recollect.entity.backend.AdminUser;
 import com.resustainability.recollect.entity.backend.Customer;
+import com.resustainability.recollect.entity.backend.Provider;
 import com.resustainability.recollect.exception.BadCredentialsException;
 import com.resustainability.recollect.tag.Role;
 
@@ -22,21 +23,24 @@ import java.time.LocalDateTime;
 public class AuthService {
     private final CustomerService customerService;
     private final AdminUserService adminUserService;
+    private final ProviderService providerService;
     private final JwtUtil jwtUtil;
 
     @Autowired
     public AuthService(
             CustomerService customerService,
             AdminUserService adminUserService,
+            ProviderService providerService,
             JwtUtil jwtUtil
     ) {
         this.customerService = customerService;
         this.adminUserService = adminUserService;
+        this.providerService = providerService;
         this.jwtUtil = jwtUtil;
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public TokenResponse loginViaPhoneNumber(LoginViaPhoneNumberRequest request) {
+    public TokenResponse customerLogin(LoginViaPhoneNumberRequest request) {
         ValidationUtils.validateRequestBody(request);
 
         final Customer customer = customerService
@@ -57,6 +61,7 @@ public class AuthService {
                 customer.getActive(),
                 jwtUtil.generateToken(
                         customer.getPhoneNumber(),
+                        Role.CUSTOMER.getAbbreviation(),
                         customer.getTokenAt(),
                         false
                 ),
@@ -66,7 +71,7 @@ public class AuthService {
         );
     }
 
-    public TokenResponse loginViaCredentials(LoginViaCredentialsRequest request) {
+    public TokenResponse adminLogin(LoginViaCredentialsRequest request) {
         ValidationUtils.validateRequestBody(request);
 
         final AdminUser adminUser = adminUserService
@@ -87,11 +92,42 @@ public class AuthService {
                 adminUser.getActive(),
                 jwtUtil.generateToken(
                         adminUser.getUsername(),
+                        Role.ADMIN.getAbbreviation(),
                         adminUser.getTokenAt()
                 ),
                 adminUser.getFullName(),
                 adminUser.getEmail(),
                 Role.ADMIN.getAbbreviation()
+        );
+    }
+
+    public TokenResponse providerLogin(LoginViaCredentialsRequest request) {
+        ValidationUtils.validateRequestBody(request);
+
+        final Provider provider = providerService
+                .findByUsernameAndPassword(request.username(), request.password())
+                .filter(usr -> !Boolean.TRUE.equals(usr.getDeleted()))
+                .orElseThrow(BadCredentialsException::new);
+
+        ValidationUtils.validateUserActiveStatus(provider::getActive);
+
+        if (null == provider.getTokenAt()) {
+            provider.setTokenAt(LocalDateTime.now());
+            providerService.refreshTokenAtById(provider.getId());
+        }
+
+        providerService.refreshLastLoginAtById(provider.getId());
+
+        return new TokenResponse(
+                provider.getActive(),
+                jwtUtil.generateToken(
+                        provider.getPhoneNumber(),
+                        Role.PROVIDER.getAbbreviation(),
+                        provider.getTokenAt()
+                ),
+                provider.getFullName(),
+                provider.getEmail(),
+                Role.PROVIDER.getAbbreviation()
         );
     }
 }

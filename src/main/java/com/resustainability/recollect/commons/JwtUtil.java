@@ -27,39 +27,43 @@ public class JwtUtil {
 
     private final String secretKey;
     private final String jwtClaimName;
+    private final String jwtRoleName;
 
     @Autowired
     public JwtUtil(
             @Value("${app.jwt.secretKey}") String secretKey,
-            @Value("${app.jwt.claimName}") String jwtClaimName
+            @Value("${app.jwt.claimName}") String jwtClaimName,
+            @Value("${app.jwt.roleName}") String jwtRoleName
     ) {
         this.secretKey = secretKey;
         this.jwtClaimName = jwtClaimName;
+        this.jwtRoleName = jwtRoleName;
     }
 
-    public String generateToken(String username, LocalDateTime tokenAt) {
+    public String generateToken(String username, String role, LocalDateTime tokenAt) {
         return generateToken(
                 username,
+                role,
                 tokenAt,
                 true
         );
     }
 
-    public String generateToken(String username, LocalDateTime tokenAt, boolean expiry) {
+    public String generateToken(String username, String role, LocalDateTime tokenAt, boolean expiry) {
         return generateToken(
                 username,
+                role,
                 tokenAt,
                 expiry ? DEFAULT_EXPIRATION : null
         );
     }
 
-    public String generateToken(String username, LocalDateTime tokenAt, Long expiry) {
+    public String generateToken(String username, String role, LocalDateTime tokenAt, Long expiry) {
         return generateToken(
                 username,
                 Map.of(
                         jwtClaimName, tokenAt.atZone(ZoneId.systemDefault()).toEpochSecond(),
-                        "database", "kerala_db",
-                        "state", "Kerala"
+                        jwtRoleName, role
                 ),
                 expiry
         );
@@ -91,6 +95,10 @@ public class JwtUtil {
 
     public Long extractUAT(String token) {
         return extractClaim(token, claims -> claims.get(jwtClaimName, Long.class));
+    }
+
+    public String extractROL(String token) {
+        return extractClaim(token, claims -> claims.get(jwtRoleName, String.class));
     }
 
     public String extractToken(String authorizationValue) {

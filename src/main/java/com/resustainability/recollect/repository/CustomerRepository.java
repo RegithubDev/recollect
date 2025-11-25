@@ -33,6 +33,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     
             true AS isCustomer,
             false AS isAdmin,
+            false AS isProvider,
     
             c.district.id AS districtId,
             c.state.id AS stateId,
@@ -59,6 +60,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     
             true AS isCustomer,
             false AS isAdmin,
+            false AS isProvider,
     
             c.district.id AS districtId,
             c.state.id AS stateId,
@@ -127,8 +129,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
         LEFT JOIN c.scrapRegion r
         LEFT JOIN c.ward w
         LEFT JOIN w.localbody lb
-    
-        WHERE
+        WHERE c.isDeleted = false
+        AND
             (:searchTerm IS NULL OR :searchTerm = '' OR
                 c.fullName LIKE CONCAT(:searchTerm, '%') OR
                 c.phoneNumber LIKE CONCAT(:searchTerm, '%') OR

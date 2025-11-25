@@ -21,22 +21,32 @@ public class AuthController {
     }
 
     @PostMapping("/get-customer-token")
-    public APIResponse<TokenResponse> loginViaPhoneNumber(
+    public APIResponse<TokenResponse> customerLogin(
             @RequestBody(required = false) LoginViaPhoneNumberRequest request
     ) {
         return new APIResponse<>(
                 Default.SUCCESS,
-                authService.loginViaPhoneNumber(request)
+                authService.customerLogin(request)
         );
     }
 
-    @PostMapping("/get-admin-token")
-    public APIResponse<TokenResponse> loginViaCredentials(
+    @PostMapping("/get-provider-token")
+    public APIResponse<TokenResponse> providerLogin(
             @RequestBody(required = false) LoginViaCredentialsRequest request
     ) {
         return new APIResponse<>(
                 Default.SUCCESS,
-                authService.loginViaCredentials(request)
+                authService.providerLogin(request)
+        );
+    }
+
+    @PostMapping("/get-admin-token")
+    public APIResponse<TokenResponse> adminLogin(
+            @RequestBody(required = false) LoginViaCredentialsRequest request
+    ) {
+        return new APIResponse<>(
+                Default.SUCCESS,
+                authService.adminLogin(request)
         );
     }
 }

@@ -11,6 +11,7 @@ import com.resustainability.recollect.entity.backend.ProviderRoles;
 import com.resustainability.recollect.exception.DataAlreadyExistException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
 import com.resustainability.recollect.repository.ProviderRoleRepository;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -65,8 +66,8 @@ public class ProviderRoleService {
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_PROVIDERROLE));
 
         entity.setRoleName(request.roleName());
-        entity.setIsAdmin(request.isAdmin());
-        entity.setIsActive(Boolean.TRUE.equals(request.isActive()));
+        entity.setAdmin(Boolean.TRUE.equals(request.isAdmin()));
+        entity.setActive(Boolean.TRUE.equals(request.isActive()));
 
         roleRepository.save(entity);
     }

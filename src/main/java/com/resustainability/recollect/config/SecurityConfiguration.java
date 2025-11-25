@@ -106,6 +106,7 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests.requestMatchers(
                         "/recollect/v1/auth/get-customer-token",
+                        "/recollect/v1/auth/get-provider-token",
                         "/recollect/v1/auth/get-admin-token",
                         "/swagger-ui/**",
                         (actuatorEndpoint + "/**"),

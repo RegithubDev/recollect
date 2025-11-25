@@ -32,6 +32,7 @@ public interface AdminUserRepository extends JpaRepository<AdminUser, Long> {
     
             false AS isCustomer,
             true AS isAdmin,
+            false AS isProvider,
     
             r.id AS roleId,
             r.roleName AS roleName,
@@ -57,6 +58,7 @@ public interface AdminUserRepository extends JpaRepository<AdminUser, Long> {
     
             false AS isCustomer,
             true AS isAdmin,
+            false AS isProvider,
  
             r.id AS roleId,
             r.roleName AS roleName,

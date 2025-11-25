@@ -16,6 +16,7 @@ public interface IUserContext {
     Boolean getIsDeleted();
     Boolean getIsCustomer();
     Boolean getIsAdmin();
+    Boolean getIsProvider();
 
     Long getDistrictId();
     Long getStateId();
