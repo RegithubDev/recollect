@@ -1,0 +1,107 @@
+package com.resustainability.recollect.controller;
+
+import com.resustainability.recollect.commons.Default;
+import com.resustainability.recollect.dto.commons.APIResponse;
+import com.resustainability.recollect.dto.pagination.Pager;
+import com.resustainability.recollect.dto.pagination.SearchCriteria;
+import com.resustainability.recollect.dto.request.AddScrapRegionRequest;
+import com.resustainability.recollect.dto.request.UpdateScrapRegionBorderRequest;
+import com.resustainability.recollect.dto.request.UpdateScrapRegionRequest;
+import com.resustainability.recollect.dto.response.IScrapRegionResponse;
+import com.resustainability.recollect.dto.response.ScrapRegionResponse;
+import com.resustainability.recollect.service.ScrapRegionService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/recollect/v1/scrap-region")
+@PreAuthorize("hasRole('ADMIN')")
+public class ScrapRegionController {
+    private final ScrapRegionService scrapRegionService;
+
+    @Autowired
+    public ScrapRegionController(
+            ScrapRegionService scrapRegionService
+    ) {
+        this.scrapRegionService = scrapRegionService;
+    }
+
+    @GetMapping("/list")
+    public APIResponse<Pager<IScrapRegionResponse>> list(
+            @ModelAttribute SearchCriteria searchCriteria
+    ) {
+        return new APIResponse<>(
+                scrapRegionService.list(searchCriteria)
+        );
+    }
+
+    @GetMapping("/border/{scrapRegionId}")
+    public APIResponse<String> getBorderById(
+            @PathVariable(value = "scrapRegionId", required = false) Long scrapRegionId
+    ) {
+        return new APIResponse<>(
+                scrapRegionService.getBorderById(scrapRegionId),
+                Default.SUCCESS,
+                null
+        );
+    }
+
+    @GetMapping("/details/{scrapRegionId}")
+    public APIResponse<ScrapRegionResponse> getById(
+            @PathVariable(value = "scrapRegionId", required = false) Long scrapRegionId
+    ) {
+        return new APIResponse<>(
+                scrapRegionService.getById(scrapRegionId)
+        );
+    }
+
+    @PostMapping("/add")
+    public APIResponse<Void> add(
+            @RequestBody(required = false) AddScrapRegionRequest request
+    ) {
+        scrapRegionService.add(request);
+        return new APIResponse<>(Default.SUCCESS_ADD_SCRAP_REGION);
+    }
+
+    @PutMapping("/update")
+    public APIResponse<Void> update(
+            @RequestBody(required = false) UpdateScrapRegionRequest request
+    ) {
+        scrapRegionService.update(request);
+        return new APIResponse<>(Default.SUCCESS_UPDATE_SCRAP_REGION_DETAILS);
+    }
+
+    @PatchMapping("/update-border")
+    public APIResponse<Void> updateBorder(
+            @RequestBody(required = false) UpdateScrapRegionBorderRequest request
+    ) {
+        scrapRegionService.updateBorder(request);
+        return new APIResponse<>(Default.SUCCESS_UPDATE_SCRAP_REGION_BORDER);
+    }
+
+    @PatchMapping("/toggle/{scrapRegionId}")
+    public APIResponse<Void> toggleById(
+            @PathVariable(value = "scrapRegionId", required = false) Long scrapRegionId
+    ) {
+        scrapRegionService.toggleById(scrapRegionId);
+        return new APIResponse<>(Default.SUCCESS_UPDATE_STATUS);
+    }
+
+    @DeleteMapping("/delete/{scrapRegionId}")
+    public APIResponse<Void> deleteById(
+            @PathVariable(value = "scrapRegionId", required = false) Long scrapRegionId
+    ) {
+        scrapRegionService.deleteById(scrapRegionId, true);
+        return new APIResponse<>(Default.SUCCESS_DELETE_SCRAP_REGION);
+    }
+
+    @DeleteMapping("/un-delete/{scrapRegionId}")
+    public APIResponse<Void> undeleteById(
+            @PathVariable(value = "scrapRegionId", required = false) Long scrapRegionId
+    ) {
+        scrapRegionService.deleteById(scrapRegionId, false);
+        return new APIResponse<>(Default.SUCCESS_UNDELETE_SCRAP_REGION);
+    }
+}

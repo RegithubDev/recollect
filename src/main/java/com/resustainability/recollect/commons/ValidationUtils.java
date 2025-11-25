@@ -1,12 +1,14 @@
 package com.resustainability.recollect.commons;
 
 import com.resustainability.recollect.dto.commons.RequestBodyValidator;
+import com.resustainability.recollect.dto.payload.PayloadScrapRegionAvailability;
 import com.resustainability.recollect.exception.InvalidDataException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.function.BooleanSupplier;
 
 public class ValidationUtils {
@@ -79,6 +81,12 @@ public class ValidationUtils {
 
     public static void validateDistrictId(Long id) {
         validateNonNegative(id, "District ID");
+    }
+
+    public static void validateScrapRegionAvailability(List<PayloadScrapRegionAvailability> availability) {
+        if (CollectionUtils.isBlank(availability)) {
+            throw new InvalidDataException("Provide availability pickup dates");
+        }
     }
 
     public static void validateCode(String value) {

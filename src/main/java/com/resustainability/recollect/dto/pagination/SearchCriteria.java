@@ -37,7 +37,7 @@ public class SearchCriteria {
     @Schema(description = "Filter start timestamp (ISO-8601)", example = "2023-01-01T00:00:00Z")
     private Instant start;
 
-    @Schema(description = "Filter end timestamp (ISO-8601)", example = "2023-12-31T23:59:59Z")
+    @Schema(description = "Filter end timestamp (ISO-8601)", example = "2060-12-31T23:59:59Z")
     private Instant end;
 
     @Schema(description = "Disable sorting")
