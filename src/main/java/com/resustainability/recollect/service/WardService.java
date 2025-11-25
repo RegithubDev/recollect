@@ -52,7 +52,7 @@ public class WardService {
         ValidationUtils.validateRequestBody(request);
 
         LocalBody localbody = localBodyRepository.findById(request.localbodyId())
-                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCALBODY));
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCAL_BODY));
 
         Ward ward = new Ward();
         ward.setWardNo(request.wardNo());
@@ -82,7 +82,7 @@ public class WardService {
         entity.setActive(Boolean.TRUE.equals(request.isActive()));
 
         LocalBody lb = localBodyRepository.findById(request.localbodyId())
-                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCALBODY));
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCAL_BODY));
 
         entity.setLocalbody(lb);
 

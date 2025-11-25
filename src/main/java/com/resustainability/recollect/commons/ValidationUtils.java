@@ -77,6 +77,10 @@ public class ValidationUtils {
         validateNonNegative(id, "User ID");
     }
 
+    public static void validateDistrictId(Long id) {
+        validateNonNegative(id, "District ID");
+    }
+
     public static void validateCode(String value) {
         validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_10_LENGTH, "Code");
     }

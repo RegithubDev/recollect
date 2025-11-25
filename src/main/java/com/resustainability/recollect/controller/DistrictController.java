@@ -18,7 +18,7 @@ import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.AddDistrictRequest;
 import com.resustainability.recollect.dto.request.UpdateDistrictRequest;
-import com.resustainability.recollect.dto.response.IDestrictResponse;
+import com.resustainability.recollect.dto.response.IDistrictResponse;
 import com.resustainability.recollect.service.DistrictService;
 
 @RestController
@@ -34,7 +34,7 @@ public class DistrictController {
 	    }
 
 	    @GetMapping("/list")
-	    public APIResponse<Pager<IDestrictResponse>> list(
+	    public APIResponse<Pager<IDistrictResponse>> list(
 	            @RequestParam(required = false) Long stateId,
 	            @RequestParam(required = false) Long countryId,
 	            @ModelAttribute SearchCriteria searchCriteria
@@ -46,7 +46,7 @@ public class DistrictController {
 	    
 
 	    @GetMapping("/details/{districtId}")
-	    public APIResponse<IDestrictResponse> getById(
+	    public APIResponse<IDistrictResponse> getById(
 	            @PathVariable Long districtId
 	    ) {
 	        return new APIResponse<>(

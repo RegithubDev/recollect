@@ -35,24 +35,24 @@ public class ProviderRoleController {
 
     @PostMapping("/add")
     public APIResponse<Long> add(@RequestBody AddProviderRoleRequest request) {
-        return new APIResponse<>(Default.SUCCESS_ADD_PROVIDERROLE, service.add(request));
+        return new APIResponse<>(Default.SUCCESS_ADD_PROVIDER_ROLE, service.add(request));
     }
 
     @PutMapping("/update")
     public APIResponse<Void> update(@RequestBody UpdateProviderRoleRequest request) {
         service.update(request);
-        return new APIResponse<>(Default.SUCCESS_UPDATE_PROVIDERROLE);
+        return new APIResponse<>(Default.SUCCESS_UPDATE_PROVIDER_ROLE);
     }
 
     @DeleteMapping("/delete/{id}")
     public APIResponse<Void> delete(@PathVariable Long id) {
         service.deleteOrUndelete(id, false);
-        return new APIResponse<>(Default.SUCCESS_DELETE_PROVIDERROLE);
+        return new APIResponse<>(Default.SUCCESS_DELETE_PROVIDER_ROLE);
     }
 
     @DeleteMapping("/un-delete/{id}")
     public APIResponse<Void> undelele(@PathVariable Long id) {
         service.deleteOrUndelete(id, true);
-        return new APIResponse<>(Default.SUCCESS_UNDELETE_PROVIDERROLE);
+        return new APIResponse<>(Default.SUCCESS_UNDELETE_PROVIDER_ROLE);
     }
 }

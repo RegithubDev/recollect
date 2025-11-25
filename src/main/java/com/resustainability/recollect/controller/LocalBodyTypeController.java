@@ -39,7 +39,7 @@ public class LocalBodyTypeController {
     @PostMapping("/add")
     public APIResponse<Long> add(@RequestBody AddLocalBodyTypeRequest request) {
         return new APIResponse<>(
-                Default.SUCCESS_ADD_LOCALBODYTYPE,
+                Default.SUCCESS_ADD_LOCAL_BODY_TYPE,
                 service.add(request)
         );
     }
@@ -47,18 +47,18 @@ public class LocalBodyTypeController {
     @PutMapping("/update")
     public APIResponse<Void> update(@RequestBody UpdateLocalBodyTypeRequest request) {
         service.update(request);
-        return new APIResponse<>(Default.SUCCESS_UPDATE_LOCALBODYTYPE);
+        return new APIResponse<>(Default.SUCCESS_UPDATE_LOCAL_BODY_TYPE);
     }
 
     @DeleteMapping("/delete/{id}")
     public APIResponse<Void> delete(@PathVariable Long id) {
         service.deleteById(id, true);
-        return new APIResponse<>(Default.SUCCESS_DELETE_LOCALBODYTYPE);
+        return new APIResponse<>(Default.SUCCESS_DELETE_LOCAL_BODY_TYPE);
     }
 
     @DeleteMapping("/un-delete/{id}")
     public APIResponse<Void> undelete(@PathVariable Long id) {
         service.deleteById(id, false);
-        return new APIResponse<>(Default.SUCCESS_UNDELETE_LOCALBODYTYPE);
+        return new APIResponse<>(Default.SUCCESS_UNDELETE_LOCAL_BODY_TYPE);
     }
 }

@@ -40,7 +40,7 @@ public class ProviderRoleService {
     public IProviderRoleResponse getById(Long id) {
         ValidationUtils.validateId(id);
         return roleRepository.findByProviderRoleId(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_PROVIDERROLE));
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_PROVIDER_ROLE));
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
@@ -63,7 +63,7 @@ public class ProviderRoleService {
         ValidationUtils.validateRequestBody(request);
 
         ProviderRoles entity = roleRepository.findById(request.id())
-                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_PROVIDERROLE));
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_PROVIDER_ROLE));
 
         entity.setRoleName(request.roleName());
         entity.setAdmin(Boolean.TRUE.equals(request.isAdmin()));
@@ -77,7 +77,7 @@ public class ProviderRoleService {
         ValidationUtils.validateId(id);
 
         if (roleRepository.updateIsActive(id, active) == 0) {
-            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_PROVIDERROLE);
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_PROVIDER_ROLE);
         }
     }
 }

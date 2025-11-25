@@ -38,7 +38,7 @@ public class LocalBodyTypeService {
 
         return repository
                 .findByLocalBodyTypeId(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCALBODYTYPE));
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCAL_BODY_TYPE));
     }
 
     @Transactional
@@ -65,7 +65,7 @@ public class LocalBodyTypeService {
         ValidationUtils.validateRequestBody(request);
 
         LocalBodyType entity = repository.findById(request.id())
-                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCALBODYTYPE));
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCAL_BODY_TYPE));
 
         boolean nameUpdated = !entity.getLocalBodyType().equalsIgnoreCase(request.name());
 
@@ -86,7 +86,7 @@ public class LocalBodyTypeService {
         ValidationUtils.validateId(id);
 
         if (0 == repository.deleteLocalBodyTypeById(id, !value, value)) {
-            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCALBODYTYPE);
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCAL_BODY_TYPE);
         }
     }
 }

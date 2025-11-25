@@ -1,7 +1,6 @@
 package com.resustainability.recollect.dto.response;
 
 public interface IWardResponse {
-
     Long getId();
     Integer getWardNo();
     String getWardName();
@@ -11,8 +10,8 @@ public interface IWardResponse {
     Boolean getIsActive();
     Boolean getIsDeleted();
 
-    Long getLocalbodyId();
-    String getLocalbodyName();
+    Long getLocalBodyId();
+    String getLocalBodyName();
 
     Long getDistrictId();
     String getDistrictName();

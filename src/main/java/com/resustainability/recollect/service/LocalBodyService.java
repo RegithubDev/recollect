@@ -54,7 +54,7 @@ public class LocalBodyService {
         ValidationUtils.validateId(id);
 
         return localBodyRepository.findByLocalBodyId(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCALBODY));
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCAL_BODY));
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -72,7 +72,7 @@ public class LocalBodyService {
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_DISTRICT));
 
         LocalBodyType type = localBodyTypeRepository.findById(request.localBodyTypeId())
-                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCALBODYTYPE));
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCAL_BODY_TYPE));
 
         LocalBody lb = new LocalBody();
         lb.setLocalBodyName(request.name());
@@ -106,7 +106,7 @@ public class LocalBodyService {
         ValidationUtils.validateRequestBody(request);
 
         LocalBody lb = localBodyRepository.findById(request.id())
-                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCALBODY));
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCAL_BODY));
 
         lb.setLocalBodyName(request.name());
         lb.setBorderPolygon(request.borderPolygon());
@@ -127,7 +127,7 @@ public class LocalBodyService {
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_DISTRICT));
 
         LocalBodyType type = localBodyTypeRepository.findById(request.localBodyTypeId())
-                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCALBODYTYPE));
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCAL_BODY_TYPE));
 
         lb.setDistrict(district);
         lb.setLocalBodyType(type);
@@ -141,7 +141,7 @@ public class LocalBodyService {
         ValidationUtils.validateId(id);
 
         if (0 == localBodyRepository.deleteLocalBodyById(id, !value, value)) {
-            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCALBODY);
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCAL_BODY);
         }
     }
 }

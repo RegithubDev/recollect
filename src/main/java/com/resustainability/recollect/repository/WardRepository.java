@@ -16,7 +16,7 @@ import java.util.Optional;
 public interface WardRepository extends JpaRepository<Ward, Long> {
 
     @Query("""
-            SELECT 
+            SELECT
                 w.id AS id,
                 w.wardNo AS wardNo,
                 w.wardName AS wardName,
@@ -24,8 +24,8 @@ public interface WardRepository extends JpaRepository<Ward, Long> {
                 w.wardWeekdayNext AS wardWeekdayNext,
                 w.isActive AS isActive,
                 w.isDeleted AS isDeleted,
-                lb.id AS localbodyId,
-                lb.localBodyName AS localbodyName,
+                lb.id AS localBodyId,
+                lb.localBodyName AS localBodyName,
                 d.id AS districtId,
                 d.districtName AS districtName,
                 s.id AS stateId,
@@ -66,8 +66,8 @@ public interface WardRepository extends JpaRepository<Ward, Long> {
                 w.wardWeekdayNext AS wardWeekdayNext,
                 w.isActive AS isActive,
                 w.isDeleted AS isDeleted,
-                lb.id AS localbodyId,
-                lb.localBodyName AS localbodyName,
+                lb.id AS localBodyId,
+                lb.localBodyName AS localBodyName,
                 d.id AS districtId,
                 d.districtName AS districtName,
                 s.id AS stateId,

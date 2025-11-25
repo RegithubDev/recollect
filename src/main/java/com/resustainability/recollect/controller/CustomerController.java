@@ -5,6 +5,7 @@ import com.resustainability.recollect.dto.commons.APIResponse;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.AddCustomerRequest;
+import com.resustainability.recollect.dto.request.UpdateCustomerProfileRequest;
 import com.resustainability.recollect.dto.request.UpdateCustomerRequest;
 import com.resustainability.recollect.dto.response.ICustomerResponse;
 import com.resustainability.recollect.exception.UnauthorizedException;
@@ -32,6 +33,7 @@ public class CustomerController {
     }
 
     @GetMapping("/whoami")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     public APIResponse<ICustomerResponse> self() {
         final Long userId = securityService
                 .getCurrentUserId()
@@ -73,6 +75,15 @@ public class CustomerController {
     ) {
         customerService.update(request);
         return new APIResponse<>(Default.SUCCESS_UPDATE_USER_DETAILS);
+    }
+
+    @PutMapping("/update-profile")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
+    public APIResponse<Void> updateProfile(
+            @RequestBody(required = false) UpdateCustomerProfileRequest request
+    ) {
+        customerService.updateProfile(request);
+        return new APIResponse<>(Default.SUCCESS_UPDATE_PROFILE_DETAILS);
     }
 
     @DeleteMapping("/delete/{customerId}")

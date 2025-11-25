@@ -1,6 +1,6 @@
 package com.resustainability.recollect.repository;
 
-import com.resustainability.recollect.dto.response.IDestrictResponse;
+import com.resustainability.recollect.dto.response.IDistrictResponse;
 import com.resustainability.recollect.entity.backend.District;
 
 import org.springframework.data.domain.Page;
@@ -39,7 +39,7 @@ public interface DistrictRepository extends JpaRepository<District, Long> {
                 d.districtCode LIKE CONCAT(:searchTerm, '%')
             )
         """)
-    Page<IDestrictResponse> findAllPaged(
+    Page<IDistrictResponse> findAllPaged(
             @Param("searchTerm") String searchTerm,
             @Param("stateId") Long stateId,
             @Param("countryId") Long countryId,
@@ -63,7 +63,7 @@ public interface DistrictRepository extends JpaRepository<District, Long> {
             JOIN s.country c
             WHERE d.id = :id
         """)
-    Optional<IDestrictResponse> findByDistrictId(@Param("id") Long districtId);
+    Optional<IDistrictResponse> findByDistrictId(@Param("id") Long districtId);
 
     @Query("""
             SELECT 

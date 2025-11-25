@@ -6,11 +6,13 @@ import com.resustainability.recollect.commons.ValidationUtils;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.AddCustomerRequest;
+import com.resustainability.recollect.dto.request.UpdateCustomerProfileRequest;
 import com.resustainability.recollect.dto.request.UpdateCustomerRequest;
 import com.resustainability.recollect.dto.response.ICustomerResponse;
 import com.resustainability.recollect.entity.backend.Customer;
 import com.resustainability.recollect.exception.DataAlreadyExistException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
+import com.resustainability.recollect.exception.UnauthorizedException;
 import com.resustainability.recollect.repository.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import java.util.Optional;
 
 @Service
 public class CustomerService {
+    private final SecurityService securityService;
     private final CustomerRepository customerRepository;
     private final DistrictRepository districtRepository;
     private final ScrapRegionRepository scrapRegionRepository;
@@ -32,12 +35,14 @@ public class CustomerService {
 
     @Autowired
     public CustomerService(
+            SecurityService securityService,
             CustomerRepository customerRepository,
             DistrictRepository districtRepository,
             ScrapRegionRepository scrapRegionRepository,
             StateRepository stateRepository,
             WardRepository wardRepository
     ) {
+        this.securityService = securityService;
         this.customerRepository = customerRepository;
         this.districtRepository = districtRepository;
         this.scrapRegionRepository = scrapRegionRepository;
@@ -207,6 +212,33 @@ public class CustomerService {
         entity.setActive(Boolean.TRUE.equals(request.isActive()));
         entity.setDeleted(Boolean.TRUE.equals(request.isDeleted()));
         entity.setDateJoined(request.dateJoined());
+
+        customerRepository.save(entity);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public void updateProfile(UpdateCustomerProfileRequest request) {
+        ValidationUtils.validateRequestBody(request);
+
+        final Long customerId = securityService
+                .getCurrentUserId()
+                .orElseThrow(UnauthorizedException::new);
+
+        final Customer entity = customerRepository
+                .findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_USER));
+
+        final boolean hasPhoneUpdated = !entity.getPhoneNumber().equalsIgnoreCase(request.phoneNumber());
+
+        if (hasPhoneUpdated && customerRepository.existsByPhoneNumber(request.phoneNumber())) {
+            throw new DataAlreadyExistException(
+                    String.format("Customer with (%s) already exists", request.phoneNumber())
+            );
+        }
+
+        entity.setFullName(request.name());
+        entity.setPhoneNumber(request.phoneNumber());
+        entity.setEmail(request.email());
 
         customerRepository.save(entity);
     }

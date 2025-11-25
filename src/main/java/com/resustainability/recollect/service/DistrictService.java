@@ -6,7 +6,7 @@ import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.AddDistrictRequest;
 import com.resustainability.recollect.dto.request.UpdateDistrictRequest;
-import com.resustainability.recollect.dto.response.IDestrictResponse;
+import com.resustainability.recollect.dto.response.IDistrictResponse;
 import com.resustainability.recollect.entity.backend.District;
 import com.resustainability.recollect.entity.backend.State;
 import com.resustainability.recollect.exception.DataAlreadyExistException;
@@ -34,7 +34,7 @@ public class DistrictService {
         this.stateRepository = stateRepository;
     }
 
-    public Pager<IDestrictResponse> list(Long stateId, Long countryId, SearchCriteria searchCriteria) {
+    public Pager<IDistrictResponse> list(Long stateId, Long countryId, SearchCriteria searchCriteria) {
         return Pager.of(
                 districtRepository.findAllPaged(
                         searchCriteria.getQ(),
@@ -47,7 +47,7 @@ public class DistrictService {
 
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public IDestrictResponse getById(Long districtId) {
+    public IDistrictResponse getById(Long districtId) {
         ValidationUtils.validateId(districtId);
 
         return districtRepository
