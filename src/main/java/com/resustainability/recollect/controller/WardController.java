@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/recollect/v1/ward")
 @PreAuthorize("hasRole('ADMIN')")
 public class WardController {
-
     private final WardService service;
 
     @Autowired
@@ -28,27 +27,38 @@ public class WardController {
 
     @GetMapping("/list")
     public APIResponse<Pager<IWardResponse>> list(
-            @RequestParam(required = false) Long localbodyId,
-            @RequestParam(required = false) Long districtId,
-            @RequestParam(required = false) Long stateId,
-            @RequestParam(required = false) Long countryId,
+            @RequestParam(value = "localBodyId", required = false) Long localBodyId,
+            @RequestParam(value = "districtId", required = false) Long districtId,
+            @RequestParam(value = "stateId", required = false) Long stateId,
+            @RequestParam(value = "countryId", required = false) Long countryId,
             @ModelAttribute SearchCriteria searchCriteria
     ) {
         return new APIResponse<>(
-                service.list(localbodyId, districtId, stateId, countryId, searchCriteria)
+                service.list(
+                        localBodyId,
+                        districtId,
+                        stateId,
+                        countryId,
+                        searchCriteria
+                )
         );
     }
 
 
     @GetMapping("/details/{wardId}")
     public APIResponse<IWardResponse> getById(@PathVariable Long wardId) {
-        return new APIResponse<>(service.getById(wardId));
+        return new APIResponse<>(
+                service.getById(wardId)
+        );
     }
 
 
     @PostMapping("/add")
     public APIResponse<Long> add(@RequestBody(required = false) AddWardRequest request) {
-        return new APIResponse<>(Default.SUCCESS_ADD_WARD, service.add(request));
+        return new APIResponse<>(
+                Default.SUCCESS_ADD_WARD,
+                service.add(request)
+        );
     }
 
 

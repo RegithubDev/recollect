@@ -52,6 +52,12 @@ public class ValidationUtils {
         }
     }
 
+    public static void validateNonNegative(Integer value, String fieldName) {
+        if (value == null || value < 0) {
+            throw new InvalidDataException(fieldName + " is required and must be non-negative");
+        }
+    }
+
     public static void validateNonNegative(Long value, String fieldName) {
         if (value == null || value < 0) {
             throw new InvalidDataException(fieldName + " is required and must be non-negative");

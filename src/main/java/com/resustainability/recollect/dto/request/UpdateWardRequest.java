@@ -7,25 +7,19 @@ import com.resustainability.recollect.dto.commons.RequestBodyValidator;
 public record UpdateWardRequest(
         Long id,
         Integer wardNo,
-        String wardName,
-        String wardWeekdayCurrent,
-        String wardWeekdayNext,
-        Long localbodyId,
+        String name,
+        String currentWeekDay,
+        String nextWeekDay,
+        Long localBodyId,
         Boolean isActive
 ) implements RequestBodyValidator {
-
     @Override
     public void validate() {
-
         ValidationUtils.validateId(id);
-        ValidationUtils.validateId(localbodyId);
-
-        if (wardNo == null || wardNo <= 0) {
-            throw new IllegalArgumentException("Ward number must be positive");
-        }
-
-        if (StringUtils.isNotBlank(wardName)) {
-            ValidationUtils.validateName(wardName);
+        ValidationUtils.validateId(localBodyId);
+        ValidationUtils.validateNonNegative(wardNo, "Ward number");
+        if (StringUtils.isNotBlank(name)) {
+            ValidationUtils.validateName(name);
         }
     }
 }

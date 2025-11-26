@@ -10,91 +10,91 @@ import com.resustainability.recollect.dto.response.IWardResponse;
 import com.resustainability.recollect.entity.backend.*;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
 import com.resustainability.recollect.repository.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.*;
 
 @Service
 public class WardService {
-
     private final WardRepository wardRepository;
     private final LocalBodyRepository localBodyRepository;
 
     @Autowired
-    public WardService(WardRepository wardRepository, LocalBodyRepository localBodyRepository) {
+    public WardService(
+            WardRepository wardRepository,
+            LocalBodyRepository localBodyRepository
+    ) {
         this.wardRepository = wardRepository;
         this.localBodyRepository = localBodyRepository;
     }
 
-
-    public Pager<IWardResponse> list(Long localbodyId, Long districtId, Long stateId, Long countryId, SearchCriteria criteria) {
+    @Transactional(readOnly = true)
+    public Pager<IWardResponse> list(Long localBodyId, Long districtId, Long stateId, Long countryId, SearchCriteria criteria) {
         return Pager.of(
                 wardRepository.findAllPaged(
-                        criteria.getQ(), localbodyId, districtId, stateId, countryId, criteria.toPageRequest()
+                        localBodyId, districtId, stateId, countryId,
+                        criteria.getQ(),
+                        criteria.toPageRequest()
                 )
         );
     }
 
-
-    @Transactional
+    @Transactional(readOnly = true)
     public IWardResponse getById(Long wardId) {
-
         ValidationUtils.validateId(wardId);
-
-        return wardRepository.findWardById(wardId)
+        return wardRepository
+                .findWardById(wardId)
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_WARD));
     }
 
-
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Long add(AddWardRequest request) {
-
         ValidationUtils.validateRequestBody(request);
 
-        LocalBody localbody = localBodyRepository.findById(request.localbodyId())
+        final LocalBody localbody = localBodyRepository
+                .findById(request.localBodyId())
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCAL_BODY));
 
-        Ward ward = new Ward();
-        ward.setWardNo(request.wardNo());
-        ward.setWardName(request.wardName());
-        ward.setWardWeekdayCurrent(request.wardWeekdayCurrent());
-        ward.setWardWeekdayNext(request.wardWeekdayNext());
-        ward.setActive(true);
-        ward.setDeleted(false);
-        ward.setLocalbody(localbody);
-
-        return wardRepository.save(ward).getId();
+        return wardRepository.save(
+                new Ward(
+                        null,
+                        request.wardNo(),
+                        request.name(),
+                        request.currentWeekDay(),
+                        request.nextWeekDay(),
+                        true,
+                        false,
+                        localbody
+                )
+        ).getId();
     }
 
-
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void update(UpdateWardRequest request) {
-
         ValidationUtils.validateRequestBody(request);
 
-        Ward entity = wardRepository.findById(request.id())
+        final Ward entity = wardRepository
+                .findById(request.id())
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_WARD));
+
+        LocalBody localBody = localBodyRepository
+                .findById(request.localBodyId())
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCAL_BODY));
 
         entity.setWardNo(request.wardNo());
-        entity.setWardName(request.wardName());
-        entity.setWardWeekdayCurrent(request.wardWeekdayCurrent());
-        entity.setWardWeekdayNext(request.wardWeekdayNext());
+        entity.setWardName(request.name());
+        entity.setWardWeekdayCurrent(request.currentWeekDay());
+        entity.setWardWeekdayNext(request.nextWeekDay());
         entity.setActive(Boolean.TRUE.equals(request.isActive()));
-
-        LocalBody lb = localBodyRepository.findById(request.localbodyId())
-                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCAL_BODY));
-
-        entity.setLocalbody(lb);
+        entity.setLocalbody(localBody);
 
         wardRepository.save(entity);
     }
 
-
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void deleteById(Long wardId, boolean value) {
-
         ValidationUtils.validateId(wardId);
-
         if (0 == wardRepository.deleteWardById(wardId, !value, value)) {
             throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_WARD);
         }

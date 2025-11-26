@@ -85,7 +85,6 @@ public class ScrapRegionService {
         return new ScrapRegionResponse(details, availability);
     }
 
-
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void add(AddScrapRegionRequest request) {
         ValidationUtils.validateRequestBody(request);
