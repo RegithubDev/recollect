@@ -27,6 +27,7 @@ public class Default {
     public static final String ERROR_NOT_FOUND_DEPARTMENT = "Department not found";
     public static final String ERROR_NOT_FOUND_USER = "User not found";
     public static final String ERROR_NOT_FOUND_COUNTRY = "Country not found";
+    public static final String ERROR_NOT_FOUND_CUSTOMER_ADDRESS = "Customer address not found";
     public static final String ERROR_NOT_FOUND_DISTRICT = "District not found";
     public static final String ERROR_NOT_FOUND_LOCAL_BODY_TYPE = "LocalBodyType not found";
     public static final String ERROR_NOT_FOUND_SCRAP_REGION = "Scrap region not found";
@@ -52,6 +53,7 @@ public class Default {
     public static final String SUCCESS_ADD_USER = "User created.";
     public static final String SUCCESS_ADD_SCRAP_REGION = "Scrap region created.";
     public static final String SUCCESS_ADD_COUNTRY = "Country created.";
+    public static final String SUCCESS_ADD_CUSTOMER_ADDRESS = "Address created.";
     public static final String SUCCESS_ADD_STATE = "State added successfully";
     public static final String SUCCESS_ADD_DISTRICT = "District added successfully";
     public static final String SUCCESS_ADD_LOCAL_BODY = "LocalBody added successfully";
@@ -63,6 +65,7 @@ public class Default {
     public static final String SUCCESS_UPDATE_USER_DETAILS = "User details have been updated successfully.";
     public static final String SUCCESS_UPDATE_SCRAP_REGION_DETAILS = "Scrap region details have been updated successfully.";
     public static final String SUCCESS_UPDATE_SCRAP_REGION_BORDER = "Scrap region border details have been updated successfully.";
+    public static final String SUCCESS_UPDATE_CUSTOMER_ADDRESS_DETAILS = "Customer address details have been updated successfully.";
     public static final String SUCCESS_UPDATE_COUNTRY_DETAILS = "Country details have been updated successfully.";
     public static final String SUCCESS_UPDATE_STATE_DETAILS = "State details updated successfully";
     public static final String SUCCESS_UPDATE_LOCAL_BODY_TYPE = "LocalBodyType details updated successfully";
@@ -76,6 +79,8 @@ public class Default {
     public static final String SUCCESS_DELETE_USER = "All done! The account's been deleted.";
     public static final String SUCCESS_DELETE_SCRAP_REGION = "All done! The scrap region's been deleted.";
     public static final String SUCCESS_UNDELETE_SCRAP_REGION = "All done! The scrap region's been restored.";
+    public static final String SUCCESS_DELETE_CUSTOMER_ADDRESS = "All done! The address's been deleted.";
+    public static final String SUCCESS_UNDELETE_CUSTOMER_ADDRESS = "All done! The address's been restored.";
     public static final String SUCCESS_DELETE_COUNTRY = "All done! The country's been deleted.";
     public static final String SUCCESS_UNDELETE_COUNTRY = "All done! The country's been restored.";
     public static final String SUCCESS_DELETE_STATE = "All done! The state's been deleted.";
@@ -111,6 +116,7 @@ public class Default {
     public static final int MAX_10_LENGTH = 10;
     public static final int MAX_20_LENGTH = 20;
     public static final int MAX_50_LENGTH = 50;
+    public static final int MAX_100_LENGTH = 100;
     public static final int MAX_150_LENGTH = 150;
     public static final int MAX_500_LENGTH = 500;
     public static final int MIN_MAX_OTP_LENGTH = 4;

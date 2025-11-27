@@ -99,6 +99,26 @@ public class ValidationUtils {
         validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_10_LENGTH, "Code");
     }
 
+    public static void validateLatitude(String value) {
+        validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_100_LENGTH, "Latitude");
+    }
+
+    public static void validateLongitude(String value) {
+        validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_100_LENGTH, "Longitude");
+    }
+
+    public static void validateResidenceType(String value) {
+        validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_20_LENGTH, "Residence Type");
+    }
+
+    public static void validateResidenceDetails(String value) {
+        validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_500_LENGTH, "Residence Details");
+    }
+
+    public static void validateLandmark(String value) {
+        validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_500_LENGTH, "Landmark");
+    }
+
     public static void validateName(String value) {
         validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_50_LENGTH, "Name");
     }
