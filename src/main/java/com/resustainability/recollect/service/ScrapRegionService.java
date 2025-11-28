@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -144,7 +145,7 @@ public class ScrapRegionService {
                 .findById(request.id())
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_SCRAP_REGION));
 
-        final boolean hasDistrictUpdated = !scrapRegion.getDistrictId().equals(request.districtId());
+        final boolean hasDistrictUpdated = !Objects.equals(scrapRegion.getDistrictId(), request.districtId());
 
         if (hasDistrictUpdated) {
             if (!districtRepository.existsById(request.districtId())) {

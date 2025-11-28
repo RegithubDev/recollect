@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -150,11 +151,11 @@ public class CustomerService {
                 .findById(request.id())
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_USER));
 
-        final boolean hasPhoneUpdated = !customer.getPhoneNumber().equalsIgnoreCase(request.phoneNumber());
-        final boolean hasDistrictUpdated = !customer.getDistrictId().equals(request.districtId());
-        final boolean hasScrapRegionUpdated = !customer.getScrapRegionId().equals(request.scrapRegionId());
-        final boolean hasStateUpdated = !customer.getStateId().equals(request.stateId());
-        final boolean hasWardUpdated = !customer.getWardId().equals(request.wardId());
+        final boolean hasPhoneUpdated = !Objects.equals(customer.getPhoneNumber(), request.phoneNumber());
+        final boolean hasDistrictUpdated = !Objects.equals(customer.getDistrictId(), request.districtId());
+        final boolean hasScrapRegionUpdated = !Objects.equals(customer.getScrapRegionId(), request.scrapRegionId());
+        final boolean hasStateUpdated = !Objects.equals(customer.getStateId(), request.stateId());
+        final boolean hasWardUpdated = !Objects.equals(customer.getWardId(), request.wardId());
 
         if (hasPhoneUpdated && customerRepository.existsByPhoneNumber(request.phoneNumber())) {
             throw new DataAlreadyExistException(
@@ -228,7 +229,7 @@ public class CustomerService {
                 .findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_USER));
 
-        final boolean hasPhoneUpdated = !entity.getPhoneNumber().equalsIgnoreCase(request.phoneNumber());
+        final boolean hasPhoneUpdated = !Objects.equals(entity.getPhoneNumber(), request.phoneNumber());
 
         if (hasPhoneUpdated && customerRepository.existsByPhoneNumber(request.phoneNumber())) {
             throw new DataAlreadyExistException(
