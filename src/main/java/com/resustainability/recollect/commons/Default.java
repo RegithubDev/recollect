@@ -35,6 +35,11 @@ public class Default {
     public static final String ERROR_NOT_FOUND_WARD = "Ward not found";
     public static final String ERROR_NOT_FOUND_LOCAL_BODY = "LocalBody not found";
     public static final String ERROR_NOT_FOUND_PROVIDER_ROLE = "Provider Role not found";
+    public static final String ERROR_NOT_FOUND_LOCALBODY = "LocalBody not found";
+    public static final String ERROR_NOT_FOUND_PROVIDERROLE = "Provider Role not found";
+    public static final String ERROR_NOT_FOUND_PROVIDER = "Provider not found with given id";
+    public static final String ERROR_NOT_FOUND_PROVIDER_ORDER_LIMIT = "Provider limit not found";
+    public static final String ERROR_NOT_FOUND_PROVIDER_DISTRICT ="Provider District with given Id not available";
     public static final String ERROR_NOT_FOUND_EMPLOYEE = "Employee not found";
     public static final String ERROR_NOT_FOUND_JOB = "Job not found";
     public static final String ERROR_NOT_FOUND_ORG = "Org not found";
@@ -42,6 +47,7 @@ public class Default {
     public static final String ERROR_NOT_PROVIDED_USER = "No User provided";
     public static final String ERROR_NOT_PROVIDED_TXNS = "No Txns provided";
     public static final String ERROR_NOT_PROVIDED_JOB = "No Job provided";
+    public static final String ERROR_LIMIT_EXCEEDED ="Current Limit cannot be greater than Max Limit";
 
     public static final String SUCCESS_LOGIN = "Login success. Session created.";
     public static final String SUCCESS_LOGOUT = "You're logged out! Session has been terminated.";
@@ -60,6 +66,9 @@ public class Default {
     public static final String SUCCESS_ADD_WARD = "Ward added successfully";
     public static final String SUCCESS_ADD_LOCAL_BODY_TYPE = "LocalBodyType added successfully";
     public static final String SUCCESS_ADD_PROVIDER_ROLE = "Provider Role added successfully";
+    public static final String SUCCESS_ADD_LOCALBODYTYPE = "LocalBodyType added successfully";
+    public static final String SUCCESS_ADD_PROVIDERROLE = "Provider Role added successfully";
+    public static final String SUCCESS_ADD_PROVIDER_ORDER_LIMIT = "Provider order limit added successfully";
     public static final String SUCCESS_ADD_TASK = "Task created.";
     public static final String SUCCESS_UPDATE_PROFILE_DETAILS = "Your profile details have been updated successfully.";
     public static final String SUCCESS_UPDATE_USER_DETAILS = "User details have been updated successfully.";
@@ -73,6 +82,8 @@ public class Default {
     public static final String SUCCESS_UPDATE_LOCAL_BODY = "LocalBody details have been updated successfully.";
     public static final String SUCCESS_UPDATE_WARD = "Ward details have been updated successfully.";
     public static final String SUCCESS_UPDATE_PROVIDER_ROLE = "Provider Role details have been updated successfully.";
+    public static final String SUCCESS_UPDATE_PROVIDERROLE = "Provider Role details have been updated successfully.";
+    public static final String SUCCESS_UPDATE_PROVIDER_ORDER_LIMIT = "Provider order limit updated successfully";
     public static final String SUCCESS_UPDATE_TASK_DETAILS = "Task details have been updated successfully.";
     public static final String SUCCESS_UPDATED_NOTICE = "Notice updated";
     public static final String SUCCESS_UPDATE_STATUS = "Status updated.";

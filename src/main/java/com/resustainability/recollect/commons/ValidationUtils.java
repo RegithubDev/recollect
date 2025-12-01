@@ -157,4 +157,11 @@ public class ValidationUtils {
             throw new AuthenticationServiceException(Default.ERROR_ACCOUNT_DISABLED);
         }
     }
+
+//    public static void validateBoolean(Boolean value, String fieldName) {
+//        if (value == null) {
+//            throw new InvalidDataException(fieldName + " is required");
+//        }
+//    }
+
 }
