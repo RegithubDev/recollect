@@ -42,6 +42,7 @@ public class Default {
     public static final String ERROR_NOT_FOUND_PROVIDER_DISTRICT ="Provider District with given Id not available";
     public static final String ERROR_NOT_FOUND_PROVIDER_LOCALBODY ="Provider Localbody not available";
     public static final String ERROR_NOT_FOUND_PROVIDER_WARD ="Porovider Ward details with given id not found";
+    public static final String ERROR_NOT_FOUND_PROVIDER_SCRAP_REGION ="Porovider Scrap Region details with given id not found";
     public static final String ERROR_NOT_FOUND_EMPLOYEE = "Employee not found";
     public static final String ERROR_NOT_FOUND_JOB = "Job not found";
     public static final String ERROR_NOT_FOUND_ORG = "Org not found";
@@ -73,6 +74,7 @@ public class Default {
     public static final String SUCCESS_ADD_PROVIDER_ORDER_LIMIT = "Provider order limit added successfully";
     public static final String SUCCESS_ADD_LOCALBODY = "Provider localbody added successfully";
     public static final String SUCCESS_ADD_PROVIDER_WARD = "Provider Ward added successfully";
+    public static final String SUCCESS_ADD_PROVIDER_SCRAP_REGION = "Provider Scrap Region Details added successfully";
     public static final String SUCCESS_ADD_TASK = "Task created.";
     public static final String SUCCESS_UPDATE_PROFILE_DETAILS = "Your profile details have been updated successfully.";
     public static final String SUCCESS_UPDATE_USER_DETAILS = "User details have been updated successfully.";
@@ -90,6 +92,7 @@ public class Default {
     public static final String SUCCESS_UPDATE_PROVIDER_ORDER_LIMIT = "Provider order limit updated successfully";
     public static final String SUCCESS_UPDATE_LOCALBODY = "Provider localbody updated successfully";
     public static final String SUCCESS_UPDATE_PROVIDER_WARD = "Provider Ward updated successfully";
+    public static final String SUCCESS_UPDATE_PROVIDER_SCRAP_REGION = "Provider Scrap Region details updated successfully";
     public static final String SUCCESS_UPDATE_TASK_DETAILS = "Task details have been updated successfully.";
     public static final String SUCCESS_UPDATED_NOTICE = "Notice updated";
     public static final String SUCCESS_UPDATE_STATUS = "Status updated.";
@@ -116,6 +119,8 @@ public class Default {
     public static final String SUCCESS_UNDELETE_LOCALBODY = "All done! The Provider localbody has been restored.";
     public static final String SUCCESS_DELETE_PROVIDER_WARD = "All done! The Provider Ward has been deleted.";
     public static final String SUCCESS_UNDELETE_PROVIDER_WARD = "All done! The Provider Ward has been restored.";
+    public static final String SUCCESS_DELETE_PROVIDER_SCRAP_REGION = "All done! The Provider Scrap Region details has been deleted.";
+    public static final String SUCCESS_UNDELETE_PROVIDER_SCRAP_REGION = "All done! The Provider Scrap Region details has been restored.";
     public static final String SUCCESS_DELETE_TASK = "All done! The task's been deleted.";
     
   
