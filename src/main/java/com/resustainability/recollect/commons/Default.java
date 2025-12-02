@@ -43,6 +43,7 @@ public class Default {
     public static final String ERROR_NOT_FOUND_PROVIDER_LOCALBODY ="Provider Localbody not available";
     public static final String ERROR_NOT_FOUND_PROVIDER_WARD ="Porovider Ward details with given id not found";
     public static final String ERROR_NOT_FOUND_PROVIDER_SCRAP_REGION ="Porovider Scrap Region details with given id not found";
+    public static final String ERROR_NOT_FOUND_PROVIDER_LOCATION_FLAGS ="Porovider Service location details not found with given id";
     public static final String ERROR_NOT_FOUND_EMPLOYEE = "Employee not found";
     public static final String ERROR_NOT_FOUND_JOB = "Job not found";
     public static final String ERROR_NOT_FOUND_ORG = "Org not found";
@@ -75,6 +76,7 @@ public class Default {
     public static final String SUCCESS_ADD_LOCALBODY = "Provider localbody added successfully";
     public static final String SUCCESS_ADD_PROVIDER_WARD = "Provider Ward added successfully";
     public static final String SUCCESS_ADD_PROVIDER_SCRAP_REGION = "Provider Scrap Region Details added successfully";
+    public static final String SUCCESS_ADD_PROVIDER_LOCATION_FLAGS = "Provider Service location flags added successfully";
     public static final String SUCCESS_ADD_TASK = "Task created.";
     public static final String SUCCESS_UPDATE_PROFILE_DETAILS = "Your profile details have been updated successfully.";
     public static final String SUCCESS_UPDATE_USER_DETAILS = "User details have been updated successfully.";
@@ -93,6 +95,7 @@ public class Default {
     public static final String SUCCESS_UPDATE_LOCALBODY = "Provider localbody updated successfully";
     public static final String SUCCESS_UPDATE_PROVIDER_WARD = "Provider Ward updated successfully";
     public static final String SUCCESS_UPDATE_PROVIDER_SCRAP_REGION = "Provider Scrap Region details updated successfully";
+    public static final String SUCCESS_UPDATE_PROVIDER_LOCATION_FLAGS = "Provider Service location flags details updated successfully";
     public static final String SUCCESS_UPDATE_TASK_DETAILS = "Task details have been updated successfully.";
     public static final String SUCCESS_UPDATED_NOTICE = "Notice updated";
     public static final String SUCCESS_UPDATE_STATUS = "Status updated.";
