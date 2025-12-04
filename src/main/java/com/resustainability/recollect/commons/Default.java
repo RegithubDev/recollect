@@ -52,6 +52,7 @@ public class Default {
     public static final String ERROR_NOT_PROVIDED_TXNS = "No Txns provided";
     public static final String ERROR_NOT_PROVIDED_JOB = "No Job provided";
     public static final String ERROR_LIMIT_EXCEEDED ="Current Limit cannot be greater than Max Limit";
+    public static final String ERROR_NOT_FOUND_PROVIDERTEAM ="Porovider Team with given id not found";
 
     public static final String SUCCESS_LOGIN = "Login success. Session created.";
     public static final String SUCCESS_LOGOUT = "You're logged out! Session has been terminated.";
@@ -77,6 +78,7 @@ public class Default {
     public static final String SUCCESS_ADD_PROVIDER_WARD = "Provider Ward added successfully";
     public static final String SUCCESS_ADD_PROVIDER_SCRAP_REGION = "Provider Scrap Region Details added successfully";
     public static final String SUCCESS_ADD_PROVIDER_LOCATION_FLAGS = "Provider Service location flags added successfully";
+    public static final String SUCCESS_ADD_PROVIDERTEAM = "Provider Team added successfully";
     public static final String SUCCESS_ADD_TASK = "Task created.";
     public static final String SUCCESS_UPDATE_PROFILE_DETAILS = "Your profile details have been updated successfully.";
     public static final String SUCCESS_UPDATE_USER_DETAILS = "User details have been updated successfully.";
@@ -96,6 +98,7 @@ public class Default {
     public static final String SUCCESS_UPDATE_PROVIDER_WARD = "Provider Ward updated successfully";
     public static final String SUCCESS_UPDATE_PROVIDER_SCRAP_REGION = "Provider Scrap Region details updated successfully";
     public static final String SUCCESS_UPDATE_PROVIDER_LOCATION_FLAGS = "Provider Service location flags details updated successfully";
+    public static final String SUCCESS_UPDATE_PROVIDERTEAM = "Provider Team details updated successfully";
     public static final String SUCCESS_UPDATE_TASK_DETAILS = "Task details have been updated successfully.";
     public static final String SUCCESS_UPDATED_NOTICE = "Notice updated";
     public static final String SUCCESS_UPDATE_STATUS = "Status updated.";
@@ -124,11 +127,18 @@ public class Default {
     public static final String SUCCESS_UNDELETE_PROVIDER_WARD = "All done! The Provider Ward has been restored.";
     public static final String SUCCESS_DELETE_PROVIDER_SCRAP_REGION = "All done! The Provider Scrap Region details has been deleted.";
     public static final String SUCCESS_UNDELETE_PROVIDER_SCRAP_REGION = "All done! The Provider Scrap Region details has been restored.";
+    public static final String SUCCESS_DELETE_PROVIDERTEAM = "All done! The Provider Team details has been deleted.";
+    public static final String SUCCESS_UNDELETE_PROVIDERTEAM = "All done! The Provider Team details has been restored.";
     public static final String SUCCESS_DELETE_TASK = "All done! The task's been deleted.";
     
   
-   
+    public static final String ERROR_NOT_FOUND_PROVIDER_TEAM = "Provider team not found";
+    public static final String SUCCESS_DELETE_PROVIDER_TEAM = "Provider team deleted successfully";
+    public static final String SUCCESS_UNDELETE_PROVIDER_TEAM = "Provider team restored successfully";
+    public static final String SUCCESS_ADD_PROVIDER_TEAM = "Provider team added successfully";
+    public static final String SUCCESS_UPDATE_PROVIDER_TEAM = "Provider team updated successfully";
 
+    
 
     public static final String EXECUTOR_MAIL = "mailTaskExecutor";
     public static final String EXECUTOR_ASYNC = "asyncTaskExecutor";
