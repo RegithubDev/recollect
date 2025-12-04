@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = BioWasteOrders.TABLE_NAME)
@@ -78,4 +79,212 @@ public class BioWasteOrders {
 
     @Column(name = "bio_price", nullable = false)
     private Double bioPrice;
+
+    public BioWasteOrders() {
+    }
+
+    public BioWasteOrders(String orderCode, Long id, LocalDateTime orderDate, LocalDate scheduleDate, Double orderRating, String alternateNumber, String billType, String preferredPaymentMethod, String comment, String orderStatus, String platform, Boolean isDeleted, CustomerAddress address, OrderCancelReason reason, State state, Ward ward, Customer customer, Integer orderAge, Double gstPercentage, String gstType, Double bioPrice) {
+        this.orderCode = orderCode;
+        this.id = id;
+        this.orderDate = orderDate;
+        this.scheduleDate = scheduleDate;
+        this.orderRating = orderRating;
+        this.alternateNumber = alternateNumber;
+        this.billType = billType;
+        this.preferredPaymentMethod = preferredPaymentMethod;
+        this.comment = comment;
+        this.orderStatus = orderStatus;
+        this.platform = platform;
+        this.isDeleted = isDeleted;
+        this.address = address;
+        this.reason = reason;
+        this.state = state;
+        this.ward = ward;
+        this.customer = customer;
+        this.orderAge = orderAge;
+        this.gstPercentage = gstPercentage;
+        this.gstType = gstType;
+        this.bioPrice = bioPrice;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        BioWasteOrders entity = (BioWasteOrders) object;
+        return Objects.equals(id, entity.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getOrderCode() {
+        return orderCode;
+    }
+
+    public void setOrderCode(String orderCode) {
+        this.orderCode = orderCode;
+    }
+
+    public LocalDateTime getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(LocalDateTime orderDate) {
+        this.orderDate = orderDate;
+    }
+
+    public LocalDate getScheduleDate() {
+        return scheduleDate;
+    }
+
+    public void setScheduleDate(LocalDate scheduleDate) {
+        this.scheduleDate = scheduleDate;
+    }
+
+    public Double getOrderRating() {
+        return orderRating;
+    }
+
+    public void setOrderRating(Double orderRating) {
+        this.orderRating = orderRating;
+    }
+
+    public String getAlternateNumber() {
+        return alternateNumber;
+    }
+
+    public void setAlternateNumber(String alternateNumber) {
+        this.alternateNumber = alternateNumber;
+    }
+
+    public String getBillType() {
+        return billType;
+    }
+
+    public void setBillType(String billType) {
+        this.billType = billType;
+    }
+
+    public String getPreferredPaymentMethod() {
+        return preferredPaymentMethod;
+    }
+
+    public void setPreferredPaymentMethod(String preferredPaymentMethod) {
+        this.preferredPaymentMethod = preferredPaymentMethod;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public String getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
+    }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public CustomerAddress getAddress() {
+        return address;
+    }
+
+    public void setAddress(CustomerAddress address) {
+        this.address = address;
+    }
+
+    public OrderCancelReason getReason() {
+        return reason;
+    }
+
+    public void setReason(OrderCancelReason reason) {
+        this.reason = reason;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public Ward getWard() {
+        return ward;
+    }
+
+    public void setWard(Ward ward) {
+        this.ward = ward;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public Integer getOrderAge() {
+        return orderAge;
+    }
+
+    public void setOrderAge(Integer orderAge) {
+        this.orderAge = orderAge;
+    }
+
+    public Double getGstPercentage() {
+        return gstPercentage;
+    }
+
+    public void setGstPercentage(Double gstPercentage) {
+        this.gstPercentage = gstPercentage;
+    }
+
+    public String getGstType() {
+        return gstType;
+    }
+
+    public void setGstType(String gstType) {
+        this.gstType = gstType;
+    }
+
+    public Double getBioPrice() {
+        return bioPrice;
+    }
+
+    public void setBioPrice(Double bioPrice) {
+        this.bioPrice = bioPrice;
+    }
 }

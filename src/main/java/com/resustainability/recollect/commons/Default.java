@@ -34,6 +34,7 @@ public class Default {
     public static final String ERROR_NOT_FOUND_USER = "User not found";
     public static final String ERROR_NOT_FOUND_COUNTRY = "Country not found";
     public static final String ERROR_NOT_FOUND_CUSTOMER_ADDRESS = "Customer address not found";
+    public static final String ERROR_NOT_FOUND_ORDER = "Order not found";
     public static final String ERROR_NOT_FOUND_DISTRICT = "District not found";
     public static final String ERROR_NOT_FOUND_LOCAL_BODY_TYPE = "LocalBodyType not found";
     public static final String ERROR_NOT_FOUND_SCRAP_REGION = "Scrap region not found";
@@ -112,6 +113,7 @@ public class Default {
 
     public static final String SUCCESS_ORDER_PLACED = "Order placed.";
     public static final String SUCCESS_UPDATE_ORDER_DETAILS = "Order details have been updated successfully.";
+    public static final String SUCCESS_CANCEL_ORDER = "Order has been cancelled.";
     public static final String SUCCESS_DELETE_ORDER = "All done! The order's been deleted.";
     public static final String SUCCESS_UNDELETE_ORDER = "All done! The order's been restored.";
 

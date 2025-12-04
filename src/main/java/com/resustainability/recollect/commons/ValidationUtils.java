@@ -85,6 +85,14 @@ public class ValidationUtils {
         validateNonNegative(id, "User ID");
     }
 
+    public static void validateOrderId(Long id) {
+        validateNonNegative(id, "Order ID");
+    }
+
+    public static void validateReasonId(Long id) {
+        validateNonNegative(id, "Reason ID");
+    }
+
     public static void validateDistrictId(Long id) {
         validateNonNegative(id, "District ID");
     }
