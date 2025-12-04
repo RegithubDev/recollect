@@ -83,9 +83,9 @@ public class BioWasteOrders {
     public BioWasteOrders() {
     }
 
-    public BioWasteOrders(String orderCode, Long id, LocalDateTime orderDate, LocalDate scheduleDate, Double orderRating, String alternateNumber, String billType, String preferredPaymentMethod, String comment, String orderStatus, String platform, Boolean isDeleted, CustomerAddress address, OrderCancelReason reason, State state, Ward ward, Customer customer, Integer orderAge, Double gstPercentage, String gstType, Double bioPrice) {
-        this.orderCode = orderCode;
+    public BioWasteOrders(Long id, String orderCode, LocalDateTime orderDate, LocalDate scheduleDate, Double orderRating, String alternateNumber, String billType, String preferredPaymentMethod, String comment, String orderStatus, String platform, Boolean isDeleted, CustomerAddress address, OrderCancelReason reason, State state, Ward ward, Customer customer, Integer orderAge, Double gstPercentage, String gstType, Double bioPrice) {
         this.id = id;
+        this.orderCode = orderCode;
         this.orderDate = orderDate;
         this.scheduleDate = scheduleDate;
         this.orderRating = orderRating;

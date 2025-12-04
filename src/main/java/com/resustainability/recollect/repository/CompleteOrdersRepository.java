@@ -78,6 +78,8 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
     @Query("""
         SELECT
             o.id AS id,
+            so.id AS scrapOrderId,
+            bo.id AS bioWasteOrderId,
             c.id AS customerId,
             c.fullName AS fullName,
             COALESCE(so.orderCode, bo.orderCode) AS code,
@@ -99,6 +101,8 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
     @Query("""
         SELECT
             o.id AS id,
+            so.id AS scrapOrderId,
+            bo.id AS bioWasteOrderId,
             c.id AS customerId,
             c.fullName AS fullName,
             COALESCE(so.orderCode, bo.orderCode) AS code,

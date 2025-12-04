@@ -38,6 +38,7 @@ public class Default {
     public static final String ERROR_NOT_FOUND_DISTRICT = "District not found";
     public static final String ERROR_NOT_FOUND_LOCAL_BODY_TYPE = "LocalBodyType not found";
     public static final String ERROR_NOT_FOUND_SCRAP_REGION = "Scrap region not found";
+    public static final String ERROR_NOT_FOUND_REASON = "Reason not found";
     public static final String ERROR_NOT_FOUND_STATE = "State not found";
     public static final String ERROR_NOT_FOUND_WARD = "Ward not found";
     public static final String ERROR_NOT_FOUND_LOCAL_BODY = "LocalBody not found";

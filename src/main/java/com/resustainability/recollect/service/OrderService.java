@@ -1,19 +1,24 @@
 package com.resustainability.recollect.service;
 
 import com.resustainability.recollect.commons.Default;
+import com.resustainability.recollect.commons.IdGenerator;
 import com.resustainability.recollect.commons.ValidationUtils;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.CancelOrderRequest;
 import com.resustainability.recollect.dto.request.PlaceOrderRequest;
+import com.resustainability.recollect.dto.response.ICustomerAddressResponse;
 import com.resustainability.recollect.dto.response.IOrderHistoryResponse;
 import com.resustainability.recollect.dto.response.IOrderCancelReasonResponse;
 import com.resustainability.recollect.dto.response.IUserContext;
+import com.resustainability.recollect.entity.backend.*;
+import com.resustainability.recollect.exception.InvalidDataException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
 import com.resustainability.recollect.exception.UnauthorizedException;
 import com.resustainability.recollect.repository.*;
-
 import com.resustainability.recollect.tag.OrderStatus;
+import com.resustainability.recollect.tag.OrderType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,25 +26,48 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class OrderService {
     private final SecurityService securityService;
+    private final CustomerAddressRepository customerAddressRepository;
     private final OrderCancelReasonRepository orderCancelReasonRepository;
     private final CompleteOrdersRepository completeOrdersRepository;
+    private final ScrapOrdersRepository scrapOrdersRepository;
+    private final BioWasteOrdersRepository bioWasteOrdersRepository;
+    private final ScrapRegionRepository scrapRegionRepository;
+    private final WardRepository wardRepository;
+    private final DistrictRepository districtRepository;
+    private final StateRepository stateRepository;
     private final CustomerRepository customerRepository;
 
     @Autowired
     public OrderService(
             SecurityService securityService,
+            CustomerAddressRepository customerAddressRepository,
             OrderCancelReasonRepository orderCancelReasonRepository,
             CompleteOrdersRepository completeOrdersRepository,
+            ScrapOrdersRepository scrapOrdersRepository,
+            BioWasteOrdersRepository bioWasteOrdersRepository,
+            ScrapRegionRepository scrapRegionRepository,
+            WardRepository wardRepository,
+            DistrictRepository districtRepository,
+            StateRepository stateRepository,
             CustomerRepository customerRepository
     ) {
         this.securityService = securityService;
+        this.customerAddressRepository = customerAddressRepository;
         this.orderCancelReasonRepository = orderCancelReasonRepository;
         this.completeOrdersRepository = completeOrdersRepository;
+        this.scrapOrdersRepository = scrapOrdersRepository;
+        this.bioWasteOrdersRepository = bioWasteOrdersRepository;
+        this.scrapRegionRepository = scrapRegionRepository;
+        this.wardRepository = wardRepository;
+        this.districtRepository = districtRepository;
+        this.stateRepository = stateRepository;
         this.customerRepository = customerRepository;
     }
 
@@ -95,65 +123,198 @@ public class OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
     }
 
-
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public Long placeOrder(PlaceOrderRequest request) {
+    public Long placeOrder(PlaceOrderRequest request, OrderType orderType) {
+        Objects.requireNonNull(orderType);
         ValidationUtils.validateRequestBody(request);
 
-        /*
-        if (!customerRepository.existsById(request.customerId())) {
-            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_USER);
-        }
+        final IUserContext user = securityService
+                .getCurrentUser()
+                .filter(usr -> Boolean.TRUE.equals(usr.getIsCustomer()))
+                .orElseThrow(UnauthorizedException::new);
 
-        if (null != request.scrapRegionId() && !scrapRegionRepository.existsById(request.scrapRegionId())) {
-            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_SCRAP_REGION);
-        }
+        final ICustomerAddressResponse address = customerAddressRepository
+                .findByCustomerAddressIdIfBelongs(user.getId(), request.addressId())
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER_ADDRESS));
 
-        if (null != request.wardId() && !wardRepository.existsById(request.wardId())) {
-            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_WARD);
+        final Customer customer = customerRepository
+                .getReferenceById(user.getId());
+
+        final CustomerAddress customerAddress = customerAddressRepository
+                .getReferenceById(request.addressId());
+
+        final ScrapRegion scrapRegion = null != address.getScrapRegionId()
+                ? scrapRegionRepository.getReferenceById(address.getScrapRegionId())
+                : null;
+        final District district = null != address.getDistrictId()
+                ? districtRepository.getReferenceById(address.getDistrictId())
+                : null;
+        final State state = null != address.getStateId()
+                ? stateRepository.getReferenceById(address.getStateId())
+                : null;
+        final Ward ward = null != address.getWardId()
+                ? wardRepository.getReferenceById(address.getWardId())
+                : null;
+
+        final double defaultDoubleValue = Double.NaN;
+        final String defaultOrderStatus = OrderStatus.PENDING.getAbbreviation();
+
+        ScrapOrders scrapOrder = null;
+        BioWasteOrders bioWasteOrder = null;
+        if (OrderType.SCRAP.equals(orderType)) {
+            scrapOrder = scrapOrdersRepository.save(
+                    new ScrapOrders(
+                            null,
+                            IdGenerator.nextId(),
+                            LocalDateTime.now(),
+                            request.scheduleDate(),
+                            request.altNumber(),
+                            null,
+                            null,
+                            null,
+                            defaultDoubleValue,
+                            defaultOrderStatus,
+                            request.platform(),
+                            false,
+                            customerAddress,
+                            null,
+                            scrapRegion,
+                            state,
+                            customer,
+                            0
+                    )
+            );
+        } else if (OrderType.BIO_WASTE.equals(orderType)) {
+            bioWasteOrder = bioWasteOrdersRepository.save(
+                    new BioWasteOrders(
+                            null,
+                            IdGenerator.nextId(),
+                            LocalDateTime.now(),
+                            request.scheduleDate(),
+                            defaultDoubleValue,
+                            request.altNumber(),
+                            null,
+                            null,
+                            null,
+                            defaultOrderStatus,
+                            request.platform(),
+                            false,
+                            customerAddress,
+                            null,
+                            state,
+                            ward,
+                            customer,
+                            0,
+                            defaultDoubleValue,
+                            null,
+                            defaultDoubleValue
+                    )
+            );
+        } else {
+            throw new InvalidDataException("Specify supported order type");
         }
 
         return completeOrdersRepository.save(
-                new CustomerAddress(
+                new CompleteOrders(
                         null,
-                        Boolean.TRUE.equals(request.isScrapService()),
-                        Boolean.TRUE.equals(request.isScrapLocationActive()),
-                        Boolean.TRUE.equals(request.isBioWasteService()),
-                        Boolean.TRUE.equals(request.isBioWasteLocationActive()),
-                        request.residenceType(),
-                        request.residenceDetails(),
-                        request.landmark(),
-                        request.latitude(),
-                        request.longitude(),
+                        request.scheduleDate(),
+                        orderType.getAbbreviation(),
+                        defaultOrderStatus,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        defaultDoubleValue,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
                         false,
-                        null != request.scrapRegionId() ? scrapRegionRepository.getReferenceById(request.scrapRegionId()) : null,
-                        null != request.wardId() ? wardRepository.getReferenceById(request.wardId()) : null,
-                        customerRepository.getReferenceById(request.customerId())
+                        null,
+                        false,
+                        false,
+                        bioWasteOrder,
+                        null,
+                        null,
+                        district,
+                        null,
+                        null,
+                        scrapOrder,
+                        state,
+                        customer
                 )
         ).getId();
-
-         */
-        return 0L;
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void cancelById(CancelOrderRequest request) {
         ValidationUtils.validateRequestBody(request);
-        if (0 == completeOrdersRepository.cancelByCompleteOrderId(
-                request.id(),
-                true,
-                OrderStatus.CANCELLED.getAbbreviation()
 
+        final IOrderHistoryResponse order = completeOrdersRepository
+                .findByCompleteOrderId(request.id())
+                .filter(ord -> null != ord.getType())
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
+
+        if (!orderCancelReasonRepository.existsById(request.reasonId())) {
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_REASON);
+        }
+
+        final String orderStatus = OrderStatus.CANCELLED.getAbbreviation();
+
+        if (OrderType.is(order.getType(), OrderType.SCRAP) && 0 == scrapOrdersRepository.cancelByScrapOrderId(
+                    order.getScrapOrderId(),
+                    request.reasonId(),
+                orderStatus
         )) {
             throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
         }
 
-        // TODO: reason_id based on type: table
+        if (OrderType.is(order.getType(), OrderType.BIO_WASTE) && 0 == bioWasteOrdersRepository.cancelByBioWasteOrderId(
+                order.getBioWasteOrderId(),
+                request.reasonId(),
+                orderStatus
+        )) {
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
+        }
+
+        if (0 == completeOrdersRepository.cancelByCompleteOrderId(
+                request.id(),
+                true,
+                orderStatus
+
+        )) {
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
+        }
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void deleteById(Long completeOrderId, boolean value) {
         ValidationUtils.validateId(completeOrderId);
+
+        final IOrderHistoryResponse order = completeOrdersRepository
+                .findByCompleteOrderId(completeOrderId)
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
+
+        if (OrderType.is(order.getType(), OrderType.SCRAP) && 0 == scrapOrdersRepository.deleteByScrapOrderId(
+                order.getScrapOrderId(),
+                value
+        )) {
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
+        }
+
+        if (OrderType.is(order.getType(), OrderType.BIO_WASTE) && 0 == bioWasteOrdersRepository.deleteByBioWasteOrderId(
+                order.getBioWasteOrderId(),
+                value
+        )) {
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
+        }
+
         if (0 == completeOrdersRepository.deleteByCompleteOrderId(
                 completeOrderId,
                 value

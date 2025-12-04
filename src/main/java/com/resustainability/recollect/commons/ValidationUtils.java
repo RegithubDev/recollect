@@ -4,9 +4,11 @@ import com.resustainability.recollect.dto.commons.RequestBodyValidator;
 import com.resustainability.recollect.dto.payload.PayloadScrapRegionAvailability;
 import com.resustainability.recollect.exception.InvalidDataException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
+
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.BooleanSupplier;
@@ -89,6 +91,10 @@ public class ValidationUtils {
         validateNonNegative(id, "Order ID");
     }
 
+    public static void validateAddressId(Long id) {
+        validateNonNegative(id, "Address ID");
+    }
+
     public static void validateReasonId(Long id) {
         validateNonNegative(id, "Reason ID");
     }
@@ -136,6 +142,11 @@ public class ValidationUtils {
         validateLength(value, Default.MIN_PHONE_LENGTH, Default.MAX_PHONE_LENGTH, "Phone number");
     }
 
+    public static void validateAltPhone(String value) {
+//        validateNumeric(value, "Alternative phone number");
+        validateLength(value, Default.MIN_PHONE_LENGTH, Default.MAX_PHONE_LENGTH, "Alternative phone number");
+    }
+
     public static void validateEmail(String value) {
         validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_DEFAULT_LENGTH, "Email");
     }
@@ -160,16 +171,13 @@ public class ValidationUtils {
         validateRequired(value, "Date joined");
     }
 
+    public static void validateScheduleDate(LocalDate value) {
+        validateRequired(value, "Schedule date");
+    }
+
     public static void validateUserActiveStatus(BooleanSupplier isActive) {
         if (!Boolean.TRUE.equals(isActive.getAsBoolean())) {
             throw new AuthenticationServiceException(Default.ERROR_ACCOUNT_DISABLED);
         }
     }
-
-//    public static void validateBoolean(Boolean value, String fieldName) {
-//        if (value == null) {
-//            throw new InvalidDataException(fieldName + " is required");
-//        }
-//    }
-
 }

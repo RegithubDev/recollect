@@ -10,6 +10,7 @@ import com.resustainability.recollect.dto.response.IOrderHistoryResponse;
 import com.resustainability.recollect.dto.response.IOrderCancelReasonResponse;
 import com.resustainability.recollect.service.OrderService;
 
+import com.resustainability.recollect.tag.OrderType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -52,14 +53,28 @@ public class OrderController {
         );
     }
 
-    @PostMapping("/place")
-    public APIResponse<IOrderHistoryResponse> placeOrder(
+    @PostMapping("/place-scrap-order")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public APIResponse<IOrderHistoryResponse> placeScrapOrder(
             @RequestBody(required = false) PlaceOrderRequest request
     ) {
         return new APIResponse<>(
                 Default.SUCCESS_ORDER_PLACED,
                 orderService.getById(
-                        orderService.placeOrder(request)
+                        orderService.placeOrder(request, OrderType.SCRAP)
+                )
+        );
+    }
+
+    @PostMapping("/place-bio-waste-order")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public APIResponse<IOrderHistoryResponse> placeBioWasteOrder(
+            @RequestBody(required = false) PlaceOrderRequest request
+    ) {
+        return new APIResponse<>(
+                Default.SUCCESS_ORDER_PLACED,
+                orderService.getById(
+                        orderService.placeOrder(request, OrderType.BIO_WASTE)
                 )
         );
     }
