@@ -21,7 +21,7 @@ public class Default {
     public static final String HEADER_SHEETS_CONTENT_DISPOSITION_VALUE = "attachment; filename=%s.xlsx";
 
 
-
+    public static final String ERROR_ALREADY_ALLOTED ="This ward is already allotted to the team";
     public static final String ERROR_INVALID_SHEET_ROW = "Row numbers must be >= 1";
     public static final String ERROR_ACCOUNT_DISABLED = "Your account has been disabled. Please contact support for assistance";
     public static final String ERROR_UNABLE_TO_UPLOAD = "Upload failed. Retry shortly";
@@ -61,6 +61,7 @@ public class Default {
 
     public static final String ERROR_LIMIT_EXCEEDED ="Current Limit cannot be greater than Max Limit";
     public static final String ERROR_NOT_FOUND_PROVIDERTEAM ="Porovider Team with given id not found";
+   
 
 
 
@@ -159,8 +160,12 @@ public class Default {
 
     public static final String SUCCESS_ADD_PROVIDER_LOCATION_FLAGS = "Provider Service location flags added successfully";
     public static final String SUCCESS_UPDATE_PROVIDER_LOCATION_FLAGS = "Provider Service location flags details updated successfully";
-
     
+    public static final String SUCCESS_ADD_PROVIDERTEAM_WARD = "Ward added to Provider Team successfully";
+    public static final String SUCCESS_UPDATE_PROVIDERTEAM_WARD = "Provider Team Ward details updated successfully";
+
+    public static final String SUCCESS_ADD_PROVIDER_AUTHENTICATION = "Providee Authentication added successfully";
+    public static final String SUCCESS_UPDATE_PROVIDER_AUTHENTICATION = "Provider Authentication data updated successfully";
 
     public static final String EXECUTOR_MAIL = "mailTaskExecutor";
     public static final String EXECUTOR_ASYNC = "asyncTaskExecutor";
