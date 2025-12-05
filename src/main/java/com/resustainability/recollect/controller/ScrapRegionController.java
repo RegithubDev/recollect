@@ -7,13 +7,18 @@ import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.AddScrapRegionRequest;
 import com.resustainability.recollect.dto.request.UpdateScrapRegionBorderRequest;
 import com.resustainability.recollect.dto.request.UpdateScrapRegionRequest;
+import com.resustainability.recollect.dto.response.IScrapRegionAvailabilityResponse;
 import com.resustainability.recollect.dto.response.IScrapRegionResponse;
 import com.resustainability.recollect.dto.response.ScrapRegionResponse;
 import com.resustainability.recollect.service.ScrapRegionService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/recollect/v1/scrap-region")
@@ -45,6 +50,17 @@ public class ScrapRegionController {
                 scrapRegionService.getBorderById(scrapRegionId),
                 Default.SUCCESS,
                 null
+        );
+    }
+
+    @GetMapping("/list/available-dates/{scrapRegionId}")
+    public APIResponse<List<IScrapRegionAvailabilityResponse>> listAvailableDates(
+            @PathVariable(value = "scrapRegionId", required = false) Long scrapRegionId,
+            @RequestParam(value = "fromDate", required = false) LocalDate fromDate,
+            @RequestParam(value = "toDate", required = false) LocalDate toDate
+    ) {
+        return new APIResponse<>(
+                scrapRegionService.listAvailableDates(scrapRegionId, fromDate, toDate)
         );
     }
 

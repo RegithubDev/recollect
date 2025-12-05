@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
@@ -167,12 +168,37 @@ public class ValidationUtils {
         validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_20_LENGTH, "Platform");
     }
 
+    public static void validateScheduleDate(LocalDate value) {
+        validateRequired(value, "Schedule date");
+    }
+
     public static void validateDateJoined(LocalDateTime value) {
         validateRequired(value, "Date joined");
     }
 
-    public static void validateScheduleDate(LocalDate value) {
-        validateRequired(value, "Schedule date");
+    public static void validateFromDate(LocalDate value) {
+        validateRequired(value, "From date");
+    }
+
+    public static void validateToDate(LocalDate value) {
+        validateRequired(value, "To date");
+    }
+
+    public static void validateRange(LocalDate from, LocalDate to) {
+        validateFromDate(from);
+        validateToDate(to);
+        if (to.isBefore(from)) {
+            throw new InvalidDataException("Invalid date range");
+        }
+    }
+
+    public static void validateRangeLimit(LocalDate from, LocalDate to, long limit) {
+        validateRange(from, to);
+        if (ChronoUnit.DAYS.between(from, to) > limit) {
+            throw new InvalidDataException(
+                    String.format("Date range too large. Please limit the range to %d days or less.", limit)
+            );
+        }
     }
 
     public static void validateUserActiveStatus(BooleanSupplier isActive) {

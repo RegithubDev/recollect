@@ -29,7 +29,7 @@ public class WardService {
         this.localBodyRepository = localBodyRepository;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Pager<IWardResponse> list(Long localBodyId, Long districtId, Long stateId, Long countryId, SearchCriteria criteria) {
         return Pager.of(
                 wardRepository.findAllPaged(
@@ -40,7 +40,7 @@ public class WardService {
         );
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public IWardResponse getById(Long wardId) {
         ValidationUtils.validateId(wardId);
         return wardRepository

@@ -1,5 +1,6 @@
 package com.resustainability.recollect.service;
 
+import com.resustainability.recollect.commons.DateTimeFormatUtils;
 import com.resustainability.recollect.commons.Default;
 import com.resustainability.recollect.commons.IdGenerator;
 import com.resustainability.recollect.commons.ValidationUtils;
@@ -7,10 +8,7 @@ import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.CancelOrderRequest;
 import com.resustainability.recollect.dto.request.PlaceOrderRequest;
-import com.resustainability.recollect.dto.response.ICustomerAddressResponse;
-import com.resustainability.recollect.dto.response.IOrderHistoryResponse;
-import com.resustainability.recollect.dto.response.IOrderCancelReasonResponse;
-import com.resustainability.recollect.dto.response.IUserContext;
+import com.resustainability.recollect.dto.response.*;
 import com.resustainability.recollect.entity.backend.*;
 import com.resustainability.recollect.exception.InvalidDataException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
@@ -33,6 +31,7 @@ import java.util.Objects;
 @Service
 public class OrderService {
     private final SecurityService securityService;
+    private final ScrapRegionAvailabilityService scrapRegionAvailabilityService;
     private final CustomerAddressRepository customerAddressRepository;
     private final OrderCancelReasonRepository orderCancelReasonRepository;
     private final CompleteOrdersRepository completeOrdersRepository;
@@ -47,6 +46,7 @@ public class OrderService {
     @Autowired
     public OrderService(
             SecurityService securityService,
+            ScrapRegionAvailabilityService scrapRegionAvailabilityService,
             CustomerAddressRepository customerAddressRepository,
             OrderCancelReasonRepository orderCancelReasonRepository,
             CompleteOrdersRepository completeOrdersRepository,
@@ -59,6 +59,7 @@ public class OrderService {
             CustomerRepository customerRepository
     ) {
         this.securityService = securityService;
+        this.scrapRegionAvailabilityService = scrapRegionAvailabilityService;
         this.customerAddressRepository = customerAddressRepository;
         this.orderCancelReasonRepository = orderCancelReasonRepository;
         this.completeOrdersRepository = completeOrdersRepository;
@@ -71,7 +72,7 @@ public class OrderService {
         this.customerRepository = customerRepository;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public List<IOrderCancelReasonResponse> listCancellationReasons() {
         return orderCancelReasonRepository.findAllOrderCancelReasons();
     }
@@ -137,15 +138,28 @@ public class OrderService {
                 .findByCustomerAddressIdIfBelongs(user.getId(), request.addressId())
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER_ADDRESS));
 
+        if (null == address.getScrapRegionId()) {
+            throw new InvalidDataException("Scrap region is required, Set region in your address.");
+        }
+
+        final ScrapRegion scrapRegion = scrapRegionRepository
+                .getReferenceById(address.getScrapRegionId());
+
+        if (!scrapRegionAvailabilityService.bookSlot(address.getScrapRegionId(), request.scheduleDate())) {
+            throw new InvalidDataException(
+                    String.format(
+                            "Booking slot full for date %s, choose another available date.",
+                            DateTimeFormatUtils.toDateShortText(request.scheduleDate())
+                    )
+            );
+        }
+
         final Customer customer = customerRepository
                 .getReferenceById(user.getId());
 
         final CustomerAddress customerAddress = customerAddressRepository
                 .getReferenceById(request.addressId());
 
-        final ScrapRegion scrapRegion = null != address.getScrapRegionId()
-                ? scrapRegionRepository.getReferenceById(address.getScrapRegionId())
-                : null;
         final District district = null != address.getDistrictId()
                 ? districtRepository.getReferenceById(address.getDistrictId())
                 : null;

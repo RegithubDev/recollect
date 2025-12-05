@@ -49,14 +49,14 @@ public class ScrapRegionService {
         this.districtRepository = districtRepository;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public String getBorderById(Long scrapRegionId) {
         return scrapRegionRepository
                 .findBorderByScrapRegionId(scrapRegionId)
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_SCRAP_REGION));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Pager<IScrapRegionResponse> list(SearchCriteria searchCriteria) {
         return Pager.of(
                 scrapRegionRepository.findAllPaged(
@@ -66,7 +66,23 @@ public class ScrapRegionService {
         );
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public List<IScrapRegionAvailabilityResponse> listAvailableDates(
+            Long scrapRegionId,
+            LocalDate from,
+            LocalDate to
+    ) {
+        ValidationUtils.validateRangeLimit(from, to, 90);
+        return scrapRegionAvailabilityRepository
+                .findAllByScrapRegionIdAndBetween(
+                        scrapRegionId,
+                        from,
+                        to,
+                        true
+                );
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public ScrapRegionResponse getById(Long scrapRegionId) {
         ValidationUtils.validateId(scrapRegionId);
 
@@ -80,7 +96,8 @@ public class ScrapRegionService {
                 .findAllByScrapRegionIdAndBetween(
                         scrapRegionId,
                         today.withDayOfMonth(1),
-                        today.withDayOfMonth(today.lengthOfMonth())
+                        today.withDayOfMonth(today.lengthOfMonth()),
+                        false
                 );
 
         return new ScrapRegionResponse(details, availability);
