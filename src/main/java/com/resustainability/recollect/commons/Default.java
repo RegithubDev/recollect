@@ -63,6 +63,8 @@ public class Default {
 
     public static final String ERROR_LIMIT_EXCEEDED ="Current Limit cannot be greater than Max Limit";
     public static final String ERROR_NOT_FOUND_PROVIDERTEAM ="Porovider Team with given id not found";
+    
+    public static final String ERROR_NOT_FOUND_PICKUP_VEHICLE ="Pickup Vehile not found";
    
 
 
@@ -169,7 +171,12 @@ public class Default {
 
     public static final String SUCCESS_ADD_PROVIDER_AUTHENTICATION = "Providee Authentication added successfully";
     public static final String SUCCESS_UPDATE_PROVIDER_AUTHENTICATION = "Provider Authentication data updated successfully";
-
+    
+    public static final String SUCCESS_ADD_PICKUP_VEHICLE = "Pickup vehicle added successfully";
+    public static final String SUCCESS_UPDATE_PICKUP_VEHICLE = "Pickup vehicle details updated successfully";
+    public static final String SUCCESS_DELETE_PICKUP_VEHICLE = "All done! The Pickup vehile has been deleted.";
+    public static final String SUCCESS_UNDELETE_PICKUP_VEHICLE = "All done! The Pickup vehicle has been restored.";
+    
     public static final String EXECUTOR_MAIL = "mailTaskExecutor";
     public static final String EXECUTOR_ASYNC = "asyncTaskExecutor";
 

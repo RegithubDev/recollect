@@ -3,7 +3,7 @@ package com.resustainability.recollect.entity.backend;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
+
 
 @Entity
 @Table(name = PickupVehicle.TABLE_NAME)
@@ -42,112 +42,106 @@ public class PickupVehicle {
     @JoinColumn(name = "state_id")
     private State state;
 
+
+	public PickupVehicle(Long id, String vehicleName, String vehicleNumber, String pickupType, LocalDateTime createdOn,
+			String vehicleImage, Boolean isAssigned, Boolean isActive, Boolean isDeleted, State state) {
+		super();
+		this.id = id;
+		this.vehicleName = vehicleName;
+		this.vehicleNumber = vehicleNumber;
+		this.pickupType = pickupType;
+		this.createdOn = createdOn;
+		this.vehicleImage = vehicleImage;
+		this.isAssigned = isAssigned;
+		this.isActive = isActive;
+		this.isDeleted = isDeleted;
+		this.state = state;
+	}
+    
     public PickupVehicle() {
+    	
     }
 
-    public PickupVehicle(Long id, String vehicleName, String vehicleNumber, String pickupType, LocalDateTime createdOn, String vehicleImage, Boolean isAssigned, Boolean isActive, Boolean isDeleted, State state) {
-        this.id = id;
-        this.vehicleName = vehicleName;
-        this.vehicleNumber = vehicleNumber;
-        this.pickupType = pickupType;
-        this.createdOn = createdOn;
-        this.vehicleImage = vehicleImage;
-        this.isAssigned = isAssigned;
-        this.isActive = isActive;
-        this.isDeleted = isDeleted;
-        this.state = state;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-        PickupVehicle entity = (PickupVehicle) object;
-        return Objects.equals(id, entity.id);
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+	public String getVehicleName() {
+		return vehicleName;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public void setVehicleName(String vehicleName) {
+		this.vehicleName = vehicleName;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public String getVehicleNumber() {
+		return vehicleNumber;
+	}
 
-    public String getVehicleName() {
-        return vehicleName;
-    }
+	public void setVehicleNumber(String vehicleNumber) {
+		this.vehicleNumber = vehicleNumber;
+	}
 
-    public void setVehicleName(String vehicleName) {
-        this.vehicleName = vehicleName;
-    }
+	public String getPickupType() {
+		return pickupType;
+	}
 
-    public String getVehicleNumber() {
-        return vehicleNumber;
-    }
+	public void setPickupType(String pickupType) {
+		this.pickupType = pickupType;
+	}
 
-    public void setVehicleNumber(String vehicleNumber) {
-        this.vehicleNumber = vehicleNumber;
-    }
+	public LocalDateTime getCreatedOn() {
+		return createdOn;
+	}
 
-    public String getPickupType() {
-        return pickupType;
-    }
+	public void setCreatedOn(LocalDateTime createdOn) {
+		this.createdOn = createdOn;
+	}
 
-    public void setPickupType(String pickupType) {
-        this.pickupType = pickupType;
-    }
+	public String getVehicleImage() {
+		return vehicleImage;
+	}
 
-    public LocalDateTime getCreatedOn() {
-        return createdOn;
-    }
+	public void setVehicleImage(String vehicleImage) {
+		this.vehicleImage = vehicleImage;
+	}
 
-    public void setCreatedOn(LocalDateTime createdOn) {
-        this.createdOn = createdOn;
-    }
+	public Boolean getIsAssigned() {
+		return isAssigned;
+	}
 
-    public String getVehicleImage() {
-        return vehicleImage;
-    }
+	public void setIsAssigned(Boolean isAssigned) {
+		this.isAssigned = isAssigned;
+	}
 
-    public void setVehicleImage(String vehicleImage) {
-        this.vehicleImage = vehicleImage;
-    }
+	public Boolean getIsActive() {
+		return isActive;
+	}
 
-    public Boolean getAssigned() {
-        return isAssigned;
-    }
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
 
-    public void setAssigned(Boolean assigned) {
-        isAssigned = assigned;
-    }
+	public Boolean getIsDeleted() {
+		return isDeleted;
+	}
 
-    public Boolean getActive() {
-        return isActive;
-    }
+	public void setIsDeleted(Boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
 
-    public void setActive(Boolean active) {
-        isActive = active;
-    }
+	public State getState() {
+		return state;
+	}
 
-    public Boolean getDeleted() {
-        return isDeleted;
-    }
+	public void setState(State state) {
+		this.state = state;
+	}
+    
+    
 
-    public void setDeleted(Boolean deleted) {
-        isDeleted = deleted;
-    }
-
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State state) {
-        this.state = state;
-    }
 }
