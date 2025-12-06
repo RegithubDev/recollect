@@ -29,22 +29,31 @@ public class WasteBagController {
             @RequestParam(required = false) Long stateId,
             @ModelAttribute SearchCriteria searchCriteria
     ) {
-        return new APIResponse<>(wasteBagService.list(stateId, searchCriteria));
+        return new APIResponse<>(
+        		wasteBagService.list(stateId, searchCriteria)
+       );
     }
 
     @GetMapping("/details/{id}")
     public APIResponse<IWasteBagResponse> getById(@PathVariable Long id) {
-        return new APIResponse<>(wasteBagService.getById(id));
+        return new APIResponse<>(
+        		wasteBagService.getById(id)
+       );
     }
 
     @PostMapping("/add")
     public APIResponse<Long> add(@RequestBody AddWasteBagRequest request) {
-        return new APIResponse<>(Default.SUCCESS_ADD_WASTEBAG, wasteBagService.add(request));
+        return new APIResponse<>(
+        		Default.SUCCESS_ADD_WASTEBAG, 
+        		wasteBagService.add(request)
+        );
     }
 
     @PutMapping("/update")
     public APIResponse<Void> update(@RequestBody UpdateWasteBagRequest request) {
         wasteBagService.update(request);
-        return new APIResponse<>(Default.SUCCESS_UPDATE_WASTEBAG);
+        return new APIResponse<>(
+        		Default.SUCCESS_UPDATE_WASTEBAG
+        );
     }
 }
