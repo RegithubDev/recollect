@@ -53,6 +53,7 @@ public class Default {
     public static final String ERROR_NOT_FOUND_PROVIDER_WARD ="Porovider Ward details with given id not found";
     public static final String ERROR_NOT_FOUND_PROVIDER_SCRAP_REGION ="Porovider Scrap Region details with given id not found";
     public static final String ERROR_NOT_FOUND_PROVIDER_LOCATION_FLAGS ="Porovider Service location details not found with given id";
+    public static final String ERROR_NOT_FOUND_WASTEBAG ="Waste bag details not found with given id";
     public static final String ERROR_NOT_FOUND_EMPLOYEE = "Employee not found";
     public static final String ERROR_NOT_FOUND_JOB = "Job not found";
     public static final String ERROR_NOT_FOUND_ORG = "Org not found";
@@ -176,6 +177,9 @@ public class Default {
     public static final String SUCCESS_UPDATE_PICKUP_VEHICLE = "Pickup vehicle details updated successfully";
     public static final String SUCCESS_DELETE_PICKUP_VEHICLE = "All done! The Pickup vehile has been deleted.";
     public static final String SUCCESS_UNDELETE_PICKUP_VEHICLE = "All done! The Pickup vehicle has been restored.";
+    
+    public static final String SUCCESS_ADD_WASTEBAG = "Waste bag added successfully";
+    public static final String SUCCESS_UPDATE_WASTEBAG = "Waste bag details updated successfully";
     
     public static final String EXECUTOR_MAIL = "mailTaskExecutor";
     public static final String EXECUTOR_ASYNC = "asyncTaskExecutor";

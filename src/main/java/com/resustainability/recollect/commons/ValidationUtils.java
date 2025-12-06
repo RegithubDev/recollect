@@ -8,6 +8,7 @@ import com.resustainability.recollect.exception.ResourceNotFoundException;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -60,9 +61,21 @@ public class ValidationUtils {
             throw new InvalidDataException(fieldName + " is required and must be non-negative");
         }
     }
+    
+    public static void validateNonNegative(Double value, String fieldName) {
+        if (value == null || value < 0) {
+            throw new InvalidDataException(fieldName + " is required and must be non-negative");
+        }
+    }
 
     public static void validateNonNegative(Long value, String fieldName) {
         if (value == null || value < 0) {
+            throw new InvalidDataException(fieldName + " is required and must be non-negative");
+        }
+    }
+    
+    public static void validateBigDecimal(BigDecimal value, String fieldName) {
+        if (value == null || value.compareTo(BigDecimal.ZERO) < 0) {
             throw new InvalidDataException(fieldName + " is required and must be non-negative");
         }
     }
@@ -206,4 +219,5 @@ public class ValidationUtils {
             throw new AuthenticationServiceException(Default.ERROR_ACCOUNT_DISABLED);
         }
     }
-}
+
+	}
