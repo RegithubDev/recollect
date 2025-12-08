@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public enum OrderStatus {
-	PENDING(0, "pending"),
-	OPEN(1, "open"),
-	CONFIRMED(2, "confirmed"),
-	COMPLETED(3, "completed"),
-	REACHED_LOCATION(4, "reached location"),
+	OPEN(0, "open"),
+	CONFIRMED(1, "confirmed"),
+	PENDING(2, "pending"),
+	REACHED_LOCATION(3, "reached location"),
+	COMPLETED(4, "completed"),
 	CANCELLED(5, "cancelled");
 
 	private final int ordinal;

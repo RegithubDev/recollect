@@ -155,7 +155,7 @@ public class OrderService {
                 : null;
 
         final double defaultDoubleValue = Double.NaN;
-        final String defaultOrderStatus = OrderStatus.PENDING.getAbbreviation();
+        final String defaultOrderStatus = OrderStatus.OPEN.getAbbreviation();
 
         ScrapOrders scrapOrder = null;
         BioWasteOrders bioWasteOrder = null;
