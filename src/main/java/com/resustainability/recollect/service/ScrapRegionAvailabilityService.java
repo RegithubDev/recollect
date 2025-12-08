@@ -28,4 +28,9 @@ public class ScrapRegionAvailabilityService {
     public boolean bookSlot(Long scrapRegionId, LocalDate scheduleDate) {
         return 1 == scrapRegionAvailabilityRepository.decrementRemainingSlot(scrapRegionId, scheduleDate);
     }
+
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
+    public boolean freeSlot(Long scrapRegionId, LocalDate scheduleDate) {
+        return 1 == scrapRegionAvailabilityRepository.incrementRemainingSlot(scrapRegionId, scheduleDate);
+    }
 }

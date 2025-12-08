@@ -138,22 +138,6 @@ public class OrderService {
                 .findByCustomerAddressIdIfBelongs(user.getId(), request.addressId())
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER_ADDRESS));
 
-        if (null == address.getScrapRegionId()) {
-            throw new InvalidDataException("Scrap region is required, Set region in your address.");
-        }
-
-        final ScrapRegion scrapRegion = scrapRegionRepository
-                .getReferenceById(address.getScrapRegionId());
-
-        if (!scrapRegionAvailabilityService.bookSlot(address.getScrapRegionId(), request.scheduleDate())) {
-            throw new InvalidDataException(
-                    String.format(
-                            "Booking slot full for date %s, choose another available date.",
-                            DateTimeFormatUtils.toDateShortText(request.scheduleDate())
-                    )
-            );
-        }
-
         final Customer customer = customerRepository
                 .getReferenceById(user.getId());
 
@@ -176,6 +160,22 @@ public class OrderService {
         ScrapOrders scrapOrder = null;
         BioWasteOrders bioWasteOrder = null;
         if (OrderType.SCRAP.equals(orderType)) {
+            if (null == address.getScrapRegionId()) {
+                throw new InvalidDataException("Scrap region is required, Set region in your address.");
+            }
+
+            final ScrapRegion scrapRegion = scrapRegionRepository
+                    .getReferenceById(address.getScrapRegionId());
+
+            if (!scrapRegionAvailabilityService.bookSlot(address.getScrapRegionId(), request.scheduleDate())) {
+                throw new InvalidDataException(
+                        String.format(
+                                "Booking slot full for date %s, choose another available date.",
+                                DateTimeFormatUtils.toDateShortText(request.scheduleDate())
+                        )
+                );
+            }
+
             scrapOrder = scrapOrdersRepository.save(
                     new ScrapOrders(
                             null,
@@ -281,12 +281,17 @@ public class OrderService {
 
         final String orderStatus = OrderStatus.CANCELLED.getAbbreviation();
 
-        if (OrderType.is(order.getType(), OrderType.SCRAP) && 0 == scrapOrdersRepository.cancelByScrapOrderId(
+        if (OrderType.is(order.getType(), OrderType.SCRAP)) {
+            if (0 == scrapOrdersRepository.cancelByScrapOrderId(
                     order.getScrapOrderId(),
                     request.reasonId(),
-                orderStatus
-        )) {
-            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
+                    orderStatus
+            )) {
+                throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
+            }
+
+            scrapRegionAvailabilityService
+                    .freeSlot(order.getScrapRegionId(), order.getScheduleDate());
         }
 
         if (OrderType.is(order.getType(), OrderType.BIO_WASTE) && 0 == bioWasteOrdersRepository.cancelByBioWasteOrderId(

@@ -15,4 +15,6 @@ public interface IOrderHistoryResponse {
 
 	Long getScrapOrderId();
 	Long getBioWasteOrderId();
+
+	Long getScrapRegionId();
 }

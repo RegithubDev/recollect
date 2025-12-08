@@ -64,4 +64,17 @@ public interface ScrapRegionAvailabilityRepository extends JpaRepository<ScrapRe
             @Param("scrapRegionId") Long scrapRegionId,
             @Param("scheduleDate") LocalDate scheduleDate
     );
+
+    @Modifying
+    @Query("""
+        UPDATE ScrapRegionAvailability sra
+        SET sra.remainingSlots = sra.remainingSlots + 1
+        WHERE sra.scrapRegion.id = :scrapRegionId
+          AND sra.availableDate = :scheduleDate
+          AND sra.remainingSlots < sra.limit
+    """)
+    int incrementRemainingSlot(
+            @Param("scrapRegionId") Long scrapRegionId,
+            @Param("scheduleDate") LocalDate scheduleDate
+    );
 }
