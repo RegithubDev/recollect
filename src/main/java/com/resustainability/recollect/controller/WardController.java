@@ -14,7 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/recollect/v1/ward")
+@RequestMapping("/api/v1/ward")
 @PreAuthorize("hasRole('ADMIN')")
 public class WardController {
     private final WardService service;

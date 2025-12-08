@@ -12,7 +12,7 @@ import com.resustainability.recollect.service.ProviderScrapRegionService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/recollect/v1/provider-scrap-region")
+@RequestMapping("/api/v1/provider-scrap-region")
 public class ProviderScrapRegionController {
 
     private final ProviderScrapRegionService service;

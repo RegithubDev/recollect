@@ -12,7 +12,7 @@ import com.resustainability.recollect.service.ProviderLocalBodyService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/recollect/v1/provider-localbody")
+@RequestMapping("/api/v1/provider-localbody")
 public class ProviderLocalBodyController {
 
     private final ProviderLocalBodyService service;

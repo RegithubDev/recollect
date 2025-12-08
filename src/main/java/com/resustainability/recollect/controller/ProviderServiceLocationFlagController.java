@@ -12,7 +12,7 @@ import com.resustainability.recollect.service.ProviderServiceLocationFlagService
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/recollect/v1/provider-service-location-flag")
+@RequestMapping("/api/v1/provider-service-location-flag")
 public class ProviderServiceLocationFlagController {
 
     private final ProviderServiceLocationFlagService service;

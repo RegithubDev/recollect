@@ -17,7 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/recollect/v1/customer")
+@RequestMapping("/api/v1/customer")
 @PreAuthorize("hasRole('ADMIN')")
 public class CustomerController {
     private final CustomerService customerService;

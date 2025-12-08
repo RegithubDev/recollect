@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 @RestController
-@RequestMapping("/recollect/v1/mobile")
+@RequestMapping("/api/v1/mobile")
 @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
 public class MobileController {
     private final MobileService mobileService;

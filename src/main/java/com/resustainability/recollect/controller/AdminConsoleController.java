@@ -11,7 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/recollect/v1/admin-console")
+@RequestMapping("/api/v1/admin-console")
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminConsoleController {
     private final AdminUserService adminUserService;

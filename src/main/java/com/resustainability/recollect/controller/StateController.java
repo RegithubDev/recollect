@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/recollect/v1/state")
+@RequestMapping("/api/v1/state")
 @PreAuthorize("hasRole('ADMIN')")
 public class StateController {
 

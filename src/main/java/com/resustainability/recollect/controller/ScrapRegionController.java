@@ -13,7 +13,6 @@ import com.resustainability.recollect.dto.response.ScrapRegionResponse;
 import com.resustainability.recollect.service.ScrapRegionService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +20,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/recollect/v1/scrap-region")
+@RequestMapping("/api/v1/scrap-region")
 @PreAuthorize("hasRole('ADMIN')")
 public class ScrapRegionController {
     private final ScrapRegionService scrapRegionService;

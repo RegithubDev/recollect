@@ -19,7 +19,7 @@ import com.resustainability.recollect.dto.response.IProviderTeamAllotedWardRespo
 import com.resustainability.recollect.service.ProviderTeamAllotedWardsService;
 
 @RestController
-@RequestMapping("/recollect/v1/provider-team-alloted-wards")
+@RequestMapping("/api/v1/provider-team-alloted-wards")
 @PreAuthorize("hasRole('ADMIN')")
 public class ProviderTeamAllotedWardsController {
 

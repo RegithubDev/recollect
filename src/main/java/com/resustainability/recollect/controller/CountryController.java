@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/recollect/v1/country")
+@RequestMapping("/api/v1/country")
 @PreAuthorize("hasRole('ADMIN')")
 public class CountryController {
     private final CountryService countryService;

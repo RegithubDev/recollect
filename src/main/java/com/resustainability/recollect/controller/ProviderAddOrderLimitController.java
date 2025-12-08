@@ -14,7 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/recollect/v1/provider-order-limit")
+@RequestMapping("/api/v1/provider-order-limit")
 @PreAuthorize("hasRole('ADMIN')")
 public class ProviderAddOrderLimitController {
 

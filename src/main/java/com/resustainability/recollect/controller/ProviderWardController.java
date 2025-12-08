@@ -12,7 +12,7 @@ import com.resustainability.recollect.service.ProviderWardService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/recollect/v1/provider-ward")
+@RequestMapping("/api/v1/provider-ward")
 public class ProviderWardController {
 
     private final ProviderWardService service;

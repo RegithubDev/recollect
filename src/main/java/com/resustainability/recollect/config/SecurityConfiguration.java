@@ -105,9 +105,9 @@ public class SecurityConfiguration {
         return http.cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests.requestMatchers(
-                        "/recollect/v1/auth/get-customer-token",
-                        "/recollect/v1/auth/get-provider-token",
-                        "/recollect/v1/auth/get-admin-token",
+                        "/api/v1/auth/get-customer-token",
+                        "/api/v1/auth/get-provider-token",
+                        "/api/v1/auth/get-admin-token",
                         "/swagger-ui/**",
                         (actuatorEndpoint + "/**"),
                         (swaggerUiEndpoint + "/**"),

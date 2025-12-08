@@ -13,7 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/recollect/v1/local-body-type")
+@RequestMapping("/api/v1/local-body-type")
 @PreAuthorize("hasRole('ADMIN')")
 public class LocalBodyTypeController {
 

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/recollect/v1/pickup-vehicle")
+@RequestMapping("/api/v1/pickup-vehicle")
 @PreAuthorize("hasRole('ADMIN')")
 public class PickupVehicleController {
 

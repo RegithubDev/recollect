@@ -12,7 +12,7 @@ import com.resustainability.recollect.service.ProviderDistrictService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/recollect/v1/provider-district")
+@RequestMapping("/api/v1/provider-district")
 public class ProviderDistrictController {
 
     private final ProviderDistrictService service;

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
-@RequestMapping("/recollect/v1/provider-roles")
+@RequestMapping("/api/v1/provider-roles")
 @PreAuthorize("hasRole('ADMIN')")
 public class ProviderRoleController {
 

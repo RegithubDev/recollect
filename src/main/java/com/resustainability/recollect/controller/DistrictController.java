@@ -22,7 +22,7 @@ import com.resustainability.recollect.dto.response.IDistrictResponse;
 import com.resustainability.recollect.service.DistrictService;
 
 @RestController
-@RequestMapping("/recollect/v1/district")
+@RequestMapping("/api/v1/district")
 @PreAuthorize("hasRole('ADMIN')")
 public class DistrictController {
 	
