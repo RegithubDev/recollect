@@ -21,4 +21,50 @@ public class PickupVehicleDistrict {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vehicle_id")
     private PickupVehicle vehicle;
+
+	public PickupVehicleDistrict(Long id, Boolean isActive, District district, PickupVehicle vehicle) {
+		super();
+		this.id = id;
+		this.isActive = isActive;
+		this.district = district;
+		this.vehicle = vehicle;
+	}
+    
+    public PickupVehicleDistrict() {
+    	
+    }
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public District getDistrict() {
+		return district;
+	}
+
+	public void setDistrict(District district) {
+		this.district = district;
+	}
+
+	public PickupVehicle getVehicle() {
+		return vehicle;
+	}
+
+	public void setVehicle(PickupVehicle vehicle) {
+		this.vehicle = vehicle;
+	}
+    
+    
 }

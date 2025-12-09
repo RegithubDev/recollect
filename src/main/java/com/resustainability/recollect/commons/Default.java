@@ -66,6 +66,8 @@ public class Default {
     public static final String ERROR_NOT_FOUND_PROVIDERTEAM ="Porovider Team with given id not found";
     
     public static final String ERROR_NOT_FOUND_PICKUP_VEHICLE ="Pickup Vehile not found";
+    
+    public static final String ERROR_NOT_FOUND_PICKUPVEHICLEDISTRICT ="Pickup Vehile district details are not found";
    
 
 
@@ -180,6 +182,9 @@ public class Default {
     
     public static final String SUCCESS_ADD_WASTEBAG = "Waste bag added successfully";
     public static final String SUCCESS_UPDATE_WASTEBAG = "Waste bag details updated successfully";
+    
+    public static final String SUCCESS_ADD_PICKUPVEHICLEDISTRICT = "Pickup Vehicle district added successfully";
+    public static final String SUCCESS_UPDATE_PICKUPVEHICLEDISTRICT = "Pickup Vehicle district details updated successfully";
     
     public static final String EXECUTOR_MAIL = "mailTaskExecutor";
     public static final String EXECUTOR_ASYNC = "asyncTaskExecutor";
