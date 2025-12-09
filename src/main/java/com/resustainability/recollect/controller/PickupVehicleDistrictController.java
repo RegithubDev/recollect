@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
-@RequestMapping("/recollect/v1/pickupvehicledistrict")
+@RequestMapping("/api/v1/pickupvehicledistrict")
 @PreAuthorize("hasRole('ADMIN')")
 public class PickupVehicleDistrictController {
 
