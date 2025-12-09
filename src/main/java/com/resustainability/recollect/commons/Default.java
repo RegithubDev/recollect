@@ -68,6 +68,8 @@ public class Default {
     public static final String ERROR_NOT_FOUND_PICKUP_VEHICLE ="Pickup Vehile not found";
     
     public static final String ERROR_NOT_FOUND_PICKUPVEHICLEDISTRICT ="Pickup Vehile district details are not found";
+    
+    public static final String ERROR_NOT_FOUND_PICKUPWEIGHT_LIMIT ="Pickup Weight limit details not found with given id";
    
 
 
@@ -185,6 +187,9 @@ public class Default {
     
     public static final String SUCCESS_ADD_PICKUPVEHICLEDISTRICT = "Pickup Vehicle district added successfully";
     public static final String SUCCESS_UPDATE_PICKUPVEHICLEDISTRICT = "Pickup Vehicle district details updated successfully";
+    
+    public static final String SUCCESS_ADD_PICKUP_WEIGHT_LIMIT = "Pickup weight limit details added successfully";
+    public static final String SUCCESS_UPDATE_PICKUPWEIGHT_LIMIT = "Pickup weight limit details updated successfully";
     
     public static final String EXECUTOR_MAIL = "mailTaskExecutor";
     public static final String EXECUTOR_ASYNC = "asyncTaskExecutor";
