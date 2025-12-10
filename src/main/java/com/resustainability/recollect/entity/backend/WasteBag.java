@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = WasteBag.TABLE_NAME)
 public class WasteBag {
-    public static final String TABLE_NAME = "Backend_wastebag";
+    public static final String TABLE_NAME = "backend_wastebag";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

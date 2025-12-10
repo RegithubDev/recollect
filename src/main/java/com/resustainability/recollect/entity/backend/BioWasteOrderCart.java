@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = BioWasteOrderCart.TABLE_NAME)
 public class BioWasteOrderCart {
-    public static final String TABLE_NAME = "Backend_biowasteordercart";
+    public static final String TABLE_NAME = "backend_biowasteordercart";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

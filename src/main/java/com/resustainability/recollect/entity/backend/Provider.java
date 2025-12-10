@@ -12,7 +12,7 @@ import java.util.Objects;
         @UniqueConstraint(columnNames = "phone_number")
 })
 public class Provider {
-    public static final String TABLE_NAME = "Backend_provider";
+    public static final String TABLE_NAME = "backend_provider";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

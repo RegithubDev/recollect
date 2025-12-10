@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
         @UniqueConstraint(columnNames = {"username"})
 })
 public class LsgdUser {
-    public static final String TABLE_NAME = "Backend_lsgduser";
+    public static final String TABLE_NAME = "backend_lsgduser";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

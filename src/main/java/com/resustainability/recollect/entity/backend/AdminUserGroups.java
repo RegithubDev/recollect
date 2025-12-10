@@ -12,7 +12,7 @@ import jakarta.persistence.*;
     }
 )
 public class AdminUserGroups {
-    public static final String TABLE_NAME = "Backend_adminuser_groups";
+    public static final String TABLE_NAME = "backend_adminuser_groups";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

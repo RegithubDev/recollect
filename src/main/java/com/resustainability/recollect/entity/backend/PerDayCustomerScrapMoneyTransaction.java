@@ -10,7 +10,7 @@ import java.time.LocalDate;
     uniqueConstraints = @UniqueConstraint(columnNames = {"customer_id","transaction_date"})
 )
 public class PerDayCustomerScrapMoneyTransaction {
-    public static final String TABLE_NAME = "Backend_perdaycustomerscrapmoneytransaction";
+    public static final String TABLE_NAME = "backend_perdaycustomerscrapmoneytransaction";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

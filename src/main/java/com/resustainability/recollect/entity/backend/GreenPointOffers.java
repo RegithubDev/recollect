@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = GreenPointOffers.TABLE_NAME)
 public class GreenPointOffers {
-    public static final String TABLE_NAME = "Backend_greenpointoffers";
+    public static final String TABLE_NAME = "backend_greenpointoffers";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
         @UniqueConstraint(columnNames = {"coupon_id"})
 })
 public class OffersAndCoupons {
-    public static final String TABLE_NAME = "Backend_offersandcoupons";
+    public static final String TABLE_NAME = "backend_offersandcoupons";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

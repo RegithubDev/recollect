@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = ProviderAddOrderLimit.TABLE_NAME)
 public class ProviderAddOrderLimit {
-    public static final String TABLE_NAME = "Backend_provideraddorderlimit";
+    public static final String TABLE_NAME = "backend_provideraddorderlimit";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

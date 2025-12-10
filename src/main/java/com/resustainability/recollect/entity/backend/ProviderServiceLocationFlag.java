@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = ProviderServiceLocationFlag.TABLE_NAME)
 public class ProviderServiceLocationFlag {
-    public static final String TABLE_NAME = "Backend_providerservicelocationflag";
+    public static final String TABLE_NAME = "backend_providerservicelocationflag";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -7,7 +7,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = BioWasteTypeAnalytics.TABLE_NAME)
 public class BioWasteTypeAnalytics {
-    public static final String TABLE_NAME = "Backend_biowastetypeanalytics";
+    public static final String TABLE_NAME = "backend_biowastetypeanalytics";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = ProviderAuthentication.TABLE_NAME)
 public class ProviderAuthentication {
-    public static final String TABLE_NAME = "Backend_providerauthentication";
+    public static final String TABLE_NAME = "backend_providerauthentication";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

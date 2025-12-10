@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = BwgMonthlyContractAmount.TABLE_NAME)
 public class BwgMonthlyContractAmount {
-    public static final String TABLE_NAME = "Backend_bwgmonthlycontractamount";
+    public static final String TABLE_NAME = "backend_bwgmonthlycontractamount";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = AdminSubModule.TABLE_NAME)
 public class AdminSubModule {
-    public static final String TABLE_NAME = "Backend_adminsubmodule";
+    public static final String TABLE_NAME = "backend_adminsubmodule";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

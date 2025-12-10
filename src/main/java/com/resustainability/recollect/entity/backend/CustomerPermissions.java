@@ -12,7 +12,7 @@ import jakarta.persistence.*;
     }
 )
 public class CustomerPermissions {
-    public static final String TABLE_NAME = "Backend_customer_user_permissions";
+    public static final String TABLE_NAME = "backend_customer_user_permissions";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

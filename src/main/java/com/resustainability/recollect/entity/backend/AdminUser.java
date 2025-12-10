@@ -14,7 +14,7 @@ import java.util.Objects;
     }
 )
 public class AdminUser {
-    public static final String TABLE_NAME = "Backend_adminuser";
+    public static final String TABLE_NAME = "backend_adminuser";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

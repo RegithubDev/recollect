@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = BwgOrderUsedBag.TABLE_NAME)
 public class BwgOrderUsedBag {
-    public static final String TABLE_NAME = "Backend_bwgorderusedbag";
+    public static final String TABLE_NAME = "backend_bwgorderusedbag";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

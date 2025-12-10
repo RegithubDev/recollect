@@ -13,7 +13,7 @@ import java.util.Objects;
     }
 )
 public class Customer {
-    public static final String TABLE_NAME = "Backend_customer";
+    public static final String TABLE_NAME = "backend_customer";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

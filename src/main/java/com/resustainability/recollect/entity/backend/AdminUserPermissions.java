@@ -12,7 +12,7 @@ import jakarta.persistence.*;
     }
 )
 public class AdminUserPermissions {
-    public static final String TABLE_NAME = "Backend_adminuser_user_permissions";
+    public static final String TABLE_NAME = "backend_adminuser_user_permissions";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

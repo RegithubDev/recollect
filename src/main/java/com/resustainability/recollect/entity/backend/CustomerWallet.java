@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = CustomerWallet.TABLE_NAME)
 public class CustomerWallet {
-    public static final String TABLE_NAME = "Backend_customerwallet";
+    public static final String TABLE_NAME = "backend_customerwallet";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

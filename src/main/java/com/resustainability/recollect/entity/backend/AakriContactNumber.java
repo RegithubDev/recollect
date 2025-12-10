@@ -7,7 +7,7 @@ import java.util.Objects;
 @Entity
 @Table(name = AakriContactNumber.TABLE_NAME)
 public class AakriContactNumber {
-    public static final String TABLE_NAME = "Backend_aakricontactnumber";
+    public static final String TABLE_NAME = "backend_aakricontactnumber";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

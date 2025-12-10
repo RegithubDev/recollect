@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = AdminLog.TABLE_NAME)
 public class AdminLog {
-    public static final String TABLE_NAME = "Backend_adminlog";
+    public static final String TABLE_NAME = "backend_adminlog";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

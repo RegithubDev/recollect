@@ -19,8 +19,8 @@ public interface BioWasteCategoryRepository extends JpaRepository<BioWasteCatego
             t.id AS typeId,
             t.biowaste_name AS typeName,
             t.image AS typeIcon
-        FROM Backend_biowastecategory c
-        JOIN Backend_biowastetype t
+        FROM backend_biowastecategory c
+        JOIN backend_biowastetype t
             ON t.biowaste_category_id = c.id
         WHERE c.is_active = 1 AND t.is_active = 1
         ORDER BY c.id, t.id

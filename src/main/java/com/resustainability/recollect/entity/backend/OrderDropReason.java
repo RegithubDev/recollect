@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = OrderDropReason.TABLE_NAME)
 public class OrderDropReason {
-    public static final String TABLE_NAME = "Backend_orderdropreason";
+    public static final String TABLE_NAME = "backend_orderdropreason";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

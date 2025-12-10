@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = BwgClientMonthlySettlement.TABLE_NAME)
 public class BwgClientMonthlySettlement {
-    public static final String TABLE_NAME = "Backend_bwgclientmonthlysettlement";
+    public static final String TABLE_NAME = "backend_bwgclientmonthlysettlement";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

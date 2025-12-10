@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = ProviderLocalBody.TABLE_NAME)
 public class ProviderLocalBody {
-    public static final String TABLE_NAME = "Backend_providerlocalbody";
+    public static final String TABLE_NAME = "backend_providerlocalbody";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

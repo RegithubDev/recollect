@@ -7,7 +7,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = PerDayOrderCount.TABLE_NAME)
 public class PerDayOrderCount {
-    public static final String TABLE_NAME = "Backend_perdayordercount";
+    public static final String TABLE_NAME = "backend_perdayordercount";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

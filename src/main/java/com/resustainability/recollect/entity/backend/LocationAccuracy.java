@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = LocationAccuracy.TABLE_NAME)
 public class LocationAccuracy {
-    public static final String TABLE_NAME = "Backend_locationaccuracy";
+    public static final String TABLE_NAME = "backend_locationaccuracy";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
