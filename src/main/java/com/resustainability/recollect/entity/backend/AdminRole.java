@@ -7,7 +7,7 @@ import java.util.Objects;
 @Entity
 @Table(name = AdminRole.TABLE_NAME)
 public class AdminRole {
-    public static final String TABLE_NAME = "backend_adminrole";
+    public static final String TABLE_NAME = "Backend_adminrole";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

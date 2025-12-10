@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = WasteDispatchCompany.TABLE_NAME)
 public class WasteDispatchCompany {
-    public static final String TABLE_NAME = "backend_wastedispatchcompany";
+    public static final String TABLE_NAME = "Backend_wastedispatchcompany";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

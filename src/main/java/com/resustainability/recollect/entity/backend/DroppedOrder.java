@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = DroppedOrder.TABLE_NAME)
 public class DroppedOrder {
-    public static final String TABLE_NAME = "backend_droppedorder";
+    public static final String TABLE_NAME = "Backend_droppedorder";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -9,7 +9,7 @@ import java.util.Objects;
 @Entity
 @Table(name = BioWasteOrders.TABLE_NAME)
 public class BioWasteOrders {
-    public static final String TABLE_NAME = "backend_biowasteorders";
+    public static final String TABLE_NAME = "Backend_biowasteorders";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

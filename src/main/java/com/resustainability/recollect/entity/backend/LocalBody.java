@@ -7,7 +7,7 @@ import java.util.Objects;
 @Entity
 @Table(name = LocalBody.TABLE_NAME)
 public class LocalBody {
-    public static final String TABLE_NAME = "backend_localbody";
+    public static final String TABLE_NAME = "Backend_localbody";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

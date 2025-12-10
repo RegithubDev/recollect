@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = CustomerLoyaltyPoint.TABLE_NAME)
 public class CustomerLoyaltyPoint {
-    public static final String TABLE_NAME = "backend_customerloyaltypoint";
+    public static final String TABLE_NAME = "Backend_customerloyaltypoint";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

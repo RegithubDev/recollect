@@ -7,7 +7,7 @@ import java.util.Objects;
 @Entity
 @Table(name = ServiceCategory.TABLE_NAME)
 public class ServiceCategory {
-    public static final String TABLE_NAME = "backend_servicecategory";
+    public static final String TABLE_NAME = "Backend_servicecategory";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

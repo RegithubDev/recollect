@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = BwgBagPrice.TABLE_NAME)
 public class BwgBagPrice {
-    public static final String TABLE_NAME = "backend_bwgbagprice";
+    public static final String TABLE_NAME = "Backend_bwgbagprice";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

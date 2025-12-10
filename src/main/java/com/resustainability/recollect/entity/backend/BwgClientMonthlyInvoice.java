@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = BwgClientMonthlyInvoice.TABLE_NAME)
 public class BwgClientMonthlyInvoice {
-    public static final String TABLE_NAME = "backend_bwgclientmothlyinvoice";
+    public static final String TABLE_NAME = "Backend_bwgclientmothlyinvoice";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

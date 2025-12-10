@@ -9,7 +9,7 @@ import java.util.Objects;
 @Entity
 @Table(name = CompleteOrders.TABLE_NAME)
 public class CompleteOrders {
-    public static final String TABLE_NAME = "backend_completeorders";
+    public static final String TABLE_NAME = "Backend_completeorders";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

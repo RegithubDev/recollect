@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = UpdatesSendTo.TABLE_NAME)
 public class UpdatesSendTo {
-    public static final String TABLE_NAME = "backend_updates_send_to";
+    public static final String TABLE_NAME = "Backend_updates_send_to";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

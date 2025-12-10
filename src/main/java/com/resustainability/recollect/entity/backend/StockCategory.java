@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = StockCategory.TABLE_NAME)
 public class StockCategory {
-    public static final String TABLE_NAME = "backend_stockcategory";
+    public static final String TABLE_NAME = "Backend_stockcategory";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

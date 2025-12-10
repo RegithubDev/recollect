@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = FrequentlyAskedQuestions.TABLE_NAME)
 public class FrequentlyAskedQuestions {
-    public static final String TABLE_NAME = "backend_frequentlyaskedquestions";
+    public static final String TABLE_NAME = "Backend_frequentlyaskedquestions";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

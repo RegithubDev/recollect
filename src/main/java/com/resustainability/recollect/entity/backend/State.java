@@ -7,7 +7,7 @@ import java.util.Objects;
 @Entity
 @Table(name = State.TABLE_NAME)
 public class State {
-    public static final String TABLE_NAME = "backend_state";
+    public static final String TABLE_NAME = "Backend_state";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

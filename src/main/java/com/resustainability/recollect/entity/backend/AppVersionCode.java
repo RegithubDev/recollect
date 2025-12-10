@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = AppVersionCode.TABLE_NAME)
 public class AppVersionCode {
-    public static final String TABLE_NAME = "backend_appversioncode";
+    public static final String TABLE_NAME = "Backend_appversioncode";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

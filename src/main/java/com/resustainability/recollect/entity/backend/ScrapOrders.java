@@ -9,7 +9,7 @@ import java.util.Objects;
 @Entity
 @Table(name = ScrapOrders.TABLE_NAME)
 public class ScrapOrders {
-    public static final String TABLE_NAME = "backend_scraporders";
+    public static final String TABLE_NAME = "Backend_scraporders";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

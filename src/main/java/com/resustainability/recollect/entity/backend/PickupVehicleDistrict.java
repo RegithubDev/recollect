@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = PickupVehicleDistrict.TABLE_NAME)
 public class PickupVehicleDistrict {
-    public static final String TABLE_NAME = "backend_pickupvehicledistrict";
+    public static final String TABLE_NAME = "Backend_pickupvehicledistrict";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

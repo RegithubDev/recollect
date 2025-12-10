@@ -7,7 +7,7 @@ import java.util.Objects;
 @Entity
 @Table(name = OrderCancelReason.TABLE_NAME)
 public class OrderCancelReason {
-    public static final String TABLE_NAME = "backend_ordercancelreason";
+    public static final String TABLE_NAME = "Backend_ordercancelreason";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

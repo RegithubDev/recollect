@@ -9,7 +9,7 @@ import jakarta.persistence.*;
     uniqueConstraints = @UniqueConstraint(columnNames = {"provider_id","group_id"})
 )
 public class ProviderGroups {
-    public static final String TABLE_NAME = "backend_provider_groups";
+    public static final String TABLE_NAME = "Backend_provider_groups";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -7,7 +7,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = ScrapTypeAnalytics.TABLE_NAME)
 public class ScrapTypeAnalytics {
-    public static final String TABLE_NAME = "backend_scraptypeanalytics";
+    public static final String TABLE_NAME = "Backend_scraptypeanalytics";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

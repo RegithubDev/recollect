@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = ScrapStock.TABLE_NAME)
 public class ScrapStock {
-    public static final String TABLE_NAME = "backend_scrapstock";
+    public static final String TABLE_NAME = "Backend_scrapstock";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

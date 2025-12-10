@@ -9,7 +9,7 @@ import java.util.Objects;
 @Entity
 @Table(name = BwgClient.TABLE_NAME)
 public class BwgClient {
-    public static final String TABLE_NAME = "backend_bwgclient";
+    public static final String TABLE_NAME = "Backend_bwgclient";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

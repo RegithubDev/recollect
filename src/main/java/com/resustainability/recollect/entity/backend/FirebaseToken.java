@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = FirebaseToken.TABLE_NAME)
 public class FirebaseToken {
-    public static final String TABLE_NAME = "backend_firebasetoken";
+    public static final String TABLE_NAME = "Backend_firebasetoken";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

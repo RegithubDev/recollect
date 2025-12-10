@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = ProviderPickupWeightLimit.TABLE_NAME)
 public class ProviderPickupWeightLimit {
-    public static final String TABLE_NAME = "backend_providerpickupweightlimit";
+    public static final String TABLE_NAME = "Backend_providerpickupweightlimit";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

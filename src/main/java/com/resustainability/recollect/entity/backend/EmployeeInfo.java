@@ -10,7 +10,7 @@ import java.time.LocalDate;
         @UniqueConstraint(columnNames = "aadhar_number")
 })
 public class EmployeeInfo {
-    public static final String TABLE_NAME = "backend_employeeinfo";
+    public static final String TABLE_NAME = "Backend_employeeinfo";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

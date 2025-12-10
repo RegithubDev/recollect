@@ -7,7 +7,7 @@ import java.util.Objects;
 @Entity
 @Table(name = BioWasteCategory.TABLE_NAME)
 public class BioWasteCategory {
-    public static final String TABLE_NAME = "backend_biowastecategory";
+    public static final String TABLE_NAME = "Backend_biowastecategory";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

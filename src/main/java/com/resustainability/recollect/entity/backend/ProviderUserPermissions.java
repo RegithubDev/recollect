@@ -10,7 +10,7 @@ import jakarta.persistence.*;
     uniqueConstraints = @UniqueConstraint(columnNames = {"provider_id","permission_id"})
 )
 public class ProviderUserPermissions {
-    public static final String TABLE_NAME = "backend_provider_user_permissions";
+    public static final String TABLE_NAME = "Backend_provider_user_permissions";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

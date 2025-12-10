@@ -10,7 +10,7 @@ import jakarta.persistence.*;
     uniqueConstraints = @UniqueConstraint(columnNames = {"lsgduser_id","group_id"})
 )
 public class LsgdUserGroups {
-    public static final String TABLE_NAME = "backend_lsgduser_groups";
+    public static final String TABLE_NAME = "Backend_lsgduser_groups";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

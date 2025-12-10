@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = ProviderLocationTrack.TABLE_NAME)
 public class ProviderLocationTrack {
-    public static final String TABLE_NAME = "backend_providerlocationtrack";
+    public static final String TABLE_NAME = "Backend_providerlocationtrack";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

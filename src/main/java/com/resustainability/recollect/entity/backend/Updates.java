@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = Updates.TABLE_NAME)
 public class Updates {
-    public static final String TABLE_NAME = "backend_updates";
+    public static final String TABLE_NAME = "Backend_updates";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -7,7 +7,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = CustomerOrderAnalytics.TABLE_NAME)
 public class CustomerOrderAnalytics {
-    public static final String TABLE_NAME = "backend_customerorderanalytics";
+    public static final String TABLE_NAME = "Backend_customerorderanalytics";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

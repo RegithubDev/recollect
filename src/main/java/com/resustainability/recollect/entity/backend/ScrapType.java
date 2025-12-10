@@ -7,7 +7,7 @@ import java.util.Objects;
 @Entity
 @Table(name = ScrapType.TABLE_NAME)
 public class ScrapType {
-    public static final String TABLE_NAME = "backend_scraptype";
+    public static final String TABLE_NAME = "Backend_scraptype";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

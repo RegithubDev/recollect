@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = ProviderTeamAllotedWards.TABLE_NAME)
 public class ProviderTeamAllotedWards {
-    public static final String TABLE_NAME = "backend_providerteamallotedwards";
+    public static final String TABLE_NAME = "Backend_providerteamallotedwards";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

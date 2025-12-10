@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = ProviderScrapRegion.TABLE_NAME)
 public class ProviderScrapRegion {
-    public static final String TABLE_NAME = "backend_providerscrapregion";
+    public static final String TABLE_NAME = "Backend_providerscrapregion";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

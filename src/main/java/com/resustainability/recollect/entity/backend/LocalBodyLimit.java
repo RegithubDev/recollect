@@ -10,7 +10,7 @@ import java.time.LocalDate;
     uniqueConstraints = @UniqueConstraint(columnNames = {"available_date","localbody_id"})
 )
 public class LocalBodyLimit {
-    public static final String TABLE_NAME = "backend_localbodylimit";
+    public static final String TABLE_NAME = "Backend_localbodylimit";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

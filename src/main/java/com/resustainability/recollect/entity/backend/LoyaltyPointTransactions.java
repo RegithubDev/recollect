@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = LoyaltyPointTransactions.TABLE_NAME)
 public class LoyaltyPointTransactions {
-    public static final String TABLE_NAME = "backend_loyaltypointtransactions";
+    public static final String TABLE_NAME = "Backend_loyaltypointtransactions";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
