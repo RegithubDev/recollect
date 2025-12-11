@@ -123,7 +123,8 @@ public class AuthService {
                 jwtUtil.generateToken(
                         provider.getPhoneNumber(),
                         Role.PROVIDER.getAbbreviation(),
-                        provider.getTokenAt()
+                        provider.getTokenAt(),
+                        false
                 ),
                 provider.getFullName(),
                 provider.getEmail(),
