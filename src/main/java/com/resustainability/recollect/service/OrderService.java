@@ -275,6 +275,10 @@ public class OrderService {
                 .filter(ord -> null != ord.getType())
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
 
+        if (OrderStatus.is(order.getStatus(), OrderStatus.COMPLETED)) {
+            throw new InvalidDataException("Once an order is completed, it can no longer be cancelled.");
+        }
+
         if (!orderCancelReasonRepository.existsById(request.reasonId())) {
             throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_REASON);
         }
