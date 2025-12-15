@@ -5,5 +5,7 @@ public record TokenResponse(
         String token,
         String fullName,
         String email,
-        String userType
+        String userType,
+        long id
+        
 ) {}
