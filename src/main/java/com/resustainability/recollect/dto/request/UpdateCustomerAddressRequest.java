@@ -22,7 +22,6 @@ public record UpdateCustomerAddressRequest(
     @Override
     public void validate() {
         ValidationUtils.validateId(id);
-        ValidationUtils.validateUserId(customerId);
         ValidationUtils.validateLatitude(latitude);
         ValidationUtils.validateLongitude(longitude);
 

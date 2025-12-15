@@ -20,7 +20,6 @@ public record AddCustomerAddressRequest(
 ) implements RequestBodyValidator {
     @Override
     public void validate() {
-        ValidationUtils.validateUserId(customerId);
         ValidationUtils.validateLatitude(latitude);
         ValidationUtils.validateLongitude(longitude);
 

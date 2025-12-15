@@ -8,6 +8,7 @@ import com.resustainability.recollect.dto.request.AddCustomerAddressRequest;
 import com.resustainability.recollect.dto.request.UpdateCustomerAddressRequest;
 import com.resustainability.recollect.dto.response.ICustomerAddressResponse;
 import com.resustainability.recollect.dto.response.IUserContext;
+import com.resustainability.recollect.entity.backend.Customer;
 import com.resustainability.recollect.entity.backend.CustomerAddress;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
 import com.resustainability.recollect.exception.UnauthorizedException;
@@ -100,8 +101,21 @@ public class CustomerAddressService {
     public Long add(AddCustomerAddressRequest request) {
         ValidationUtils.validateRequestBody(request);
 
-        if (!customerRepository.existsById(request.customerId())) {
-            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_USER);
+        final IUserContext user = securityService
+                .getCurrentUser()
+                .orElseThrow(UnauthorizedException::new);
+
+        final Customer customer;
+        if (!Boolean.TRUE.equals(user.getIsCustomer())) {
+            ValidationUtils.validateUserId(request.customerId());
+
+            if (!customerRepository.existsById(request.customerId())) {
+                throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_USER);
+            }
+
+            customer = customerRepository.getReferenceById(request.customerId());
+        } else {
+            customer = customerRepository.getReferenceById(user.getId());
         }
 
         if (null != request.scrapRegionId() && !scrapRegionRepository.existsById(request.scrapRegionId())) {
@@ -127,7 +141,7 @@ public class CustomerAddressService {
                         false,
                         null != request.scrapRegionId() ? scrapRegionRepository.getReferenceById(request.scrapRegionId()) : null,
                         null != request.wardId() ? wardRepository.getReferenceById(request.wardId()) : null,
-                        customerRepository.getReferenceById(request.customerId())
+                        customer
                 )
         ).getId();
     }
@@ -135,6 +149,10 @@ public class CustomerAddressService {
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void update(UpdateCustomerAddressRequest request) {
         ValidationUtils.validateRequestBody(request);
+
+        final IUserContext user = securityService
+                .getCurrentUser()
+                .orElseThrow(UnauthorizedException::new);
 
         final ICustomerAddressResponse customerAddress = customerAddressRepository
                 .findByCustomerAddressId(request.id())
@@ -144,7 +162,7 @@ public class CustomerAddressService {
                 .findById(request.id())
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER_ADDRESS));
 
-        final boolean hasCustomerUpdated = !Objects.equals(customerAddress.getCustomerId(), request.customerId());
+        final boolean hasCustomerUpdated = !Boolean.TRUE.equals(user.getIsCustomer()) && !Objects.equals(customerAddress.getCustomerId(), request.customerId());
         final boolean hasScrapRegionUpdated = !Objects.equals(customerAddress.getScrapRegionId(), request.scrapRegionId());
         final boolean hasWardUpdated = !Objects.equals(customerAddress.getWardId(), request.wardId());
 
