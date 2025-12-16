@@ -1,8 +1,11 @@
 package com.resustainability.recollect.repository;
 
+import com.resustainability.recollect.dto.response.IProviderResponse;
 import com.resustainability.recollect.dto.response.IUserContext;
 import com.resustainability.recollect.entity.backend.Provider;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -79,6 +82,73 @@ public interface ProviderRepository extends JpaRepository<Provider, Long> {
     Optional<Provider> findByUsernameAndPassword(
             @Param("username") String username,
             @Param("password") String password
+    );
+
+    @Query("""
+        SELECT
+            p.id AS id,
+            p.providerCode AS code,
+            p.fullName AS fullName,
+            p.phoneNumber AS phoneNumber,
+
+            p.scrapCashInHand AS scrapCashInHand,
+            p.bioCashInHand AS bioCashInHand,
+            p.bwgScrapCashInHand AS bwgScrapCashInHand,
+            p.bwgBioCashInHand AS bwgBioCashInHand,
+            p.totalCashInHand AS totalCashInHand,
+
+            p.plainPassword AS password,
+
+            p.scrapPickup AS scrapPickup,
+            p.biowastePickup AS biowastePickup,
+            p.bwgBioPickup AS bwgBioPickup,
+            p.bwgScrapPickup AS bwgScrapPickup,
+            p.orderPickupLimit AS orderPickupLimit,
+
+            p.isActive AS isActive,
+            p.isDeleted AS isDeleted,
+
+            s.id AS stateId,
+            s.stateName AS stateName,
+            s.stateCode AS stateCode
+
+        FROM Provider p
+        LEFT JOIN p.state s
+        WHERE p.isDeleted = false
+        AND
+            (:searchTerm IS NULL OR :searchTerm = '' OR
+                p.providerCode LIKE CONCAT(:searchTerm, '%') OR
+                p.fullName LIKE CONCAT(:searchTerm, '%')
+            )
+    """)
+    Page<IProviderResponse> findAllPaged(
+            @Param("searchTerm") String searchTerm,
+            Pageable pageable
+    );
+
+    @Query("""
+        SELECT
+            p.id AS id,
+            p.providerCode AS code,
+            p.fullName AS fullName,
+            p.scrapCashInHand AS scrapCashInHand,
+            p.bioCashInHand AS bioCashInHand,
+            p.bwgScrapCashInHand AS bwgScrapCashInHand,
+            p.bwgBioCashInHand AS bwgBioCashInHand,
+            p.totalCashInHand AS totalCashInHand
+
+        FROM Provider p
+        LEFT JOIN p.state s
+        WHERE p.isDeleted = false
+        AND
+            (:searchTerm IS NULL OR :searchTerm = '' OR
+                p.providerCode LIKE CONCAT(:searchTerm, '%') OR
+                p.fullName LIKE CONCAT(:searchTerm, '%')
+            )
+    """)
+    Page<IProviderResponse> findAllCashCollectionPaged(
+            @Param("searchTerm") String searchTerm,
+            Pageable pageable
     );
 
     @Modifying(clearAutomatically = true)

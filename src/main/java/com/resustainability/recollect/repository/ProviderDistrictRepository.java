@@ -9,17 +9,22 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Set;
+
 @Repository
 public interface ProviderDistrictRepository extends JpaRepository<ProviderDistrict, Long> {
-
     @Query("""
-        SELECT 
+        SELECT
             pd.id AS id,
             pd.scrapAllowed AS scrapAllowed,
             pd.bioAllowed AS bioAllowed,
             pd.isActive AS isActive,
 
             d.id AS districtId,
+            d.districtCode AS districtCode,
+            d.districtName AS districtName,
+
             p.id AS providerId
 
         FROM ProviderDistrict pd
@@ -35,15 +40,40 @@ public interface ProviderDistrictRepository extends JpaRepository<ProviderDistri
             Pageable pageable
     );
 
-
     @Query("""
-        SELECT 
+        SELECT
             pd.id AS id,
             pd.scrapAllowed AS scrapAllowed,
             pd.bioAllowed AS bioAllowed,
             pd.isActive AS isActive,
 
             d.id AS districtId,
+            d.districtCode AS districtCode,
+            d.districtName AS districtName,
+
+            p.id AS providerId
+
+        FROM ProviderDistrict pd
+        JOIN pd.district d
+        JOIN pd.provider p
+        WHERE p.id IN :providerIds
+          AND pd.isActive = true
+    """)
+    List<IProviderDistrictResponse> listAllActiveProviderDistricts(
+            @Param("providerIds") Set<Long> providerIds
+    );
+
+    @Query("""
+        SELECT
+            pd.id AS id,
+            pd.scrapAllowed AS scrapAllowed,
+            pd.bioAllowed AS bioAllowed,
+            pd.isActive AS isActive,
+
+            d.id AS districtId,
+            d.districtCode AS districtCode,
+            d.districtName AS districtName,
+
             p.id AS providerId
 
         FROM ProviderDistrict pd
@@ -56,7 +86,7 @@ public interface ProviderDistrictRepository extends JpaRepository<ProviderDistri
 
     @Modifying
     @Query("""
-        UPDATE ProviderDistrict pd 
+        UPDATE ProviderDistrict pd
         SET pd.isActive = :isActive
         WHERE pd.id = :id
     """)
