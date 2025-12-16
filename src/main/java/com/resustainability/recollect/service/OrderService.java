@@ -1,9 +1,6 @@
 package com.resustainability.recollect.service;
 
-import com.resustainability.recollect.commons.DateTimeFormatUtils;
-import com.resustainability.recollect.commons.Default;
-import com.resustainability.recollect.commons.IdGenerator;
-import com.resustainability.recollect.commons.ValidationUtils;
+import com.resustainability.recollect.commons.*;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.CancelOrderRequest;
@@ -16,6 +13,7 @@ import com.resustainability.recollect.exception.UnauthorizedException;
 import com.resustainability.recollect.repository.*;
 import com.resustainability.recollect.tag.OrderStatus;
 import com.resustainability.recollect.tag.OrderType;
+import com.resustainability.recollect.tag.Role;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +33,7 @@ public class OrderService {
     private final CustomerAddressRepository customerAddressRepository;
     private final OrderCancelReasonRepository orderCancelReasonRepository;
     private final CompleteOrdersRepository completeOrdersRepository;
+    private final CompleteOrderLogRepository completeOrderLogRepository;
     private final ScrapOrdersRepository scrapOrdersRepository;
     private final BioWasteOrdersRepository bioWasteOrdersRepository;
     private final ScrapRegionRepository scrapRegionRepository;
@@ -50,6 +49,7 @@ public class OrderService {
             CustomerAddressRepository customerAddressRepository,
             OrderCancelReasonRepository orderCancelReasonRepository,
             CompleteOrdersRepository completeOrdersRepository,
+            CompleteOrderLogRepository completeOrderLogRepository,
             ScrapOrdersRepository scrapOrdersRepository,
             BioWasteOrdersRepository bioWasteOrdersRepository,
             ScrapRegionRepository scrapRegionRepository,
@@ -63,6 +63,7 @@ public class OrderService {
         this.customerAddressRepository = customerAddressRepository;
         this.orderCancelReasonRepository = orderCancelReasonRepository;
         this.completeOrdersRepository = completeOrdersRepository;
+        this.completeOrderLogRepository = completeOrderLogRepository;
         this.scrapOrdersRepository = scrapOrdersRepository;
         this.bioWasteOrdersRepository = bioWasteOrdersRepository;
         this.scrapRegionRepository = scrapRegionRepository;
@@ -228,7 +229,7 @@ public class OrderService {
             throw new InvalidDataException("Specify supported order type");
         }
 
-        return completeOrdersRepository.save(
+        final CompleteOrders completeOrder = completeOrdersRepository.save(
                 new CompleteOrders(
                         null,
                         request.scheduleDate(),
@@ -263,7 +264,37 @@ public class OrderService {
                         state,
                         customer
                 )
-        ).getId();
+        );
+
+        final String userRole = Role.fromUserContext(user);
+
+        completeOrderLogRepository.save(
+                new CompleteOrderLog(
+                        null,
+                        String.format(
+                                "%s%s%s",
+                                user.getFullName(),
+                                StringUtils.isNotBlank(user.getPhoneNumber())
+                                        ? String.format("/%s", user.getPhoneNumber())
+                                        : Default.EMPTY,
+                                StringUtils.isNotBlank(userRole)
+                                        ? String.format(" - (%s)", userRole)
+                                        : Default.EMPTY
+                        ),
+                        String.format(
+                                "Order Placed with Schedule Date %s by ",
+                                DateTimeFormatUtils.toIsoDate(request.scheduleDate())
+                        ),
+                        LocalDateTime.now(),
+                        null,
+                        null,
+                        completeOrder,
+                        null,
+                        customer
+                )
+        );
+
+        return completeOrder.getId();
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)

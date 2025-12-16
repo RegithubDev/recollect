@@ -34,6 +34,7 @@ public class UserPrincipal implements UserDetails {
                 .of(
                         Boolean.TRUE.equals(user.getIsAdmin()) ? Role.ADMIN.name() : null,
                         Boolean.TRUE.equals(user.getIsCustomer()) ? Role.CUSTOMER.name() : null,
+                        Boolean.TRUE.equals(user.getIsProvider()) ? Role.PROVIDER.name() : null,
                         Boolean.TRUE.equals(user.getRoleActive()) && StringUtils.isNotBlank(user.getRoleName()) ? user.getRoleName() : null
                 )
                 .filter(StringUtils::isNotBlank)

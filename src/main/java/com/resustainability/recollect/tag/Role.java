@@ -2,6 +2,7 @@ package com.resustainability.recollect.tag;
 
 import com.resustainability.recollect.commons.Default;
 import com.resustainability.recollect.commons.StringUtils;
+import com.resustainability.recollect.dto.response.IUserContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +36,14 @@ public enum Role {
 			}
 		}
 		throw new IllegalArgumentException("Unknown abbreviation: " + abbreviation);
+	}
+
+	public static String fromUserContext(IUserContext user) {
+		if (null == user) return null;
+		if (Boolean.TRUE.equals(user.getIsCustomer())) return CUSTOMER.getAbbreviation();
+		if (Boolean.TRUE.equals(user.getIsAdmin())) return ADMIN.getAbbreviation();
+		if (Boolean.TRUE.equals(user.getIsProvider())) return PROVIDER.getAbbreviation();
+		return null;
 	}
 
 	public static boolean is(String abbreviation, Role value) {
