@@ -155,7 +155,7 @@ public class OrderService {
                 ? wardRepository.getReferenceById(address.getWardId())
                 : null;
 
-        final double defaultDoubleValue = Double.NaN;
+        final double defaultDoubleValue = 0.0d;
         final String defaultOrderStatus = OrderStatus.OPEN.getAbbreviation();
 
         ScrapOrders scrapOrder = null;
