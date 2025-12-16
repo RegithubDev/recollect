@@ -4,6 +4,7 @@ import com.resustainability.recollect.dto.commons.APIResponse;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.response.ProviderCashCollectionResponse;
+import com.resustainability.recollect.dto.response.ProviderResponse;
 import com.resustainability.recollect.service.ProviderService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,15 @@ public class ProviderController {
     ) {
         return new APIResponse<>(
                 providerService.listCashCollection(searchCriteria)
+        );
+    }
+
+    @GetMapping("/list")
+    public APIResponse<Pager<ProviderResponse>> list(
+            @ModelAttribute SearchCriteria searchCriteria
+    ) {
+        return new APIResponse<>(
+                providerService.list(searchCriteria)
         );
     }
 }
