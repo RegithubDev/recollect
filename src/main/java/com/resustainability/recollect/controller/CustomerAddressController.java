@@ -28,10 +28,11 @@ public class CustomerAddressController {
 
     @GetMapping("/list")
     public APIResponse<Pager<ICustomerAddressResponse>> list(
+            @RequestParam(value = "customerId", required = false) Long customerId,
             @ModelAttribute SearchCriteria searchCriteria
     ) {
         return new APIResponse<>(
-                customerAddressService.list(searchCriteria)
+                customerAddressService.list(customerId, searchCriteria)
         );
     }
 
@@ -77,14 +78,4 @@ public class CustomerAddressController {
         customerAddressService.deleteById(customerAddressId, false);
         return new APIResponse<>(Default.SUCCESS_UNDELETE_CUSTOMER_ADDRESS);
     }
-    
-    @GetMapping("/addressdetails/{customerId}")
-    public APIResponse<List <ICustomerAddressResponse>> getByCustomerId(
-            @PathVariable Long customerId
-    ) {
-        return new APIResponse<>(
-                customerAddressService.getByCustomerId(customerId)
-        );
-    }
-
 }

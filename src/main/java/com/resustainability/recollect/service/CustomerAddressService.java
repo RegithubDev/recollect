@@ -51,7 +51,7 @@ public class CustomerAddressService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public Pager<ICustomerAddressResponse> list(SearchCriteria searchCriteria) {
+    public Pager<ICustomerAddressResponse> list(Long customerId, SearchCriteria searchCriteria) {
         final IUserContext user = securityService
                 .getCurrentUser()
                 .orElseThrow(UnauthorizedException::new);
@@ -61,6 +61,7 @@ public class CustomerAddressService {
         if (Boolean.TRUE.equals(user.getIsAdmin())) {
             return Pager.of(
                     customerAddressRepository.findAllPaged(
+                            customerId,
                             searchCriteria.getQ(),
                             pageable
                     )
@@ -232,29 +233,4 @@ public class CustomerAddressService {
             throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER_ADDRESS);
         }
     }
-    
-    
-    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public List<ICustomerAddressResponse> getByCustomerId(Long customerId) {
-        ValidationUtils.validateId(customerId);
-
-        final IUserContext user = securityService
-                .getCurrentUser()
-                .orElseThrow(UnauthorizedException::new);
-
-        // Non-admin can fetch only their own addresses
-        if (!Boolean.TRUE.equals(user.getIsAdmin())) {
-            if (!user.getId().equals(customerId)) {
-                throw new UnauthorizedException();
-            }
-
-            return customerAddressRepository
-                    .findAllByCustomerId(customerId);
-        }
-
-        // Admin can fetch any customer's addresses
-        return customerAddressRepository
-                .findAllByCustomerId(customerId);
-    }
-
 }
