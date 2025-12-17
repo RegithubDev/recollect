@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -257,4 +258,59 @@ public interface CustomerAddressRepository extends JpaRepository<CustomerAddress
             @Param("id") Long customerAddressId,
             @Param("isDeleted") boolean isDeleted
     );
+    
+    
+    
+    @Query("""
+    	    SELECT
+    	        ca.id AS id,
+
+    	        ca.scrapService AS isScrapService,
+    	        ca.scrapLocationActive AS isScrapLocationActive,
+    	        ca.bioWasteService AS isBioWasteService,
+    	        ca.bioWasteLocationActive AS isBioWasteLocationActive,
+
+    	        ca.residenceType AS residenceType,
+    	        ca.residenceDetails AS residenceDetails,
+    	        ca.landmark AS landmark,
+    	        ca.latitude AS latitude,
+    	        ca.longitude AS longitude,
+
+    	        ca.isDeleted AS isDeleted,
+
+    	        c.id AS customerId,
+    	        c.fullName AS fullName,
+
+    	        r.id AS scrapRegionId,
+    	        r.regionName AS scrapRegionName,
+
+    	        d.id AS districtId,
+    	        d.districtName AS districtName,
+    	        d.districtCode AS districtCode,
+
+    	        s.id AS stateId,
+    	        s.stateName AS stateName,
+    	        s.stateCode AS stateCode,
+
+    	        w.id AS wardId,
+    	        w.wardNo AS wardNo,
+    	        w.wardName AS wardName,
+
+    	        lb.id AS localBodyId,
+    	        lb.localBodyName AS localBodyName
+
+    	    FROM CustomerAddress ca
+    	    JOIN ca.customer c
+    	    LEFT JOIN ca.scrapRegion r
+    	    LEFT JOIN r.district d
+    	    LEFT JOIN d.state s
+    	    LEFT JOIN ca.ward w
+    	    LEFT JOIN w.localbody lb
+    	    WHERE c.id = :customerId
+    	      AND ca.isDeleted = false
+    	""")
+    	List<ICustomerAddressResponse> findAllByCustomerId(
+    	        @Param("customerId") Long customerId
+    	);
+
 }

@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -231,4 +232,29 @@ public class CustomerAddressService {
             throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER_ADDRESS);
         }
     }
+    
+    
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public List<ICustomerAddressResponse> getByCustomerId(Long customerId) {
+        ValidationUtils.validateId(customerId);
+
+        final IUserContext user = securityService
+                .getCurrentUser()
+                .orElseThrow(UnauthorizedException::new);
+
+        // Non-admin can fetch only their own addresses
+        if (!Boolean.TRUE.equals(user.getIsAdmin())) {
+            if (!user.getId().equals(customerId)) {
+                throw new UnauthorizedException();
+            }
+
+            return customerAddressRepository
+                    .findAllByCustomerId(customerId);
+        }
+
+        // Admin can fetch any customer's addresses
+        return customerAddressRepository
+                .findAllByCustomerId(customerId);
+    }
+
 }

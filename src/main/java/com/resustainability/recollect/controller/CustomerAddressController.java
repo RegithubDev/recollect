@@ -9,6 +9,8 @@ import com.resustainability.recollect.dto.request.UpdateCustomerAddressRequest;
 import com.resustainability.recollect.dto.response.ICustomerAddressResponse;
 import com.resustainability.recollect.service.CustomerAddressService;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -75,4 +77,14 @@ public class CustomerAddressController {
         customerAddressService.deleteById(customerAddressId, false);
         return new APIResponse<>(Default.SUCCESS_UNDELETE_CUSTOMER_ADDRESS);
     }
+    
+    @GetMapping("/addressdetails/{customerId}")
+    public APIResponse<List <ICustomerAddressResponse>> getByCustomerId(
+            @PathVariable Long customerId
+    ) {
+        return new APIResponse<>(
+                customerAddressService.getByCustomerId(customerId)
+        );
+    }
+
 }
