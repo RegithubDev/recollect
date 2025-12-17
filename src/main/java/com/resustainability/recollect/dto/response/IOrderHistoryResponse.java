@@ -17,4 +17,12 @@ public interface IOrderHistoryResponse {
 	Long getBioWasteOrderId();
 
 	Long getScrapRegionId();
+
+	Long getAddressId();
+	String getResidenceType();
+	String getResidenceDetails();
+	String getLandmark();
+	String getLatitude();
+	String getLongitude();
+	Boolean getIsAddressDeleted();
 }

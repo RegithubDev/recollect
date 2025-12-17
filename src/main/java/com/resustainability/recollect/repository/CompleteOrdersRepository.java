@@ -87,11 +87,20 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
             o.orderType AS type,
             o.scheduleDate AS scheduleDate,
             COALESCE(so.orderDate, bo.orderDate) AS orderDate,
-            o.orderStatus AS status
+            o.orderStatus AS status,
+            COALESCE(aso.id, abo.id) AS addressId,
+            COALESCE(aso.residenceType, abo.residenceType) AS residenceType,
+            COALESCE(aso.residenceDetails, abo.residenceDetails) AS residenceDetails,
+            COALESCE(aso.landmark, abo.landmark) AS landmark,
+            COALESCE(aso.latitude, abo.latitude) AS latitude,
+            COALESCE(aso.longitude, abo.longitude) AS longitude,
+            COALESCE(aso.isDeleted, abo.isDeleted) AS isAddressDeleted
         FROM CompleteOrders o
         JOIN o.customer c
         LEFT JOIN o.scrapOrder so
+        LEFT JOIN so.address aso
         LEFT JOIN o.bioWasteOrder bo
+        LEFT JOIN bo.address abo
         WHERE (so.id IS NOT NULL OR bo.id IS NOT NULL)
         AND o.id = :id
     """)
@@ -111,11 +120,20 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
             o.orderType AS type,
             o.scheduleDate AS scheduleDate,
             COALESCE(so.orderDate, bo.orderDate) AS orderDate,
-            o.orderStatus AS status
+            o.orderStatus AS status,
+            COALESCE(aso.id, abo.id) AS addressId,
+            COALESCE(aso.residenceType, abo.residenceType) AS residenceType,
+            COALESCE(aso.residenceDetails, abo.residenceDetails) AS residenceDetails,
+            COALESCE(aso.landmark, abo.landmark) AS landmark,
+            COALESCE(aso.latitude, abo.latitude) AS latitude,
+            COALESCE(aso.longitude, abo.longitude) AS longitude,
+            COALESCE(aso.isDeleted, abo.isDeleted) AS isAddressDeleted
         FROM CompleteOrders o
         JOIN o.customer c
         LEFT JOIN o.scrapOrder so
+        LEFT JOIN so.address aso
         LEFT JOIN o.bioWasteOrder bo
+        LEFT JOIN bo.address abo
         WHERE (so.id IS NOT NULL OR bo.id IS NOT NULL)
         AND o.id = :id
         AND c.id = :customerId
