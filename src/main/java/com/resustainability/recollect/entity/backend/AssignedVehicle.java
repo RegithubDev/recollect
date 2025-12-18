@@ -18,4 +18,43 @@ public class AssignedVehicle {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id", nullable = false)
     private Provider provider;
+    
+    public AssignedVehicle() {
+    	
+    }
+
+	public AssignedVehicle(Long id, PickupVehicle vehicle, Provider provider) {
+		super();
+		this.id = id;
+		this.vehicle = vehicle;
+		this.provider = provider;
+	}
+	
+	
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public PickupVehicle getVehicle() {
+		return vehicle;
+	}
+
+	public void setVehicle(PickupVehicle vehicle) {
+		this.vehicle = vehicle;
+	}
+
+	public Provider getProvider() {
+		return provider;
+	}
+
+	public void setProvider(Provider provider) {
+		this.provider = provider;
+	}
+    
+    
 }
