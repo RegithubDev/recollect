@@ -40,15 +40,4 @@ public class SwaggerConfiguration {
                         new SecurityRequirement().addList("bearerAuth")
                 );
     }
-
-    @Bean
-    public OpenApiCustomizer serverSchemeCustomizer(HttpServletRequest request) {
-        return openApi -> {
-            final String host = request.getServerName();
-            final boolean isIp = host.matches("^localhost$|^\\d{1,3}(\\.\\d{1,3}){3}$");
-            openApi.setServers(List.of(
-                    new Server().url(isIp ? "http" : "https" + "://" + host + ":" + request.getServerPort())
-            ));
-        };
-    }
 }
