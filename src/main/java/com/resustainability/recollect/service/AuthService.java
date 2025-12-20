@@ -72,6 +72,7 @@ public class AuthService {
         );
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public TokenResponse adminLogin(LoginViaCredentialsRequest request) {
         ValidationUtils.validateRequestBody(request);
 
@@ -94,7 +95,8 @@ public class AuthService {
                 jwtUtil.generateToken(
                         adminUser.getUsername(),
                         Role.ADMIN.getAbbreviation(),
-                        adminUser.getTokenAt()
+                        adminUser.getTokenAt(),
+                        false
                 ),
                 adminUser.getFullName(),
                 adminUser.getEmail(),
@@ -103,6 +105,7 @@ public class AuthService {
         );
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public TokenResponse providerLogin(LoginViaCredentialsRequest request) {
         ValidationUtils.validateRequestBody(request);
 
