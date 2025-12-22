@@ -78,8 +78,8 @@ public class MobileService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public Collection<ItemCategoryResponse> listScrapCategories() {
-        final Long districtId = securityService
+    public Collection<ItemCategoryResponse> listScrapCategories(Long addressDistrictId) {
+        final Long districtId = null != addressDistrictId ? addressDistrictId : securityService
                 .getCurrentUser()
                 .map(IUserContext::getDistrictId)
                 .orElse(null);
