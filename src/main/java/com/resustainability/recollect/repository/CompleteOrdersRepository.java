@@ -110,6 +110,112 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
         LEFT JOIN so.scrapRegion sr
         LEFT JOIN o.bioWasteOrder bo
         LEFT JOIN bo.address abo
+        WHERE o.isDeleted = false
+            AND p IS NULL
+            AND o.orderStatus = :orderStatus
+            AND (so.id IS NOT NULL OR bo.id IS NOT NULL)
+            AND (
+                :searchTerm IS NULL OR :searchTerm = '' OR
+                c.fullName LIKE CONCAT(:searchTerm, '%') OR
+                COALESCE(so.orderCode, bo.orderCode) LIKE CONCAT(:searchTerm, '%') OR
+                o.orderType LIKE CONCAT(:searchTerm, '%')
+            )
+    """)
+    Page<IOrderHistoryResponse> findAllAssignablePaged(
+            @Param("orderStatus") String orderStatus,
+            @Param("searchTerm") String searchTerm,
+            Pageable pageable
+    );
+
+    @Query("""
+        SELECT
+            o.id AS id,
+            so.id AS scrapOrderId,
+            sr.id AS scrapRegionId,
+            sr.regionName AS scrapRegionName,
+            d.id AS districtId,
+            d.districtName AS districtName,
+            d.districtCode AS districtCode,
+            p.id AS providerId,
+            p.fullName AS providerName,
+            bo.id AS bioWasteOrderId,
+            c.id AS customerId,
+            c.fullName AS fullName,
+            COALESCE(so.orderCode, bo.orderCode) AS code,
+            o.orderType AS type,
+            o.scheduleDate AS scheduleDate,
+            COALESCE(so.orderDate, bo.orderDate) AS orderDate,
+            o.orderStatus AS status,
+            COALESCE(aso.id, abo.id) AS addressId,
+            COALESCE(aso.residenceType, abo.residenceType) AS residenceType,
+            COALESCE(aso.residenceDetails, abo.residenceDetails) AS residenceDetails,
+            COALESCE(aso.landmark, abo.landmark) AS landmark,
+            COALESCE(aso.latitude, abo.latitude) AS latitude,
+            COALESCE(aso.longitude, abo.longitude) AS longitude,
+            COALESCE(aso.isDeleted, abo.isDeleted) AS isAddressDeleted
+        FROM CompleteOrders o
+        JOIN o.customer c
+        JOIN o.district d
+        LEFT JOIN o.provider p
+        LEFT JOIN o.scrapOrder so
+        LEFT JOIN so.address aso
+        LEFT JOIN so.scrapRegion sr
+        LEFT JOIN o.bioWasteOrder bo
+        LEFT JOIN bo.address abo
+        WHERE o.isDeleted = false
+            AND p IS NULL
+            AND o.orderStatus = :orderStatus
+            AND (so.id IS NOT NULL OR bo.id IS NOT NULL)
+            AND d.id = :districtId
+            AND (
+                :searchTerm IS NULL OR :searchTerm = '' OR
+                c.fullName LIKE CONCAT(:searchTerm, '%') OR
+                COALESCE(so.orderCode, bo.orderCode) LIKE CONCAT(:searchTerm, '%') OR
+                o.orderType LIKE CONCAT(:searchTerm, '%')
+            )
+    """)
+    Page<IOrderHistoryResponse> findAllAssignablePagedIfBelongs(
+            @Param("orderStatus") String orderStatus,
+            @Param("districtId") Long districtId,
+            @Param("searchTerm") String searchTerm,
+            Pageable pageable
+    );
+
+    @Query("""
+        SELECT
+            o.id AS id,
+            so.id AS scrapOrderId,
+            sr.id AS scrapRegionId,
+            sr.regionName AS scrapRegionName,
+            d.id AS districtId,
+            d.districtName AS districtName,
+            d.districtCode AS districtCode,
+            p.id AS providerId,
+            p.fullName AS providerName,
+            bo.id AS bioWasteOrderId,
+            c.id AS customerId,
+            c.fullName AS fullName,
+            COALESCE(so.orderCode, bo.orderCode) AS code,
+            o.orderType AS type,
+            o.scheduleDate AS scheduleDate,
+            COALESCE(so.orderDate, bo.orderDate) AS orderDate,
+            o.orderStatus AS status,
+            COALESCE(aso.id, abo.id) AS addressId,
+            COALESCE(aso.residenceType, abo.residenceType) AS residenceType,
+            COALESCE(aso.residenceDetails, abo.residenceDetails) AS residenceDetails,
+            COALESCE(aso.landmark, abo.landmark) AS landmark,
+            COALESCE(aso.latitude, abo.latitude) AS latitude,
+            COALESCE(aso.longitude, abo.longitude) AS longitude,
+            COALESCE(aso.isDeleted, abo.isDeleted) AS isAddressDeleted
+        FROM CompleteOrders o
+        JOIN o.customer c
+        JOIN o.district d
+        LEFT JOIN o.provider p
+        LEFT JOIN o.scrapOrder so
+        LEFT JOIN so.address aso
+        LEFT JOIN so.scrapRegion sr
+        LEFT JOIN o.bioWasteOrder bo
+        LEFT JOIN bo.address abo
         WHERE (so.id IS NOT NULL OR bo.id IS NOT NULL)
         AND o.id = :id
     """)

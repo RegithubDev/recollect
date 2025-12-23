@@ -108,7 +108,32 @@ public class OrderService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Pager<IOrderHistoryResponse> listAssignable(SearchCriteria searchCriteria) {
-        return null;
+        final IUserContext user = securityService
+                .getCurrentUser()
+                .orElseThrow(UnauthorizedException::new);
+
+        final Pageable pageable = searchCriteria.toPageRequest();
+
+        if (Boolean.TRUE.equals(user.getIsAdmin())) {
+            return Pager.of(
+                    completeOrdersRepository.findAllAssignablePaged(
+                            OrderStatus.PENDING.getAbbreviation(),
+                            searchCriteria.getQ(),
+                            pageable
+                    )
+            );
+        } else if (Boolean.TRUE.equals(user.getIsProvider())) {
+            return Pager.of(
+                    completeOrdersRepository.findAllAssignablePagedIfBelongs(
+                            OrderStatus.PENDING.getAbbreviation(),
+                            user.getDistrictId(),
+                            searchCriteria.getQ(),
+                            pageable
+                    )
+            );
+        }
+
+        return Pager.empty(pageable);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
