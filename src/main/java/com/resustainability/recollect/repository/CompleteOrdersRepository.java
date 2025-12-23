@@ -79,7 +79,13 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
         SELECT
             o.id AS id,
             so.id AS scrapOrderId,
-            so.scrapRegion.id AS scrapRegionId,
+            sr.id AS scrapRegionId,
+            sr.regionName AS scrapRegionName,
+            d.id AS districtId,
+            d.districtName AS districtName,
+            d.districtCode AS districtCode,
+            p.id AS providerId,
+            p.fullName AS providerName,
             bo.id AS bioWasteOrderId,
             c.id AS customerId,
             c.fullName AS fullName,
@@ -97,8 +103,11 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
             COALESCE(aso.isDeleted, abo.isDeleted) AS isAddressDeleted
         FROM CompleteOrders o
         JOIN o.customer c
+        JOIN o.district d
+        LEFT JOIN o.provider p
         LEFT JOIN o.scrapOrder so
         LEFT JOIN so.address aso
+        LEFT JOIN so.scrapRegion sr
         LEFT JOIN o.bioWasteOrder bo
         LEFT JOIN bo.address abo
         WHERE (so.id IS NOT NULL OR bo.id IS NOT NULL)
@@ -112,7 +121,13 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
         SELECT
             o.id AS id,
             so.id AS scrapOrderId,
-            so.scrapRegion.id AS scrapRegionId,
+            sr.id AS scrapRegionId,
+            sr.regionName AS scrapRegionName,
+            d.id AS districtId,
+            d.districtName AS districtName,
+            d.districtCode AS districtCode,
+            p.id AS providerId,
+            p.fullName AS providerName,
             bo.id AS bioWasteOrderId,
             c.id AS customerId,
             c.fullName AS fullName,
@@ -130,8 +145,11 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
             COALESCE(aso.isDeleted, abo.isDeleted) AS isAddressDeleted
         FROM CompleteOrders o
         JOIN o.customer c
+        JOIN o.district d
+        LEFT JOIN o.provider p
         LEFT JOIN o.scrapOrder so
         LEFT JOIN so.address aso
+        LEFT JOIN so.scrapRegion sr
         LEFT JOIN o.bioWasteOrder bo
         LEFT JOIN bo.address abo
         WHERE (so.id IS NOT NULL OR bo.id IS NOT NULL)

@@ -44,12 +44,34 @@ public class OrderController {
         );
     }
 
+    @GetMapping("/list-assignable")
+    public APIResponse<Pager<IOrderHistoryResponse>> listAssignable(
+            @ModelAttribute SearchCriteria searchCriteria
+    ) {
+        return new APIResponse<>(
+                orderService.listAssignable(searchCriteria)
+        );
+    }
+
     @GetMapping("/details/{orderId}")
     public APIResponse<IOrderHistoryResponse> getById(
             @PathVariable(value = "orderId", required = false) Long orderId
     ) {
         return new APIResponse<>(
                 orderService.getById(orderId)
+        );
+    }
+
+    @PostMapping("/self-assign/{orderId}")
+    @PreAuthorize("hasRole('PROVIDER')")
+    public APIResponse<IOrderHistoryResponse> selfAssign(
+            @PathVariable(value = "orderId", required = false) Long orderId
+    ) {
+        return new APIResponse<>(
+                Default.SUCCESS_ORDER_SELF_ASSIGNED,
+                orderService.getById(
+                        orderService.selfAssign(orderId)
+                )
         );
     }
 

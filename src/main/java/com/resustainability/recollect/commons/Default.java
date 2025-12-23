@@ -120,6 +120,7 @@ public class Default {
     public static final String SUCCESS_UNDELETE_CUSTOMER_ADDRESS = "All done! The address's been restored.";
 
     public static final String SUCCESS_ORDER_PLACED = "Order placed.";
+    public static final String SUCCESS_ORDER_SELF_ASSIGNED = "Order assigned to you.";
     public static final String SUCCESS_UPDATE_ORDER_DETAILS = "Order details have been updated successfully.";
     public static final String SUCCESS_CANCEL_ORDER = "Order has been cancelled.";
     public static final String SUCCESS_DELETE_ORDER = "All done! The order's been deleted.";

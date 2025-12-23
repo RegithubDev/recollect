@@ -107,6 +107,11 @@ public class OrderService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public Pager<IOrderHistoryResponse> listAssignable(SearchCriteria searchCriteria) {
+        return null;
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public IOrderHistoryResponse getById(Long completeOrderId) {
         ValidationUtils.validateId(completeOrderId);
 
@@ -123,6 +128,11 @@ public class OrderService {
         return completeOrdersRepository
                 .findByCompleteOrderId(completeOrderId)
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public Long selfAssign(Long completeOrderId) {
+        return null;
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)

@@ -16,7 +16,15 @@ public interface IOrderHistoryResponse {
 	Long getScrapOrderId();
 	Long getBioWasteOrderId();
 
+	Long getDistrictId();
+	String getDistrictName();
+	String getDistrictCode();
+
 	Long getScrapRegionId();
+	String getScrapRegionName();
+
+	Long getProviderId();
+	String getProviderName();
 
 	Long getAddressId();
 	String getResidenceType();
