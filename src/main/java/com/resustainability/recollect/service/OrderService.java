@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Service
 public class OrderService {
@@ -41,6 +42,8 @@ public class OrderService {
     private final DistrictRepository districtRepository;
     private final StateRepository stateRepository;
     private final CustomerRepository customerRepository;
+    private final ProviderRepository providerRepository;
+    private final ProviderDistrictRepository providerDistrictRepository;
 
     @Autowired
     public OrderService(
@@ -56,7 +59,9 @@ public class OrderService {
             WardRepository wardRepository,
             DistrictRepository districtRepository,
             StateRepository stateRepository,
-            CustomerRepository customerRepository
+            CustomerRepository customerRepository,
+            ProviderRepository providerRepository,
+            ProviderDistrictRepository providerDistrictRepository
     ) {
         this.securityService = securityService;
         this.scrapRegionAvailabilityService = scrapRegionAvailabilityService;
@@ -71,6 +76,8 @@ public class OrderService {
         this.districtRepository = districtRepository;
         this.stateRepository = stateRepository;
         this.customerRepository = customerRepository;
+        this.providerRepository = providerRepository;
+        this.providerDistrictRepository = providerDistrictRepository;
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
@@ -123,10 +130,13 @@ public class OrderService {
                     )
             );
         } else if (Boolean.TRUE.equals(user.getIsProvider())) {
+            final Set<Long> districtIds = providerDistrictRepository
+                    .listAllActiveProviderDistrictIds(user.getId());
+
             return Pager.of(
                     completeOrdersRepository.findAllAssignablePagedIfBelongs(
                             OrderStatus.PENDING.getAbbreviation(),
-                            user.getDistrictId(),
+                            districtIds,
                             searchCriteria.getQ(),
                             pageable
                     )
@@ -153,11 +163,6 @@ public class OrderService {
         return completeOrdersRepository
                 .findByCompleteOrderId(completeOrderId)
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
-    }
-
-    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public Long selfAssign(Long completeOrderId) {
-        return null;
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
@@ -330,6 +335,69 @@ public class OrderService {
         );
 
         return completeOrder.getId();
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public Long selfAssign(Long completeOrderId) {
+        ValidationUtils.validateId(completeOrderId);
+
+        final IUserContext user = securityService
+                .getCurrentUser()
+                .filter(usr -> Boolean.TRUE.equals(usr.getIsProvider()))
+                .orElseThrow(UnauthorizedException::new);
+
+        final IOrderHistoryResponse order = completeOrdersRepository
+                .findByCompleteOrderId(completeOrderId)
+                .filter(ord -> null != ord.getType())
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
+
+        final Set<Long> districtIds = providerDistrictRepository
+                .listAllActiveProviderDistrictIds(user.getId());
+
+        if (!OrderStatus.is(order.getStatus(), OrderStatus.OPEN)) {
+            throw new InvalidDataException("This order is no longer available for assignment.");
+        }
+
+        if (0 == completeOrdersRepository.assignProviderIfEligible(
+                completeOrderId,
+                user.getId(),
+                districtIds,
+                OrderStatus.OPEN.getAbbreviation(),
+                OrderStatus.CONFIRMED.getAbbreviation()
+        )) {
+            throw new InvalidDataException("This order has already been claimed and cannot be assigned to you.");
+        }
+
+        final LocalDateTime now = LocalDateTime.now();
+        final String userRole = Role.fromUserContext(user);
+
+        completeOrderLogRepository.save(
+                new CompleteOrderLog(
+                        null,
+                        String.format(
+                                "%s%s%s",
+                                user.getFullName(),
+                                StringUtils.isNotBlank(user.getPhoneNumber())
+                                        ? String.format("/%s", user.getPhoneNumber())
+                                        : Default.EMPTY,
+                                StringUtils.isNotBlank(userRole)
+                                        ? String.format(" - (%s)", userRole)
+                                        : Default.EMPTY
+                        ),
+                        String.format(
+                                "Order Accepted on %s by ",
+                                DateTimeFormatUtils.toDbTimestamp(now)
+                        ),
+                        now,
+                        null,
+                        null,
+                        completeOrdersRepository.getReferenceById(order.getId()),
+                        providerRepository.getReferenceById(user.getId()),
+                        null != order.getCustomerId() ? customerRepository.getReferenceById(order.getCustomerId()) : null
+                )
+        );
+
+        return order.getId();
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)

@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, Long> {
@@ -166,7 +167,7 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
             AND p IS NULL
             AND o.orderStatus = :orderStatus
             AND (so.id IS NOT NULL OR bo.id IS NOT NULL)
-            AND d.id = :districtId
+            AND d.id IN :districtIds
             AND (
                 :searchTerm IS NULL OR :searchTerm = '' OR
                 c.fullName LIKE CONCAT(:searchTerm, '%') OR
@@ -176,7 +177,7 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
     """)
     Page<IOrderHistoryResponse> findAllAssignablePagedIfBelongs(
             @Param("orderStatus") String orderStatus,
-            @Param("districtId") Long districtId,
+            @Param("districtIds") Set<Long> districtIds,
             @Param("searchTerm") String searchTerm,
             Pageable pageable
     );
@@ -289,5 +290,24 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
     int deleteByCompleteOrderId(
             @Param("id") Long completeOrderId,
             @Param("isDeleted") boolean isDeleted
+    );
+
+    @Modifying(clearAutomatically = true)
+    @Query("""
+        UPDATE CompleteOrders o
+        SET o.provider.id = :providerId,
+            o.orderStatus = :newOrderStatus
+        WHERE o.id = :id
+            AND o.isDeleted = false
+            AND o.provider.id IS NULL
+            AND o.district.id IN :districtIds
+            AND o.orderStatus = :expectedOrderStatus
+    """)
+    int assignProviderIfEligible(
+            @Param("id") Long completeOrderId,
+            @Param("providerId") Long providerId,
+            @Param("districtIds") Set<Long> districtIds,
+            @Param("expectedOrderStatus") String expectedOrderStatus,
+            @Param("newOrderStatus") String newOrderStatus
     );
 }
