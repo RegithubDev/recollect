@@ -108,6 +108,7 @@ public class CompleteOrders {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "scrap_order_id")
     private ScrapOrders scrapOrder;
+    
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "state_id")

@@ -10,7 +10,7 @@ public interface IOrderHistoryResponse {
 	String getCode();
 	String getType();
 	LocalDate getScheduleDate();
-	LocalDateTime getOrderDate();
+	LocalDateTime getOrderDate(); 
 	String getStatus();
 
 	Long getScrapOrderId();
@@ -22,9 +22,10 @@ public interface IOrderHistoryResponse {
 
 	Long getScrapRegionId();
 	String getScrapRegionName();
-
+	String getVehicle();
 	Long getProviderId();
 	String getProviderName();
+	String getPlatform();
 
 	Long getAddressId();
 	String getResidenceType();
@@ -33,4 +34,6 @@ public interface IOrderHistoryResponse {
 	String getLatitude();
 	String getLongitude();
 	Boolean getIsAddressDeleted();
+	String getScrapBillType();
+	String getDHBillType();
 }

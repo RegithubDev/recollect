@@ -25,11 +25,14 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
             o.orderType AS type,
             o.scheduleDate AS scheduleDate,
             COALESCE(so.orderDate, bo.orderDate) AS orderDate,
-            o.orderStatus AS status
+            o.orderStatus AS status, pv.vehicleNumber as vehicle, so.platform, p.fullName as providerName
+            , p.id as providerId, so.billType as scrapBillType, bo.billType as DHBillType
         FROM CompleteOrders o
         JOIN o.customer c
         LEFT JOIN o.scrapOrder so
         LEFT JOIN o.bioWasteOrder bo
+        LEFT JOIN o.vehicle pv
+          LEFT JOIN o.provider p
         WHERE o.isDeleted = false
             AND (so.id IS NOT NULL OR bo.id IS NOT NULL)
             AND (
@@ -38,7 +41,7 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
                 COALESCE(so.orderCode, bo.orderCode) LIKE CONCAT(:searchTerm, '%') OR
                 o.orderType LIKE CONCAT(:searchTerm, '%') OR
                 o.orderStatus LIKE CONCAT(:searchTerm, '%')
-            )
+            ) 
     """)
     Page<IOrderHistoryResponse> findAllPaged(
             @Param("searchTerm") String searchTerm,
