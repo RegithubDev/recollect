@@ -2,6 +2,8 @@ package com.resustainability.recollect.entity.backend;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = ScrapOrderCart.TABLE_NAME)
 public class ScrapOrderCart {
@@ -30,4 +32,85 @@ public class ScrapOrderCart {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "scrap_type_id", nullable = false)
     private ScrapType scrapType;
+
+    public ScrapOrderCart() {
+    }
+
+    public ScrapOrderCart(Long id, Double scrapWeight, Double scrapPrice, Double totalPrice, Boolean isDeleted, ScrapOrders scrapOrder, ScrapType scrapType) {
+        this.id = id;
+        this.scrapWeight = scrapWeight;
+        this.scrapPrice = scrapPrice;
+        this.totalPrice = totalPrice;
+        this.isDeleted = isDeleted;
+        this.scrapOrder = scrapOrder;
+        this.scrapType = scrapType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ScrapOrderCart that = (ScrapOrderCart) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Double getScrapWeight() {
+        return scrapWeight;
+    }
+
+    public void setScrapWeight(Double scrapWeight) {
+        this.scrapWeight = scrapWeight;
+    }
+
+    public Double getScrapPrice() {
+        return scrapPrice;
+    }
+
+    public void setScrapPrice(Double scrapPrice) {
+        this.scrapPrice = scrapPrice;
+    }
+
+    public Double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(Double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public ScrapOrders getScrapOrder() {
+        return scrapOrder;
+    }
+
+    public void setScrapOrder(ScrapOrders scrapOrder) {
+        this.scrapOrder = scrapOrder;
+    }
+
+    public ScrapType getScrapType() {
+        return scrapType;
+    }
+
+    public void setScrapType(ScrapType scrapType) {
+        this.scrapType = scrapType;
+    }
 }
