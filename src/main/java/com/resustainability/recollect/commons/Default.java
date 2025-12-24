@@ -73,6 +73,8 @@ public class Default {
    
     public static final String ERROR_NOT_FOUND_ASSIGNED_VEHILE ="Assigned vehicle not found";
     
+    public static final String ERROR_NOT_FOUND_BWG_CLIENT_REQUEST ="BWG Client Request not found";
+    
 
     public static final String SUCCESS_LOGIN = "Login success. Session created.";
     public static final String SUCCESS_LOGOUT = "You're logged out! Session has been terminated.";
