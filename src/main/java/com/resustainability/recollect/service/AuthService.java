@@ -68,7 +68,9 @@ public class AuthService {
                 customer.getFullName(),
                 customer.getEmail(),
                 customer.getUserType(),
-                customer.getId()
+                customer.getId(),
+                customer.getPhoneNumber(),
+                customer.getPlatform()
         );
     }
 
@@ -101,7 +103,9 @@ public class AuthService {
                 adminUser.getFullName(),
                 adminUser.getEmail(),
                 Role.ADMIN.getAbbreviation(),
-                adminUser.getId()
+                adminUser.getId(),
+                adminUser.getPhoneNumber(),
+                null
         );
     }
 
@@ -134,7 +138,9 @@ public class AuthService {
                 provider.getFullName(),
                 provider.getEmail(),
                 Role.PROVIDER.getAbbreviation(),
-                provider.getId()
+                provider.getId(),
+                provider.getPhoneNumber(),
+                null
                 
         );
     }
