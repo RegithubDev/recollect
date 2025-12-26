@@ -23,21 +23,27 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
     private final SecurityService securityService;
     private final ScrapRegionAvailabilityService scrapRegionAvailabilityService;
+    private final MobileService mobileService;
+
     private final CustomerAddressRepository customerAddressRepository;
     private final OrderCancelReasonRepository orderCancelReasonRepository;
     private final CompleteOrdersRepository completeOrdersRepository;
     private final CompleteOrderLogRepository completeOrderLogRepository;
+    private final BioWasteOrderCartRepository bioWasteOrderCartRepository;
+    private final ScrapOrderCartRepository scrapOrderCartRepository;
     private final ScrapOrdersRepository scrapOrdersRepository;
     private final BioWasteOrdersRepository bioWasteOrdersRepository;
     private final ScrapRegionRepository scrapRegionRepository;
+    private final ScrapTypeRepository scrapTypeRepository;
+    private final BioWasteTypeRepository bioWasteTypeRepository;
     private final WardRepository wardRepository;
     private final DistrictRepository districtRepository;
     private final StateRepository stateRepository;
@@ -49,13 +55,18 @@ public class OrderService {
     public OrderService(
             SecurityService securityService,
             ScrapRegionAvailabilityService scrapRegionAvailabilityService,
+            MobileService mobileService,
             CustomerAddressRepository customerAddressRepository,
             OrderCancelReasonRepository orderCancelReasonRepository,
             CompleteOrdersRepository completeOrdersRepository,
             CompleteOrderLogRepository completeOrderLogRepository,
+            BioWasteOrderCartRepository bioWasteOrderCartRepository,
+            ScrapOrderCartRepository scrapOrderCartRepository,
             ScrapOrdersRepository scrapOrdersRepository,
             BioWasteOrdersRepository bioWasteOrdersRepository,
             ScrapRegionRepository scrapRegionRepository,
+            ScrapTypeRepository scrapTypeRepository,
+            BioWasteTypeRepository bioWasteTypeRepository,
             WardRepository wardRepository,
             DistrictRepository districtRepository,
             StateRepository stateRepository,
@@ -65,13 +76,18 @@ public class OrderService {
     ) {
         this.securityService = securityService;
         this.scrapRegionAvailabilityService = scrapRegionAvailabilityService;
+        this.mobileService = mobileService;
         this.customerAddressRepository = customerAddressRepository;
         this.orderCancelReasonRepository = orderCancelReasonRepository;
         this.completeOrdersRepository = completeOrdersRepository;
         this.completeOrderLogRepository = completeOrderLogRepository;
+        this.bioWasteOrderCartRepository = bioWasteOrderCartRepository;
+        this.scrapOrderCartRepository = scrapOrderCartRepository;
         this.scrapOrdersRepository = scrapOrdersRepository;
         this.bioWasteOrdersRepository = bioWasteOrdersRepository;
         this.scrapRegionRepository = scrapRegionRepository;
+        this.scrapTypeRepository = scrapTypeRepository;
+        this.bioWasteTypeRepository = bioWasteTypeRepository;
         this.wardRepository = wardRepository;
         this.districtRepository = districtRepository;
         this.stateRepository = stateRepository;
@@ -198,8 +214,8 @@ public class OrderService {
         final double defaultDoubleValue = 0.0d;
         final String defaultOrderStatus = OrderStatus.OPEN.getAbbreviation();
 
-        ScrapOrders scrapOrder = null;
-        BioWasteOrders bioWasteOrder = null;
+        final ScrapOrders scrapOrder;
+        final BioWasteOrders bioWasteOrder;
         if (OrderType.SCRAP.equals(orderType)) {
             if (null == address.getScrapRegionId()) {
                 throw new InvalidDataException("Scrap region is required, Set region in your address.");
@@ -239,6 +255,47 @@ public class OrderService {
                             0
                     )
             );
+            bioWasteOrder = null;
+
+            final Map<Long, ItemCategoryTypeResponse> indexedTypes = mobileService
+                    .listScrapCategories(
+                            null == district ? user.getDistrictId() : district.getId()
+                    )
+                    .stream()
+                    .map(ItemCategoryResponse::types)
+                    .filter(Objects::nonNull)
+                    .flatMap(List::stream)
+                    .collect(Collectors.toMap(
+                            ItemCategoryTypeResponse::id,
+                            Function.identity()
+                    ));
+
+            final List<ScrapOrderCart> orderItems = request
+                    .items()
+                    .stream()
+                    .filter(item -> null != item.id() && indexedTypes.containsKey(item.id()))
+                    .map(item -> {
+                        final ItemCategoryTypeResponse type = indexedTypes.get(item.id());
+                        final double quantity = type.kg() && null != item.quantity() && item.quantity() > 0
+                                ? item.quantity()
+                                : 0;
+                        final double price = null != type.price() && type.price() > 0
+                                ? type.price()
+                                : 0;
+                        return new ScrapOrderCart(
+                                null,
+                                quantity,
+                                price,
+                                type.kg() ? (price * quantity) : price,
+                                false,
+                                scrapOrder,
+                                scrapTypeRepository.getReferenceById(type.id())
+                        );
+                    })
+                    .toList();
+            if (CollectionUtils.isNonBlank(orderItems)) {
+                scrapOrderCartRepository.saveAll(orderItems);
+            }
         } else if (OrderType.BIO_WASTE.equals(orderType)) {
             bioWasteOrder = bioWasteOrdersRepository.save(
                     new BioWasteOrders(
@@ -265,6 +322,31 @@ public class OrderService {
                             defaultDoubleValue
                     )
             );
+            scrapOrder = null;
+
+            final Set<Long> indexedTypes = mobileService
+                    .listBioWasteCategories()
+                    .stream()
+                    .map(ItemCategoryResponse::types)
+                    .filter(Objects::nonNull)
+                    .flatMap(List::stream)
+                    .map(ItemCategoryTypeResponse::id)
+                    .collect(Collectors.toUnmodifiableSet());
+
+            final List<BioWasteOrderCart> orderItems = request
+                    .items()
+                    .stream()
+                    .filter(item -> null != item.id() && indexedTypes.contains(item.id()))
+                    .map(item -> new BioWasteOrderCart(
+                            null,
+                            false,
+                            bioWasteOrder,
+                            bioWasteTypeRepository.getReferenceById(item.id())
+                    ))
+                    .toList();
+            if (CollectionUtils.isNonBlank(orderItems)) {
+                bioWasteOrderCartRepository.saveAll(orderItems);
+            }
         } else {
             throw new InvalidDataException("Specify supported order type");
         }
