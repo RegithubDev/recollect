@@ -27,7 +27,7 @@ public interface ScrapRegionRepository extends JpaRepository<ScrapRegion, Long> 
             d.id AS districtId,
             d.districtName AS districtName,
             d.districtCode AS districtCode,
-    
+    		sr.borderPolygon as borderPolygon,
             s.id AS stateId,
             s.stateName AS stateName,
             s.stateCode AS stateCode,
