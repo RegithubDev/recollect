@@ -61,7 +61,7 @@ public class ScrapRegionService {
         return Pager.of(
                 scrapRegionRepository.findAllPaged(
                         searchCriteria.getQ(),
-                        searchCriteria.toPageRequest()
+                        searchCriteria.toPageRequestUnLimit()
                 )
         );
     }

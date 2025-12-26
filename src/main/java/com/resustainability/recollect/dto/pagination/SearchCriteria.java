@@ -77,6 +77,22 @@ public class SearchCriteria {
         return PageRequest.of(page, size, buildSort());
     }
 
+    public Pageable toPageRequestUnLimit() {
+        if (Boolean.TRUE.equals(unpaged)) {
+            return Pageable.unpaged();
+        }
+
+        if (null == size || size < 1 || size > 100) {
+            size = 1000000;
+        }
+
+        if (null == page || page < 1) {
+            page = 0;
+        }
+
+        return PageRequest.of(page, size, buildSort());
+    }
+    
     public SearchCriteria setHibernateFields(Map<String, String> hibernateFields) {
         if (sortDisabled || hibernateFields == null || hibernateFields.isEmpty()) {
             return this;
