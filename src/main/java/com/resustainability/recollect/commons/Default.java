@@ -75,6 +75,10 @@ public class Default {
     
     public static final String ERROR_NOT_FOUND_BWG_CLIENT_REQUEST ="BWG Client Request not found";
     
+    public static final String ERROR_NOT_FOUND_BWG_BAG_PRICE ="BWG bag details not found";
+    
+    public static final String ERROR_NOT_FOUND_BWG_CLIENT ="BWG Client not found";
+    
 
     public static final String SUCCESS_LOGIN = "Login success. Session created.";
     public static final String SUCCESS_LOGOUT = "You're logged out! Session has been terminated.";
@@ -197,6 +201,9 @@ public class Default {
     public static final String SUCCESS_ADD_ASSIGNED_VEHICLE = "Assigned Vehicle added successfully";
     public static final String SUCCESS_UPDATE_ASSIGNED_VEHICLE = "Assigned Vehicle updated successfully";
     public static final String SUCCESS_DELETE_ASSIGNED_VEHICLE = "All done! Assigned Vehicle deleted successfully";
+    
+    public static final String SUCCESS_ADD_BWG_BAG_PRICE = "BWG bag added successfully";
+    public static final String SUCCESS_UPDATE_BWG_BAG_PRICE = "BWG bag details updated successfully";
     
     public static final String EXECUTOR_MAIL = "mailTaskExecutor";
     public static final String EXECUTOR_ASYNC = "asyncTaskExecutor";
