@@ -205,10 +205,19 @@ public class Default {
     public static final String SUCCESS_ADD_BWG_BAG_PRICE = "BWG bag added successfully";
     public static final String SUCCESS_UPDATE_BWG_BAG_PRICE = "BWG bag details updated successfully";
     
+    public static final String SUCCESS_ADD_BWG_CLIENT = "Client added successfully";
+    public static final String SUCCESS_UPDATE_BWG_CLIENT = "Client details updated successfully";
+    public static final String SUCCESS_DELETE_BWG_CLIENT = "All done! Client deleted successfully.";
+    public static final String SUCCESS_UNDELETE_BWG_CLIENT = "All done! Client restored successfully";
+    public static final String SUCCESS_UPLOAD_BWG_CONTRACT = "BWG Contract file uploaded Successfully.";
+    public static final String SUCCESS_REMOVE_BWG_CONTRACT = "BWG Contract file Removed Successfully.";
+    
+    
     public static final String EXECUTOR_MAIL = "mailTaskExecutor";
     public static final String EXECUTOR_ASYNC = "asyncTaskExecutor";
 
     public static final long MAX_IMAGE_FILE_SIZE = 5L * 1024L * 1024L; // 5MB
+    public static final long MAX_FILE_SIZE = 10L * 1024L * 1024L; // 10MB
 
     public static final int MAX_DEFAULT_LENGTH = 250;
     public static final int MIN_DEFAULT_LENGTH = 2;

@@ -51,8 +51,11 @@ public class UploadService {
         if (!type.equals("image/png") &&
             !type.equals("image/jpeg") &&
             !type.equals("image/jpg") &&
-            !type.equals("image/webp")) {
-            throw new InvalidDataException("Unsupported type");
+            !type.equals("image/webp") &&
+            !type.equals("application/pdf")) {
+            throw new InvalidDataException(
+            		String.format("Unsupported (%s) type", type)
+            );
         }
     }
 
