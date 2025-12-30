@@ -1,6 +1,7 @@
 package com.resustainability.recollect.service;
 
 import com.resustainability.recollect.commons.Default;
+import com.resustainability.recollect.commons.StringUtils;
 import com.resustainability.recollect.commons.ValidationUtils;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
@@ -241,6 +242,24 @@ public class ScrapRegionService {
                 geometryNormalizer.toMultiPolygon(request.geometry())
         );
         scrapRegionRepository.save(entity);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public void normalizeAllToGeometry() {
+        final List<ScrapRegion> entities = scrapRegionRepository
+                .findAll()
+                .stream()
+                .filter(entity -> null == entity.getGeometry() && StringUtils.isNotBlank(entity.getBorderPolygon()))
+                .map(entity -> {
+                    entity.setGeometry(
+                            geometryNormalizer.parseToMultiPolygon(
+                                    entity.getBorderPolygon()
+                            )
+                    );
+                    return entity;
+                })
+                .toList();
+        scrapRegionRepository.saveAll(entities);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)

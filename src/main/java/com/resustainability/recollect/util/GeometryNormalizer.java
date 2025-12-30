@@ -1,14 +1,23 @@
 package com.resustainability.recollect.util;
 
 import com.resustainability.recollect.exception.InvalidDataException;
+
 import org.locationtech.jts.geom.*;
 
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class GeometryNormalizer {
 
     public static final int SRID = 4326;
+
+    private static final Pattern COORD_PATTERN =
+            Pattern.compile("\\((-?\\d+\\.\\d+),\\s*(-?\\d+\\.\\d+)\\)");
 
     private final GeometryFactory geometryFactory =
             new GeometryFactory(new PrecisionModel(), SRID);
@@ -34,5 +43,51 @@ public class GeometryNormalizer {
         throw new InvalidDataException(
                 "Unsupported geometry type: " + geometry.getGeometryType()
         );
+    }
+
+    /**
+     * Parses "(lat, lon),(lat, lon),..." into MultiPolygon
+     */
+    public MultiPolygon parseToMultiPolygon(String input) {
+
+        if (input == null || input.isBlank()) {
+            throw new IllegalArgumentException("Input string is empty");
+        }
+
+        List<Coordinate> coordinates = new ArrayList<>();
+        Matcher matcher = COORD_PATTERN.matcher(input);
+
+        while (matcher.find()) {
+            double lat = Double.parseDouble(matcher.group(1));
+            double lon = Double.parseDouble(matcher.group(2));
+
+            // JTS order: (lon, lat)
+            coordinates.add(new Coordinate(lon, lat));
+        }
+
+        if (coordinates.size() < 4) {
+            throw new IllegalArgumentException("Polygon requires at least 4 points");
+        }
+
+        // Close ring
+        if (!coordinates.get(0).equals2D(coordinates.get(coordinates.size() - 1))) {
+            coordinates.add(new Coordinate(coordinates.get(0)));
+        }
+
+        LinearRing shell = geometryFactory.createLinearRing(
+                coordinates.toArray(Coordinate[]::new)
+        );
+
+        Polygon polygon = geometryFactory.createPolygon(shell);
+        polygon.setSRID(SRID);
+
+        Geometry fixed = polygon;
+
+        if (!polygon.isValid()) {
+            fixed = polygon.buffer(0);
+            fixed.setSRID(SRID);
+        }
+
+        return toMultiPolygon(fixed);
     }
 }
