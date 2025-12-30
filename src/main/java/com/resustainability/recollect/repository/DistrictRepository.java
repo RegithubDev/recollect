@@ -36,7 +36,11 @@ public interface DistrictRepository extends JpaRepository<District, Long> {
             AND (
                 :searchTerm IS NULL OR :searchTerm = '' OR
                 d.districtName LIKE CONCAT(:searchTerm, '%') OR
-                d.districtCode LIKE CONCAT(:searchTerm, '%')
+                d.districtCode LIKE CONCAT(:searchTerm, '%') OR
+                s.stateName LIKE CONCAT(:searchTerm, '%') OR
+                s.stateCode LIKE CONCAT(:searchTerm, '%') OR
+                c.countryName LIKE CONCAT(:searchTerm, '%') OR
+                c.countryCode LIKE CONCAT(:searchTerm, '%')
             )
         """)
     Page<IDistrictResponse> findAllPaged(

@@ -34,6 +34,7 @@ public class DistrictService {
         this.stateRepository = stateRepository;
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Pager<IDistrictResponse> list(Long stateId, Long countryId, SearchCriteria searchCriteria) {
         return Pager.of(
                 districtRepository.findAllPaged(
