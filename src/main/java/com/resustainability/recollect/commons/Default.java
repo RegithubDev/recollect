@@ -232,6 +232,4 @@ public class Default {
 
     public static final int MIN_PHONE_LENGTH = 9;
     public static final int MAX_PHONE_LENGTH = 36;
-
-    public static final int POLYGON_SRID = 4326;
 }

@@ -19,8 +19,7 @@ import com.resustainability.recollect.exception.ResourceNotFoundException;
 import com.resustainability.recollect.repository.DistrictRepository;
 import com.resustainability.recollect.repository.ScrapRegionAvailabilityRepository;
 import com.resustainability.recollect.repository.ScrapRegionRepository;
-
-import org.locationtech.jts.geom.Polygon;
+import com.resustainability.recollect.util.GeometryNormalizer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,16 +36,19 @@ import java.util.stream.Collectors;
 
 @Service
 public class ScrapRegionService {
+    private final GeometryNormalizer geometryNormalizer;
     private final ScrapRegionRepository scrapRegionRepository;
     private final ScrapRegionAvailabilityRepository scrapRegionAvailabilityRepository;
     private final DistrictRepository districtRepository;
 
     @Autowired
     public ScrapRegionService(
+            GeometryNormalizer geometryNormalizer,
             ScrapRegionRepository scrapRegionRepository,
             ScrapRegionAvailabilityRepository scrapRegionAvailabilityRepository,
             DistrictRepository districtRepository
     ) {
+        this.geometryNormalizer = geometryNormalizer;
         this.scrapRegionRepository = scrapRegionRepository;
         this.scrapRegionAvailabilityRepository = scrapRegionAvailabilityRepository;
         this.districtRepository = districtRepository;
@@ -114,8 +116,6 @@ public class ScrapRegionService {
             throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_DISTRICT);
         }
 
-        final Polygon geometry = (Polygon) request.geometry();
-
         final ScrapRegion entity = scrapRegionRepository.save(
                 new ScrapRegion(
                         null,
@@ -126,7 +126,7 @@ public class ScrapRegionService {
                         true,
                         false,
                         districtRepository.getReferenceById(request.districtId()),
-                        geometry
+                        geometryNormalizer.toMultiPolygon(request.geometry())
                 )
         );
 
@@ -237,8 +237,9 @@ public class ScrapRegionService {
                 .findById(request.id())
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_SCRAP_REGION));
 
-        final Polygon geometry = (Polygon) request.geometry();
-        entity.setGeometry(geometry);
+        entity.setGeometry(
+                geometryNormalizer.toMultiPolygon(request.geometry())
+        );
         scrapRegionRepository.save(entity);
     }
 

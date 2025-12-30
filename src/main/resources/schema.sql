@@ -129,7 +129,7 @@ SET @exists := (
 
 SET @sql := IF(
     @exists = 0,
-    'ALTER TABLE backend_scrapregion ADD COLUMN geometry POLYGON SRID 4326',
+    'ALTER TABLE backend_scrapregion ADD COLUMN geometry MULTIPOLYGON SRID 4326',
     'SELECT 1'
 );
 

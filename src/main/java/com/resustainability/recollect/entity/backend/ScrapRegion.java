@@ -2,7 +2,7 @@ package com.resustainability.recollect.entity.backend;
 
 import jakarta.persistence.*;
 
-import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.MultiPolygon;
 
 import java.util.Objects;
 
@@ -37,13 +37,13 @@ public class ScrapRegion {
     @JoinColumn(name = "district_id", nullable = false)
     private District district;
 
-    @Column(name = "geometry", columnDefinition = "POLYGON SRID 4326")
-    private Polygon geometry;
+    @Column(name = "geometry", columnDefinition = "MULTIPOLYGON SRID 4326")
+    private MultiPolygon geometry;
 
     public ScrapRegion() {
     }
 
-    public ScrapRegion(Long id, String regionName, String borderPolygon, String regionWeekdayCurrent, String regionWeekdayNext, Boolean isActive, Boolean isDeleted, District district, Polygon geometry) {
+    public ScrapRegion(Long id, String regionName, String borderPolygon, String regionWeekdayCurrent, String regionWeekdayNext, Boolean isActive, Boolean isDeleted, District district, MultiPolygon geometry) {
         this.id = id;
         this.regionName = regionName;
         this.borderPolygon = borderPolygon;
@@ -132,11 +132,11 @@ public class ScrapRegion {
         this.district = district;
     }
 
-    public Polygon getGeometry() {
+    public MultiPolygon getGeometry() {
         return geometry;
     }
 
-    public void setGeometry(Polygon geometry) {
+    public void setGeometry(MultiPolygon geometry) {
         this.geometry = geometry;
     }
 }
