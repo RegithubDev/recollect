@@ -99,3 +99,22 @@ SET @sql := IF(
 PREPARE stmt FROM @sql;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
+
+
+SET @exists := (
+    SELECT COUNT(*)
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'backend_bwgbagprice'
+      AND COLUMN_NAME = 'is_active'
+);
+
+SET @sql := IF(
+    @exists = 0,
+    'ALTER TABLE backend_bwgbagprice ADD COLUMN is_active BIT(1) NOT NULL DEFAULT 1',
+    'SELECT 1'
+);
+
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
