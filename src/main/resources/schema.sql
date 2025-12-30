@@ -118,3 +118,21 @@ SET @sql := IF(
 PREPARE stmt FROM @sql;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
+
+SET @exists := (
+    SELECT COUNT(*)
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'backend_scrapregion'
+      AND COLUMN_NAME = 'geometry'
+);
+
+SET @sql := IF(
+    @exists = 0,
+    'ALTER TABLE backend_scrapregion ADD COLUMN geometry POLYGON SRID 4326',
+    'SELECT 1'
+);
+
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;

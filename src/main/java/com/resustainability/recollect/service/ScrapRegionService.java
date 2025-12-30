@@ -8,6 +8,7 @@ import com.resustainability.recollect.dto.payload.PayloadScrapRegionAvailability
 import com.resustainability.recollect.dto.request.AddScrapRegionRequest;
 import com.resustainability.recollect.dto.request.UpdateScrapRegionBorderRequest;
 import com.resustainability.recollect.dto.request.UpdateScrapRegionRequest;
+import com.resustainability.recollect.dto.response.IGeometryResponse;
 import com.resustainability.recollect.dto.response.IScrapRegionAvailabilityResponse;
 import com.resustainability.recollect.dto.response.IScrapRegionResponse;
 import com.resustainability.recollect.dto.response.ScrapRegionResponse;
@@ -18,6 +19,8 @@ import com.resustainability.recollect.exception.ResourceNotFoundException;
 import com.resustainability.recollect.repository.DistrictRepository;
 import com.resustainability.recollect.repository.ScrapRegionAvailabilityRepository;
 import com.resustainability.recollect.repository.ScrapRegionRepository;
+
+import org.locationtech.jts.geom.Polygon;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,7 +53,7 @@ public class ScrapRegionService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public String getBorderById(Long scrapRegionId) {
+    public IGeometryResponse getBorderById(Long scrapRegionId) {
         return scrapRegionRepository
                 .findBorderByScrapRegionId(scrapRegionId)
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_SCRAP_REGION));
@@ -111,6 +114,8 @@ public class ScrapRegionService {
             throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_DISTRICT);
         }
 
+        final Polygon geometry = (Polygon) request.geometry();
+
         final ScrapRegion entity = scrapRegionRepository.save(
                 new ScrapRegion(
                         null,
@@ -120,7 +125,8 @@ public class ScrapRegionService {
                         request.nextWeekDay(),
                         true,
                         false,
-                        districtRepository.getReferenceById(request.districtId())
+                        districtRepository.getReferenceById(request.districtId()),
+                        geometry
                 )
         );
 
@@ -231,7 +237,8 @@ public class ScrapRegionService {
                 .findById(request.id())
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_SCRAP_REGION));
 
-        entity.setBorderPolygon(request.border());
+        final Polygon geometry = (Polygon) request.geometry();
+        entity.setGeometry(geometry);
         scrapRegionRepository.save(entity);
     }
 

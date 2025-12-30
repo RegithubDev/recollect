@@ -1,5 +1,6 @@
 package com.resustainability.recollect.repository;
 
+import com.resustainability.recollect.dto.response.IGeometryResponse;
 import com.resustainability.recollect.dto.response.IScrapRegionResponse;
 import com.resustainability.recollect.entity.backend.ScrapRegion;
 
@@ -83,11 +84,13 @@ public interface ScrapRegionRepository extends JpaRepository<ScrapRegion, Long> 
     );
 
     @Query("""
-        SELECT sr.borderPolygon
+        SELECT
+           sr.id AS id,
+           sr.geometry AS geometry
         FROM ScrapRegion sr
         WHERE sr.id = :scrapRegionId
     """)
-    Optional<String> findBorderByScrapRegionId(
+    Optional<IGeometryResponse> findBorderByScrapRegionId(
             @Param("scrapRegionId") Long scrapRegionId
     );
 

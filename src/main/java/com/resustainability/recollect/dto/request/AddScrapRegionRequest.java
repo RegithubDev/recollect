@@ -4,6 +4,8 @@ import com.resustainability.recollect.commons.ValidationUtils;
 import com.resustainability.recollect.dto.commons.RequestBodyValidator;
 import com.resustainability.recollect.dto.payload.PayloadScrapRegionAvailability;
 
+import org.locationtech.jts.geom.Geometry;
+
 import java.util.List;
 
 public record AddScrapRegionRequest(
@@ -11,6 +13,7 @@ public record AddScrapRegionRequest(
         Long districtId,
         String currentWeekDay,
         String nextWeekDay,
+        Geometry geometry,
         List<PayloadScrapRegionAvailability> availability
 ) implements RequestBodyValidator {
     @Override
@@ -18,5 +21,6 @@ public record AddScrapRegionRequest(
         ValidationUtils.validateName(name);
         ValidationUtils.validateDistrictId(districtId);
         ValidationUtils.validateScrapRegionAvailability(availability);
+        ValidationUtils.validateGeometry(geometry);
     }
 }

@@ -2,6 +2,8 @@ package com.resustainability.recollect.entity.backend;
 
 import jakarta.persistence.*;
 
+import org.locationtech.jts.geom.Polygon;
+
 import java.util.Objects;
 
 @Entity
@@ -35,10 +37,13 @@ public class ScrapRegion {
     @JoinColumn(name = "district_id", nullable = false)
     private District district;
 
+    @Column(name = "geometry", columnDefinition = "POLYGON SRID 4326")
+    private Polygon geometry;
+
     public ScrapRegion() {
     }
 
-    public ScrapRegion(Long id, String regionName, String borderPolygon, String regionWeekdayCurrent, String regionWeekdayNext, Boolean isActive, Boolean isDeleted, District district) {
+    public ScrapRegion(Long id, String regionName, String borderPolygon, String regionWeekdayCurrent, String regionWeekdayNext, Boolean isActive, Boolean isDeleted, District district, Polygon geometry) {
         this.id = id;
         this.regionName = regionName;
         this.borderPolygon = borderPolygon;
@@ -47,6 +52,7 @@ public class ScrapRegion {
         this.isActive = isActive;
         this.isDeleted = isDeleted;
         this.district = district;
+        this.geometry = geometry;
     }
 
     @Override
@@ -124,5 +130,13 @@ public class ScrapRegion {
 
     public void setDistrict(District district) {
         this.district = district;
+    }
+
+    public Polygon getGeometry() {
+        return geometry;
+    }
+
+    public void setGeometry(Polygon geometry) {
+        this.geometry = geometry;
     }
 }

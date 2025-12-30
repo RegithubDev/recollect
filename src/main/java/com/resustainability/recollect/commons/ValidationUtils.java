@@ -5,6 +5,8 @@ import com.resustainability.recollect.dto.payload.PayloadScrapRegionAvailability
 import com.resustainability.recollect.exception.InvalidDataException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
 
+import org.locationtech.jts.geom.Geometry;
+
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -220,4 +222,7 @@ public class ValidationUtils {
         }
     }
 
-	}
+    public static void validateGeometry(Geometry geometry) {
+        validateRequired(geometry, "Geometry");
+    }
+}

@@ -7,10 +7,13 @@ import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.AddScrapRegionRequest;
 import com.resustainability.recollect.dto.request.UpdateScrapRegionBorderRequest;
 import com.resustainability.recollect.dto.request.UpdateScrapRegionRequest;
+import com.resustainability.recollect.dto.response.IGeometryResponse;
 import com.resustainability.recollect.dto.response.IScrapRegionAvailabilityResponse;
 import com.resustainability.recollect.dto.response.IScrapRegionResponse;
 import com.resustainability.recollect.dto.response.ScrapRegionResponse;
 import com.resustainability.recollect.service.ScrapRegionService;
+
+import org.locationtech.jts.geom.Geometry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,7 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/scrap-region")
-//@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
 public class ScrapRegionController {
     private final ScrapRegionService scrapRegionService;
 
@@ -42,7 +45,7 @@ public class ScrapRegionController {
     }
 
     @GetMapping("/border/{scrapRegionId}")
-    public APIResponse<String> getBorderById(
+    public APIResponse<IGeometryResponse> getBorderById(
             @PathVariable(value = "scrapRegionId", required = false) Long scrapRegionId
     ) {
         return new APIResponse<>(
