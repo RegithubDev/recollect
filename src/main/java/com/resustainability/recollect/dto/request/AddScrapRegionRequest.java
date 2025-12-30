@@ -21,6 +21,5 @@ public record AddScrapRegionRequest(
         ValidationUtils.validateName(name);
         ValidationUtils.validateDistrictId(districtId);
         ValidationUtils.validateScrapRegionAvailability(availability);
-        ValidationUtils.validateGeometry(geometry);
     }
 }

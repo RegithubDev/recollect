@@ -127,7 +127,7 @@ public class ScrapRegionService {
                         true,
                         false,
                         districtRepository.getReferenceById(request.districtId()),
-                        geometryNormalizer.toMultiPolygon(request.geometry())
+                        null == request.geometry() ? null : geometryNormalizer.toMultiPolygon(request.geometry())
                 )
         );
 
