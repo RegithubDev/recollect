@@ -2,6 +2,9 @@ package com.resustainability.recollect.service;
 
 import com.resustainability.recollect.commons.Default;
 import com.resustainability.recollect.commons.ValidationUtils;
+import com.resustainability.recollect.dto.commons.GeoFenceUtil;
+import com.resustainability.recollect.dto.commons.GeoPoint;
+import com.resustainability.recollect.dto.commons.PolygonUtil;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.AddCustomerAddressRequest;
@@ -10,6 +13,7 @@ import com.resustainability.recollect.dto.response.ICustomerAddressResponse;
 import com.resustainability.recollect.dto.response.IUserContext;
 import com.resustainability.recollect.entity.backend.Customer;
 import com.resustainability.recollect.entity.backend.CustomerAddress;
+import com.resustainability.recollect.entity.backend.ScrapRegion;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
 import com.resustainability.recollect.exception.UnauthorizedException;
 import com.resustainability.recollect.repository.CustomerAddressRepository;
@@ -101,6 +105,7 @@ public class CustomerAddressService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Long add(AddCustomerAddressRequest request) {
+
         ValidationUtils.validateRequestBody(request);
 
         final IUserContext user = securityService
@@ -109,6 +114,7 @@ public class CustomerAddressService {
 
         final Customer customer;
         if (!Boolean.TRUE.equals(user.getIsCustomer())) {
+
             ValidationUtils.validateUserId(request.customerId());
 
             if (!customerRepository.existsById(request.customerId())) {
@@ -120,12 +126,48 @@ public class CustomerAddressService {
             customer = customerRepository.getReferenceById(user.getId());
         }
 
-        if (null != request.scrapRegionId() && !scrapRegionRepository.existsById(request.scrapRegionId())) {
+        if (request.scrapRegionId() != null &&
+                !scrapRegionRepository.existsById(request.scrapRegionId())) {
             throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_SCRAP_REGION);
         }
 
-        if (null != request.wardId() && !wardRepository.existsById(request.wardId())) {
+        if (request.wardId() != null &&
+                !wardRepository.existsById(request.wardId())) {
             throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_WARD);
+        }
+
+        // 🔴 GEO-FENCE VALIDATION
+        if (request.latitude() != null && request.longitude() != null) {
+
+            double lat;
+            double lon;
+
+            try {
+                lat = Double.parseDouble(request.latitude());
+                lon = Double.parseDouble(request.longitude());
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Invalid latitude or longitude format");
+            }
+
+            if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+                throw new IllegalArgumentException("Latitude or Longitude out of range");
+            }
+
+            ScrapRegion region = scrapRegionRepository
+                    .findById(request.scrapRegionId())
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(Default.ERROR_NOT_FOUND_SCRAP_REGION));
+
+            List<GeoPoint> polygon =
+                    PolygonUtil.parsePolygon(region.getBorderPolygon());
+
+            boolean inside = GeoFenceUtil.isPointInsidePolygon(lat, lon, polygon);
+
+            if (!inside) {
+                throw new ResourceNotFoundException(
+                        "Address is outside the selected scrap region service area"
+                );
+            }
         }
 
         return customerAddressRepository.save(
@@ -141,8 +183,12 @@ public class CustomerAddressService {
                         request.latitude(),
                         request.longitude(),
                         false,
-                        null != request.scrapRegionId() ? scrapRegionRepository.getReferenceById(request.scrapRegionId()) : null,
-                        null != request.wardId() ? wardRepository.getReferenceById(request.wardId()) : null,
+                        request.scrapRegionId() != null
+                                ? scrapRegionRepository.getReferenceById(request.scrapRegionId())
+                                : null,
+                        request.wardId() != null
+                                ? wardRepository.getReferenceById(request.wardId())
+                                : null,
                         customer
                 )
         ).getId();
