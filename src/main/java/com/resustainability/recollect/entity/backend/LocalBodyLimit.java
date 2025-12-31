@@ -19,7 +19,7 @@ public class LocalBodyLimit {
     @Column(name = "available_date", nullable = false)
     private LocalDate availableDate;
 
-    @Column(name = "limit", nullable = false)
+    @Column(name = "`limit`", nullable = false)
     private Integer limit;
 
     @Column(name = "remaining_slots", nullable = false)
