@@ -69,15 +69,24 @@ public class WardController {
     }
 
 
+    @PatchMapping("/toggle/{wardId}")
+    public APIResponse<Void> toggleById(
+            @PathVariable(value = "wardId", required = false) Long wardId
+    ) {
+        service.toggleById(wardId);
+        return new APIResponse<>(Default.SUCCESS_UPDATE_STATUS);
+    }
+
+
     @DeleteMapping("/delete/{wardId}")
-    public APIResponse<Void> delete(@PathVariable Long wardId) {
+    public APIResponse<Void> delete(@PathVariable(value = "wardId", required = false) Long wardId) {
         service.deleteById(wardId, true);
         return new APIResponse<>(Default.SUCCESS_DELETE_WARD);
     }
 
 
     @DeleteMapping("/un-delete/{wardId}")
-    public APIResponse<Void> undelete(@PathVariable Long wardId) {
+    public APIResponse<Void> undelete(@PathVariable(value = "wardId", required = false) Long wardId) {
         service.deleteById(wardId, false);
         return new APIResponse<>(Default.SUCCESS_UNDELETE_WARD);
     }

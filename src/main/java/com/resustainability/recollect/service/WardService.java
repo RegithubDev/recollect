@@ -99,4 +99,13 @@ public class WardService {
             throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_WARD);
         }
     }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public void toggleById(Long wardId) {
+        ValidationUtils.validateId(wardId);
+
+        if (0 == wardRepository.toggleActiveStatusById(wardId)) {
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_WARD);
+        }
+    }
 }

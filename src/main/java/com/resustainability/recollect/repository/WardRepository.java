@@ -93,4 +93,16 @@ public interface WardRepository extends JpaRepository<Ward, Long> {
             @Param("isActive") boolean isActive,
             @Param("isDeleted") boolean isDeleted
     );
+
+    @Modifying(clearAutomatically = true)
+    @Query("""
+        UPDATE Ward w
+        SET w.isActive =
+                CASE
+                    WHEN w.isActive = true THEN false
+                    ELSE true
+                END
+        WHERE w.id = :wardId
+    """)
+    int toggleActiveStatusById(@Param("wardId") Long wardId);
 }
