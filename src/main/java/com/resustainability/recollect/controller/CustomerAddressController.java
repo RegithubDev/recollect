@@ -10,6 +10,7 @@ import com.resustainability.recollect.dto.response.ICustomerAddressResponse;
 import com.resustainability.recollect.service.CustomerAddressService;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,6 +34,16 @@ public class CustomerAddressController {
     ) {
         return new APIResponse<>(
                 customerAddressService.list(customerId, searchCriteria)
+        );
+    }
+
+    @GetMapping("/list-overlap-regions")
+    public APIResponse<Set<Long>> listAllContainingGeometry(
+            @RequestParam(value = "latitude", required = false) String latitude,
+            @RequestParam(value = "longitude", required = false) String longitude
+    ) {
+        return new APIResponse<>(
+                customerAddressService.listAllContainingGeometry(latitude, longitude)
         );
     }
 

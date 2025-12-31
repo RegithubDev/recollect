@@ -137,6 +137,14 @@ public class ValidationUtils {
         validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_100_LENGTH, "Longitude");
     }
 
+    public static void validateLatitude(Double value) {
+        validateRequired(value, "Latitude");
+    }
+
+    public static void validateLongitude(Double value) {
+        validateRequired(value, "Longitude");
+    }
+
     public static void validateResidenceType(String value) {
         validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_20_LENGTH, "Residence Type");
     }
@@ -224,5 +232,24 @@ public class ValidationUtils {
 
     public static void validateGeometry(Geometry geometry) {
         validateRequired(geometry, "Geometry");
+    }
+
+    public static double[] validateAndParseCoordinates(String latitude, String longitude) {
+        final double lat;
+        final double lon;
+        try {
+            lat = Double.parseDouble(latitude);
+            lon = Double.parseDouble(longitude);
+        } catch (NumberFormatException | NullPointerException e) {
+            throw new InvalidDataException("Invalid latitude or longitude format");
+        }
+        validateCoordinates(lat, lon);
+        return new double[]{lat, lon};
+    }
+
+    public static void validateCoordinates(double latitude, double longitude) {
+        if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+            throw new InvalidDataException("Latitude or Longitude out of range");
+        }
     }
 }

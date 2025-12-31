@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface ScrapRegionRepository extends JpaRepository<ScrapRegion, Long> {
@@ -117,5 +118,37 @@ public interface ScrapRegionRepository extends JpaRepository<ScrapRegion, Long> 
             @Param("scrapRegionId") Long scrapRegionId,
             @Param("isActive") boolean isActive,
             @Param("isDeleted") boolean isDeleted
+    );
+
+    @Query(nativeQuery = true, value = """
+        SELECT sr.id
+        FROM backend_scrapregion sr
+        WHERE ST_Contains(
+            sr.geometry,
+            ST_SRID(POINT(:lon, :lat), :srid)
+        )
+    """)
+    Set<Long> findIdsContainingGeometry(
+            @Param("lat") double lat,
+            @Param("lon") double lon,
+            @Param("srid") int srid
+    );
+
+    @Query(nativeQuery = true, value = """
+        SELECT EXISTS (
+            SELECT 1
+            FROM backend_scrapregion sr
+            WHERE sr.id = :scrapRegionId
+              AND ST_Contains(
+                  sr.geometry,
+                  ST_SRID(POINT(:lon, :lat), :srid)
+              )
+        )
+    """)
+    boolean existsContainingGeometryById(
+            @Param("scrapRegionId") Long scrapRegionId,
+            @Param("lat") double lat,
+            @Param("lon") double lon,
+            @Param("srid") int srid
     );
 }

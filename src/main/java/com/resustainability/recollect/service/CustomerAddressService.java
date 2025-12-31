@@ -1,10 +1,8 @@
 package com.resustainability.recollect.service;
 
 import com.resustainability.recollect.commons.Default;
+import com.resustainability.recollect.commons.StringUtils;
 import com.resustainability.recollect.commons.ValidationUtils;
-import com.resustainability.recollect.dto.commons.GeoFenceUtil;
-import com.resustainability.recollect.dto.commons.GeoPoint;
-import com.resustainability.recollect.dto.commons.PolygonUtil;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.AddCustomerAddressRequest;
@@ -13,7 +11,7 @@ import com.resustainability.recollect.dto.response.ICustomerAddressResponse;
 import com.resustainability.recollect.dto.response.IUserContext;
 import com.resustainability.recollect.entity.backend.Customer;
 import com.resustainability.recollect.entity.backend.CustomerAddress;
-import com.resustainability.recollect.entity.backend.ScrapRegion;
+import com.resustainability.recollect.exception.InvalidDataException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
 import com.resustainability.recollect.exception.UnauthorizedException;
 import com.resustainability.recollect.repository.CustomerAddressRepository;
@@ -21,6 +19,7 @@ import com.resustainability.recollect.repository.CustomerRepository;
 import com.resustainability.recollect.repository.ScrapRegionRepository;
 import com.resustainability.recollect.repository.WardRepository;
 
+import com.resustainability.recollect.util.GeometryNormalizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,8 +27,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Service
 public class CustomerAddressService {
@@ -84,6 +83,19 @@ public class CustomerAddressService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public Set<Long> listAllContainingGeometry(String latitude, String longitude) {
+        final double[] coordinates = ValidationUtils
+                .validateAndParseCoordinates(latitude, longitude);
+
+        return scrapRegionRepository
+                .findIdsContainingGeometry(
+                        coordinates[0],
+                        coordinates[1],
+                        GeometryNormalizer.SRID
+                );
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public ICustomerAddressResponse getById(Long customerAddressId) {
         ValidationUtils.validateId(customerAddressId);
 
@@ -102,10 +114,8 @@ public class CustomerAddressService {
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER_ADDRESS));
     }
 
-
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Long add(AddCustomerAddressRequest request) {
-
         ValidationUtils.validateRequestBody(request);
 
         final IUserContext user = securityService
@@ -136,35 +146,21 @@ public class CustomerAddressService {
             throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_WARD);
         }
 
-        // 🔴 GEO-FENCE VALIDATION
-        if (request.latitude() != null && request.longitude() != null) {
+        if (StringUtils.isNotBlank(request.latitude()) && StringUtils.isNotBlank(request.longitude())) {
+            final double[] coordinates = ValidationUtils
+                    .validateAndParseCoordinates(request.latitude(), request.longitude());
 
-            double lat;
-            double lon;
-
-            try {
-                lat = Double.parseDouble(request.latitude());
-                lon = Double.parseDouble(request.longitude());
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Invalid latitude or longitude format");
-            }
-
-            if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
-                throw new IllegalArgumentException("Latitude or Longitude out of range");
-            }
-
-            ScrapRegion region = scrapRegionRepository
-                    .findById(request.scrapRegionId())
-                    .orElseThrow(() ->
-                            new ResourceNotFoundException(Default.ERROR_NOT_FOUND_SCRAP_REGION));
-
-            List<GeoPoint> polygon =
-                    PolygonUtil.parsePolygon(region.getBorderPolygon());
-
-            boolean inside = GeoFenceUtil.isPointInsidePolygon(lat, lon, polygon);
+            boolean inside = Boolean.TRUE.equals(
+                    scrapRegionRepository.existsContainingGeometryById(
+                            request.scrapRegionId(),
+                            coordinates[0],
+                            coordinates[1],
+                            GeometryNormalizer.SRID
+                    )
+            );
 
             if (!inside) {
-                throw new ResourceNotFoundException(
+                throw new InvalidDataException(
                         "Address is outside the selected scrap region service area"
                 );
             }
