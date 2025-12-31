@@ -18,7 +18,7 @@ public interface ScrapRegionAvailabilityRepository extends JpaRepository<ScrapRe
     @Query("""
         SELECT
             sra.id AS id,
-            sra.availableDate AS availableDate,
+            sra.availableDate AS date,
             sra.limit AS limit,
             sra.remainingSlots AS remainingSlots
         FROM ScrapRegionAvailability sra
