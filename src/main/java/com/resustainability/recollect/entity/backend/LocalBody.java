@@ -2,6 +2,8 @@ package com.resustainability.recollect.entity.backend;
 
 import jakarta.persistence.*;
 
+import org.locationtech.jts.geom.MultiPolygon;
+
 import java.util.Objects;
 
 @Entity
@@ -60,10 +62,13 @@ public class LocalBody {
     @Column(name = "is_inclusive_residential", nullable = false)
     private Boolean isInclusiveResidential;
 
+    @Column(name = "geometry", columnDefinition = "MULTIPOLYGON SRID 4326")
+    private MultiPolygon geometry;
+
     public LocalBody() {
     }
 
-    public LocalBody(Long id, String localBodyName, String borderPolygon, Double bioProcessingCharge, Double bioServiceCharge, Double bioSubsidyAmount, Double bioCgstPercentage, Double bioSgstPercentage, Double bioResidentialPrice, Double bioCommercialPrice, Boolean isActive, Boolean isDeleted, District district, LocalBodyType localBodyType, Boolean isInclusiveCommercial, Boolean isInclusiveResidential) {
+    public LocalBody(Long id, String localBodyName, String borderPolygon, Double bioProcessingCharge, Double bioServiceCharge, Double bioSubsidyAmount, Double bioCgstPercentage, Double bioSgstPercentage, Double bioResidentialPrice, Double bioCommercialPrice, Boolean isActive, Boolean isDeleted, District district, LocalBodyType localBodyType, Boolean isInclusiveCommercial, Boolean isInclusiveResidential, MultiPolygon geometry) {
         this.id = id;
         this.localBodyName = localBodyName;
         this.borderPolygon = borderPolygon;
@@ -80,6 +85,7 @@ public class LocalBody {
         this.localBodyType = localBodyType;
         this.isInclusiveCommercial = isInclusiveCommercial;
         this.isInclusiveResidential = isInclusiveResidential;
+        this.geometry = geometry;
     }
 
     @Override
@@ -221,5 +227,13 @@ public class LocalBody {
 
     public void setInclusiveResidential(Boolean inclusiveResidential) {
         isInclusiveResidential = inclusiveResidential;
+    }
+
+    public MultiPolygon getGeometry() {
+        return geometry;
+    }
+
+    public void setGeometry(MultiPolygon geometry) {
+        this.geometry = geometry;
     }
 }

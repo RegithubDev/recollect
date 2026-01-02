@@ -5,7 +5,7 @@ import com.resustainability.recollect.dto.commons.RequestBodyValidator;
 
 import org.locationtech.jts.geom.Geometry;
 
-public record UpdateScrapRegionBorderRequest(
+public record UpdateBorderRequest(
         Long id,
         Geometry geometry
 ) implements RequestBodyValidator {

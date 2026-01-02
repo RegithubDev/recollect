@@ -4,6 +4,8 @@ import com.resustainability.recollect.commons.StringUtils;
 import com.resustainability.recollect.commons.ValidationUtils;
 import com.resustainability.recollect.dto.commons.RequestBodyValidator;
 
+import org.locationtech.jts.geom.Geometry;
+
 public record AddLocalBodyRequest(
         String name,
         Long districtId,
@@ -17,7 +19,8 @@ public record AddLocalBodyRequest(
         Double bioResidentialPrice,
         Double bioCommercialPrice,
         Boolean isInclusiveCommercial,
-        Boolean isInclusiveResidential
+        Boolean isInclusiveResidential,
+        Geometry geometry
 ) implements RequestBodyValidator {
 
     @Override

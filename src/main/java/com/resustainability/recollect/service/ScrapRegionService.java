@@ -7,7 +7,7 @@ import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.payload.PayloadScrapRegionAvailability;
 import com.resustainability.recollect.dto.request.AddScrapRegionRequest;
-import com.resustainability.recollect.dto.request.UpdateScrapRegionBorderRequest;
+import com.resustainability.recollect.dto.request.UpdateBorderRequest;
 import com.resustainability.recollect.dto.request.UpdateScrapRegionRequest;
 import com.resustainability.recollect.dto.response.IGeometryResponse;
 import com.resustainability.recollect.dto.response.IScrapRegionAvailabilityResponse;
@@ -231,7 +231,7 @@ public class ScrapRegionService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public void updateBorder(UpdateScrapRegionBorderRequest request) {
+    public void updateBorder(UpdateBorderRequest request) {
         ValidationUtils.validateRequestBody(request);
 
         final ScrapRegion entity = scrapRegionRepository

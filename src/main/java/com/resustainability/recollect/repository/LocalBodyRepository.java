@@ -1,5 +1,6 @@
 package com.resustainability.recollect.repository;
 
+import com.resustainability.recollect.dto.response.IGeometryResponse;
 import com.resustainability.recollect.dto.response.ILocalBodyResponse;
 import com.resustainability.recollect.dto.response.ILocalBodyResponseByDistrictId;
 import com.resustainability.recollect.entity.backend.LocalBody;
@@ -140,6 +141,26 @@ public interface LocalBodyRepository extends JpaRepository<LocalBody, Long> {
 
     boolean existsByLocalBodyName(String localBodyName);
 
+	@Query("""
+        SELECT
+           lb.id AS id,
+           lb.geometry AS geometry
+        FROM LocalBody lb
+        WHERE lb.id = :localBodyId
+    """)
+	Optional<IGeometryResponse> findBorderByLocalBodyId(@Param("localBodyId") Long localBodyId);
+
+	@Modifying(clearAutomatically = true)
+	@Query("""
+        UPDATE LocalBody lb
+        SET lb.isActive =
+                CASE
+                    WHEN lb.isActive = true THEN false
+                    ELSE true
+                END
+        WHERE lb.id = :localBodyId
+    """)
+	int toggleActiveStatusById(@Param("localBodyId") Long localBodyId);
 
     @Modifying(clearAutomatically = true)
     @Query("""

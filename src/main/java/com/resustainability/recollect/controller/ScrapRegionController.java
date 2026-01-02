@@ -5,15 +5,13 @@ import com.resustainability.recollect.dto.commons.APIResponse;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.AddScrapRegionRequest;
-import com.resustainability.recollect.dto.request.UpdateScrapRegionBorderRequest;
+import com.resustainability.recollect.dto.request.UpdateBorderRequest;
 import com.resustainability.recollect.dto.request.UpdateScrapRegionRequest;
 import com.resustainability.recollect.dto.response.IGeometryResponse;
 import com.resustainability.recollect.dto.response.IScrapRegionAvailabilityResponse;
 import com.resustainability.recollect.dto.response.IScrapRegionResponse;
 import com.resustainability.recollect.dto.response.ScrapRegionResponse;
 import com.resustainability.recollect.service.ScrapRegionService;
-
-import org.locationtech.jts.geom.Geometry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -93,7 +91,7 @@ public class ScrapRegionController {
 
     @PatchMapping("/update-border")
     public APIResponse<Void> updateBorder(
-            @RequestBody(required = false) UpdateScrapRegionBorderRequest request
+            @RequestBody(required = false) UpdateBorderRequest request
     ) {
         scrapRegionService.updateBorder(request);
         return new APIResponse<>(Default.SUCCESS_UPDATE_SCRAP_REGION_BORDER);
