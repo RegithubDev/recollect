@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final SecurityService securityService;
     private final ScrapRegionAvailabilityService scrapRegionAvailabilityService;
+    private final LocalBodyAvailabilityService localBodyAvailabilityService;
     private final MobileService mobileService;
 
     private final CustomerAddressRepository customerAddressRepository;
@@ -55,6 +56,7 @@ public class OrderService {
     public OrderService(
             SecurityService securityService,
             ScrapRegionAvailabilityService scrapRegionAvailabilityService,
+            LocalBodyAvailabilityService localBodyAvailabilityService,
             MobileService mobileService,
             CustomerAddressRepository customerAddressRepository,
             OrderCancelReasonRepository orderCancelReasonRepository,
@@ -76,6 +78,7 @@ public class OrderService {
     ) {
         this.securityService = securityService;
         this.scrapRegionAvailabilityService = scrapRegionAvailabilityService;
+        this.localBodyAvailabilityService = localBodyAvailabilityService;
         this.mobileService = mobileService;
         this.customerAddressRepository = customerAddressRepository;
         this.orderCancelReasonRepository = orderCancelReasonRepository;
@@ -297,6 +300,18 @@ public class OrderService {
                 scrapOrderCartRepository.saveAll(orderItems);
             }
         } else if (OrderType.BIO_WASTE.equals(orderType)) {
+            // TODO - Biowaste availability check
+            /*
+            if (!localBodyAvailabilityService.bookSlot(address.getLocalBodyId(), request.scheduleDate())) {
+                throw new InvalidDataException(
+                        String.format(
+                                "Booking slot full for date %s, choose another available date.",
+                                DateTimeFormatUtils.toDateShortText(request.scheduleDate())
+                        )
+                );
+            }
+             */
+
             bioWasteOrder = bioWasteOrdersRepository.save(
                     new BioWasteOrders(
                             null,
