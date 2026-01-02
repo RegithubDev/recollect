@@ -23,8 +23,8 @@ public class ScrapRegionExtendAvailabilityJob extends ScheduledJobTemplate {
         this.scrapRegionAvailabilityService = scrapRegionAvailabilityService;
     }
 
-    // Daily at 00:30 midnight
-    @Scheduled(cron = "0 30 0 * * *", zone = Default.ZONE)
+    // Daily at 00:25 midnight
+    @Scheduled(cron = "0 25 0 * * *", zone = Default.ZONE)
     public void scheduled() {
         super.run();
     }

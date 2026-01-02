@@ -23,8 +23,8 @@ public class LocalBodyExtendAvailabilityJob extends ScheduledJobTemplate {
         this.localBodyAvailabilityService = localBodyAvailabilityService;
     }
 
-    // Daily at 00:30 midnight
-    @Scheduled(cron = "0 30 0 * * *", zone = Default.ZONE)
+    // Daily at 00:24 midnight
+    @Scheduled(cron = "0 24 0 * * *", zone = Default.ZONE)
     public void scheduled() {
         super.run();
     }
