@@ -5,16 +5,20 @@ import com.resustainability.recollect.dto.commons.APIResponse;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.AddLocalBodyRequest;
+import com.resustainability.recollect.dto.request.UpdateBorderRequest;
 import com.resustainability.recollect.dto.request.UpdateLocalBodyRequest;
-import com.resustainability.recollect.dto.response.ILocalBodyResponse;
-import com.resustainability.recollect.dto.response.ILocalBodyResponseByDistrictId;
+import com.resustainability.recollect.dto.response.*;
 import com.resustainability.recollect.service.LocalBodyService;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/localbody")
-//@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'PROVIDER')")
 public class LocalBodyController {
 
     private final LocalBodyService localBodyService;
@@ -35,8 +39,30 @@ public class LocalBodyController {
         );
     }
 
+    @GetMapping("/border/{localBodyId}")
+    public APIResponse<IGeometryResponse> getBorderById(
+            @PathVariable(value = "localBodyId", required = false) Long localBodyId
+    ) {
+        return new APIResponse<>(
+                localBodyService.getBorderById(localBodyId),
+                Default.SUCCESS,
+                null
+        );
+    }
+
+    @GetMapping("/list/available-dates/{localBodyId}")
+    public APIResponse<List<ILocalBodyLimitResponse>> listAvailableDates(
+            @PathVariable(value = "localBodyId", required = false) Long localBodyId,
+            @RequestParam(value = "fromDate", required = false) LocalDate fromDate,
+            @RequestParam(value = "toDate", required = false) LocalDate toDate
+    ) {
+        return new APIResponse<>(
+                localBodyService.listAvailableDates(localBodyId, fromDate, toDate)
+        );
+    }
+
     @GetMapping("/details/{id}")
-    public APIResponse<ILocalBodyResponse> getById(@PathVariable Long id) {
+    public APIResponse<LocalBodyResponse> getById(@PathVariable Long id) {
         return new APIResponse<>(localBodyService.getById(id));
     }
     
@@ -60,6 +86,22 @@ public class LocalBodyController {
     public APIResponse<Void> update(@RequestBody UpdateLocalBodyRequest request) {
         localBodyService.update(request);
         return new APIResponse<>(Default.SUCCESS_UPDATE_LOCAL_BODY);
+    }
+
+    @PatchMapping("/update-border")
+    public APIResponse<Void> updateBorder(
+            @RequestBody(required = false) UpdateBorderRequest request
+    ) {
+        localBodyService.updateBorder(request);
+        return new APIResponse<>(Default.SUCCESS_UPDATE_LOCAL_BODY_BORDER);
+    }
+
+    @PatchMapping("/toggle/{localBodyId}")
+    public APIResponse<Void> toggleById(
+            @PathVariable(value = "localBodyId", required = false) Long localBodyId
+    ) {
+        localBodyService.toggleById(localBodyId);
+        return new APIResponse<>(Default.SUCCESS_UPDATE_STATUS);
     }
 
     @DeleteMapping("/delete/{id}")

@@ -1,6 +1,7 @@
 package com.resustainability.recollect.util;
 
 import com.resustainability.recollect.commons.FileUtils;
+import com.resustainability.recollect.service.LocalBodyService;
 import com.resustainability.recollect.service.ScrapRegionService;
 
 import org.slf4j.Logger;
@@ -23,14 +24,17 @@ public class StartupSyncListener implements ApplicationListener<ContextRefreshed
     private final Logger log;
 
     private final ScrapRegionService scrapRegionService;
+    private final LocalBodyService localBodyService;
 
     @Autowired
     public StartupSyncListener(
             @Value("${app.file.uploadPath}") String fileUploadPath,
-            ScrapRegionService scrapRegionService
+            ScrapRegionService scrapRegionService,
+            LocalBodyService localBodyService
     ) {
         this.fileUploadPath = fileUploadPath;
         this.scrapRegionService = scrapRegionService;
+        this.localBodyService = localBodyService;
         this.alreadySynced = new AtomicBoolean(false);
         this.log = LoggerFactory.getLogger(StartupSyncListener.class);
     }
@@ -43,6 +47,7 @@ public class StartupSyncListener implements ApplicationListener<ContextRefreshed
             );
 
             scrapRegionService.normalizeAllToGeometry();
+            localBodyService.normalizeAllToGeometry();
         }
     }
 }

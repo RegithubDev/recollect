@@ -3,8 +3,11 @@ package com.resustainability.recollect.dto.request;
 import com.resustainability.recollect.commons.StringUtils;
 import com.resustainability.recollect.commons.ValidationUtils;
 import com.resustainability.recollect.dto.commons.RequestBodyValidator;
+import com.resustainability.recollect.dto.payload.PayloadLocalBodyAvailability;
 
 import org.locationtech.jts.geom.Geometry;
+
+import java.util.List;
 
 public record AddLocalBodyRequest(
         String name,
@@ -20,7 +23,8 @@ public record AddLocalBodyRequest(
         Double bioCommercialPrice,
         Boolean isInclusiveCommercial,
         Boolean isInclusiveResidential,
-        Geometry geometry
+        Geometry geometry,
+        List<PayloadLocalBodyAvailability> availability
 ) implements RequestBodyValidator {
 
     @Override
@@ -31,5 +35,6 @@ public record AddLocalBodyRequest(
 
         ValidationUtils.validateId(districtId);
         ValidationUtils.validateId(localBodyTypeId);
+        ValidationUtils.validateLocalBodyAvailability(availability);
     }
 }

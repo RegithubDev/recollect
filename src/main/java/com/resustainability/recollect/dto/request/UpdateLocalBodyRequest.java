@@ -3,6 +3,9 @@ package com.resustainability.recollect.dto.request;
 import com.resustainability.recollect.commons.StringUtils;
 import com.resustainability.recollect.commons.ValidationUtils;
 import com.resustainability.recollect.dto.commons.RequestBodyValidator;
+import com.resustainability.recollect.dto.payload.PayloadLocalBodyAvailability;
+
+import java.util.List;
 
 public record UpdateLocalBodyRequest(
         Long id,
@@ -19,7 +22,8 @@ public record UpdateLocalBodyRequest(
         Double bioCommercialPrice,
         Boolean isInclusiveCommercial,
         Boolean isInclusiveResidential,
-        Boolean isActive
+        Boolean isActive,
+        List<PayloadLocalBodyAvailability> availability
 ) implements RequestBodyValidator {
 
     @Override
@@ -32,5 +36,6 @@ public record UpdateLocalBodyRequest(
 
         ValidationUtils.validateId(districtId);
         ValidationUtils.validateId(localBodyTypeId);
+        ValidationUtils.validateLocalBodyAvailability(availability);
     }
 }
