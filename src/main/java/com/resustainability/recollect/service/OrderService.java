@@ -210,9 +210,6 @@ public class OrderService {
         final State state = null != address.getStateId()
                 ? stateRepository.getReferenceById(address.getStateId())
                 : null;
-        final Ward ward = null != address.getWardId()
-                ? wardRepository.getReferenceById(address.getWardId())
-                : null;
 
         final double defaultDoubleValue = 0.0d;
         final String defaultOrderStatus = OrderStatus.OPEN.getAbbreviation();
@@ -300,8 +297,19 @@ public class OrderService {
                 scrapOrderCartRepository.saveAll(orderItems);
             }
         } else if (OrderType.BIO_WASTE.equals(orderType)) {
+            final Ward ward = null != address.getWardId()
+                    ? wardRepository.getReferenceById(address.getWardId())
+                    : null;
+
             // TODO - Biowaste availability check
             /*
+            if (null == address.getWardId()) {
+                throw new InvalidDataException("Ward is required, Set ward in your address.");
+            }
+
+            final Ward ward = wardRepository
+                    .getReferenceById(address.getWardId());
+
             if (!localBodyAvailabilityService.bookSlot(address.getLocalBodyId(), request.scheduleDate())) {
                 throw new InvalidDataException(
                         String.format(
@@ -529,12 +537,18 @@ public class OrderService {
                     .freeSlot(order.getScrapRegionId(), order.getScheduleDate());
         }
 
-        if (OrderType.is(order.getType(), OrderType.BIO_WASTE) && 0 == bioWasteOrdersRepository.cancelByBioWasteOrderId(
-                order.getBioWasteOrderId(),
-                request.reasonId(),
-                orderStatus
-        )) {
-            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
+        if (OrderType.is(order.getType(), OrderType.BIO_WASTE)) {
+            if (0 == bioWasteOrdersRepository.cancelByBioWasteOrderId(
+                    order.getBioWasteOrderId(),
+                    request.reasonId(),
+                    orderStatus
+            )) {
+                throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
+            }
+
+           // TODO - Slot free for BIO WASTE
+//            localBodyAvailabilityService
+//                    .freeSlot(order.getLocalBodyId(), order.getScheduleDate());
         }
 
         if (0 == completeOrdersRepository.cancelByCompleteOrderId(

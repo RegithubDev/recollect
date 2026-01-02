@@ -36,13 +36,13 @@ public class LocalBodyAvailabilityService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
-    public boolean bookSlot(Long scrapRegionId, LocalDate scheduleDate) {
-        return 1 == localBodyLimitRepository.decrementRemainingSlot(scrapRegionId, scheduleDate);
+    public boolean bookSlot(Long localBodyId, LocalDate scheduleDate) {
+        return 1 == localBodyLimitRepository.decrementRemainingSlot(localBodyId, scheduleDate);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
-    public boolean freeSlot(Long scrapRegionId, LocalDate scheduleDate) {
-        return 1 == localBodyLimitRepository.incrementRemainingSlot(scrapRegionId, scheduleDate);
+    public boolean freeSlot(Long localBodyId, LocalDate scheduleDate) {
+        return 1 == localBodyLimitRepository.incrementRemainingSlot(localBodyId, scheduleDate);
     }
 
 
