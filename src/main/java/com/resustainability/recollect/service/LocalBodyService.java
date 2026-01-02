@@ -5,18 +5,17 @@ import com.resustainability.recollect.commons.StringUtils;
 import com.resustainability.recollect.commons.ValidationUtils;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
+import com.resustainability.recollect.dto.payload.PayloadLocalBodyAvailability;
 import com.resustainability.recollect.dto.request.AddLocalBodyRequest;
 import com.resustainability.recollect.dto.request.UpdateLocalBodyRequest;
 import com.resustainability.recollect.dto.request.UpdateBorderRequest;
-import com.resustainability.recollect.dto.response.IGeometryResponse;
-import com.resustainability.recollect.dto.response.ILocalBodyResponse;
-import com.resustainability.recollect.dto.response.ILocalBodyResponseByDistrictId;
-import com.resustainability.recollect.entity.backend.District;
-import com.resustainability.recollect.entity.backend.LocalBody;
-import com.resustainability.recollect.entity.backend.LocalBodyType;
+import com.resustainability.recollect.dto.response.*;
+import com.resustainability.recollect.entity.backend.*;
 import com.resustainability.recollect.exception.DataAlreadyExistException;
+import com.resustainability.recollect.exception.InvalidDataException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
 import com.resustainability.recollect.repository.DistrictRepository;
+import com.resustainability.recollect.repository.LocalBodyLimitRepository;
 import com.resustainability.recollect.repository.LocalBodyRepository;
 import com.resustainability.recollect.repository.LocalBodyTypeRepository;
 import com.resustainability.recollect.util.GeometryNormalizer;
@@ -27,23 +26,30 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class LocalBodyService {
     private final GeometryNormalizer geometryNormalizer;
     private final LocalBodyRepository localBodyRepository;
+    private final LocalBodyLimitRepository localBodyLimitRepository;
     private final DistrictRepository districtRepository;
     private final LocalBodyTypeRepository localBodyTypeRepository;
 
     public LocalBodyService(
             GeometryNormalizer geometryNormalizer,
             LocalBodyRepository localBodyRepository,
+            LocalBodyLimitRepository localBodyLimitRepository,
             DistrictRepository districtRepository,
             LocalBodyTypeRepository localBodyTypeRepository
     ) {
         this.geometryNormalizer = geometryNormalizer;
         this.localBodyRepository = localBodyRepository;
+        this.localBodyLimitRepository = localBodyLimitRepository;
         this.districtRepository = districtRepository;
         this.localBodyTypeRepository = localBodyTypeRepository;
     }
@@ -93,13 +99,41 @@ public class LocalBodyService {
         return Pager.of(page);
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public List<ILocalBodyLimitResponse> listAvailableDates(
+            Long localBodyId,
+            LocalDate from,
+            LocalDate to
+    ) {
+        ValidationUtils.validateRangeLimit(from, to, 90);
+        return localBodyLimitRepository
+                .findAllByLocalBodyIdAndBetween(
+                        localBodyId,
+                        from,
+                        to,
+                        true
+                );
+    }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED) 
-    public ILocalBodyResponse getById(Long id) {
+    public LocalBodyResponse getById(Long id) {
         ValidationUtils.validateId(id);
 
-        return localBodyRepository.findByLocalBodyId(id)
+        final ILocalBodyResponse details = localBodyRepository
+                .findByLocalBodyId(id)
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCAL_BODY));
+
+        final LocalDate today = LocalDate.now();
+
+        final List<ILocalBodyLimitResponse> availability = localBodyLimitRepository
+                .findAllByLocalBodyIdAndBetween(
+                        id,
+                        today.withDayOfMonth(1),
+                        today.withDayOfMonth(today.lengthOfMonth()),
+                        false
+                );
+
+        return new LocalBodyResponse(details, availability);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED) 
@@ -145,7 +179,30 @@ public class LocalBodyService {
 
         LocalBody saved = localBodyRepository.save(lb);
 
-        // TODO - regionAvailabilities
+        final List<LocalBodyLimit> regionAvailabilities = request
+                .availability()
+                .stream()
+                .filter(dto -> null != dto.date() && null != dto.limit() && dto.limit() >= 0)
+                .collect(Collectors.toMap(
+                        PayloadLocalBodyAvailability::date,
+                        Function.identity(),
+                        (existing, replacement) -> replacement
+                )).values()
+                .stream()
+                .map(dto -> new LocalBodyLimit(
+                        null,
+                        dto.date(),
+                        dto.limit(),
+                        dto.limit(),
+                        saved
+                ))
+                .toList();
+
+        if (regionAvailabilities.isEmpty()) {
+            throw new InvalidDataException("Provide availability pickup dates for current and next month");
+        }
+
+        localBodyLimitRepository.saveAll(regionAvailabilities);
 
         return saved.getId();
     }
@@ -183,6 +240,52 @@ public class LocalBodyService {
         lb.setLocalBodyType(type);
 
         localBodyRepository.save(lb);
+
+
+        final Map<LocalDate, PayloadLocalBodyAvailability> indexedRegionAvailability = request
+                .availability()
+                .stream()
+                .filter(dto -> null != dto.date() && null != dto.limit() && dto.limit() >= 0)
+                .collect(Collectors.toMap(
+                        PayloadLocalBodyAvailability::date,
+                        Function.identity(),
+                        (existing, replacement) -> replacement
+                ));
+
+        final Map<LocalDate, LocalBodyLimit> existingRegionAvailabilities = localBodyLimitRepository
+                .findAllByLocalBodyIdAndDates(request.id(), indexedRegionAvailability.keySet())
+                .stream()
+                .collect(Collectors.toMap(
+                        LocalBodyLimit::getAvailableDate,
+                        Function.identity(),
+                        (existing, replacement) -> replacement
+                ));
+
+        final List<LocalBodyLimit> entities = indexedRegionAvailability
+                .values()
+                .stream()
+                .map(dto -> existingRegionAvailabilities.compute(dto.date(), (k, v) -> {
+                    if (null == v) {
+                        return new LocalBodyLimit(
+                                null,
+                                dto.date(),
+                                dto.limit(),
+                                dto.limit(),
+                                lb
+                        );
+                    }
+
+                    v.setLimit(dto.limit());
+                    v.setRemainingSlots(
+                            Math.max(0, dto.limit() - (v.getLimit() - v.getRemainingSlots()))
+                    ); // TODO: compute logic
+                    return v;
+                }))
+                .toList();
+
+        if (!entities.isEmpty()) {
+            localBodyLimitRepository.saveAll(entities);
+        }
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)

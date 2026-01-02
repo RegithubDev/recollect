@@ -1,6 +1,7 @@
 package com.resustainability.recollect.commons;
 
 import com.resustainability.recollect.dto.commons.RequestBodyValidator;
+import com.resustainability.recollect.dto.payload.PayloadLocalBodyAvailability;
 import com.resustainability.recollect.dto.payload.PayloadScrapRegionAvailability;
 import com.resustainability.recollect.exception.InvalidDataException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
@@ -120,6 +121,12 @@ public class ValidationUtils {
     }
 
     public static void validateScrapRegionAvailability(List<PayloadScrapRegionAvailability> availability) {
+        if (CollectionUtils.isBlank(availability)) {
+            throw new InvalidDataException("Provide availability pickup dates");
+        }
+    }
+
+    public static void validateLocalBodyAvailability(List<PayloadLocalBodyAvailability> availability) {
         if (CollectionUtils.isBlank(availability)) {
             throw new InvalidDataException("Provide availability pickup dates");
         }

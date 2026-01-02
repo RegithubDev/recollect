@@ -146,6 +146,7 @@ public class Default {
 
     public static final String SUCCESS_ADD_LOCAL_BODY = "LocalBody added successfully";
     public static final String SUCCESS_UPDATE_LOCAL_BODY = "LocalBody details have been updated successfully.";
+    public static final String SUCCESS_UPDATE_LOCAL_BODY_BORDER = "Local body border details have been updated successfully.";
     public static final String SUCCESS_DELETE_LOCAL_BODY = "All done! The LocalBody's been deleted.";
     public static final String SUCCESS_UNDELETE_LOCAL_BODY = "All done! The LocalBody's been restored.";
 
