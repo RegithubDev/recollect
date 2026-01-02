@@ -1,6 +1,7 @@
 package com.resustainability.recollect.repository;
 
 import com.resustainability.recollect.dto.response.ILocalBodyResponse;
+import com.resustainability.recollect.dto.response.ILocalBodyResponseByDistrictId;
 import com.resustainability.recollect.entity.backend.LocalBody;
 
 import org.springframework.data.domain.Page;
@@ -65,6 +66,35 @@ public interface LocalBodyRepository extends JpaRepository<LocalBody, Long> {
             @Param("countryId") Long countryId,
             Pageable pageable
     );
+
+    @Query("""
+    	    SELECT 
+    	        lb.id AS id,
+    	        lb.localBodyName AS localBodyName,
+    	        lb.bioProcessingCharge AS bioProcessingCharge,
+    	        lb.bioServiceCharge AS bioServiceCharge,
+    	        lb.bioSubsidyAmount AS bioSubsidyAmount,
+    	        lb.bioCgstPercentage AS bioCgstPercentage,
+    	        lb.bioSgstPercentage AS bioSgstPercentage,
+    	        lb.bioResidentialPrice AS bioResidentialPrice,
+    	        lb.bioCommercialPrice AS bioCommercialPrice
+
+    	    FROM LocalBody lb
+    	    JOIN lb.district d
+
+    	    WHERE lb.isDeleted = false
+    	      AND d.id = :districtId
+    	      AND (
+    	            :searchTerm IS NULL
+    	            OR LOWER(lb.localBodyName) LIKE CONCAT(LOWER(:searchTerm), '%')
+    	          )
+    	""")
+    	Page<ILocalBodyResponseByDistrictId> findAllByDistrictPaged(
+    	        @Param("districtId") Long districtId,
+    	        @Param("searchTerm") String searchTerm,
+    	        Pageable pageable
+    	);
+
 
 
 

@@ -7,6 +7,7 @@ import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.AddLocalBodyRequest;
 import com.resustainability.recollect.dto.request.UpdateLocalBodyRequest;
 import com.resustainability.recollect.dto.response.ILocalBodyResponse;
+import com.resustainability.recollect.dto.response.ILocalBodyResponseByDistrictId;
 import com.resustainability.recollect.entity.backend.District;
 import com.resustainability.recollect.entity.backend.LocalBody;
 import com.resustainability.recollect.entity.backend.LocalBodyType;
@@ -16,9 +17,11 @@ import com.resustainability.recollect.repository.DistrictRepository;
 import com.resustainability.recollect.repository.LocalBodyRepository;
 import com.resustainability.recollect.repository.LocalBodyTypeRepository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 
 @Service
 public class LocalBodyService {
@@ -37,6 +40,7 @@ public class LocalBodyService {
         this.localBodyTypeRepository = localBodyTypeRepository;
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED) 
     public Pager<ILocalBodyResponse> list(Long districtId, Long stateId, Long countryId, SearchCriteria criteria) {
         return Pager.of(
                 localBodyRepository.findAllPaged(
@@ -48,8 +52,35 @@ public class LocalBodyService {
                 )
         );
     }
+    
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public Pager<ILocalBodyResponseByDistrictId> listByDistrict(
+            Long districtId,
+            SearchCriteria criteria
+    ) {
+
+        ValidationUtils.validateDistrictId(districtId);
+
+        Page<ILocalBodyResponseByDistrictId> page =
+                localBodyRepository.findAllByDistrictPaged(
+                        districtId,
+                        criteria.getQ(),
+                        criteria.toPageRequest()
+                );
+
+        
+        if (page.isEmpty()) {
+            throw new ResourceNotFoundException(
+                    "No local bodies found for the given district"
+            );
+        }
+
+        return Pager.of(page);
+    }
+
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED) 
     public ILocalBodyResponse getById(Long id) {
         ValidationUtils.validateId(id);
 
@@ -57,7 +88,7 @@ public class LocalBodyService {
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCAL_BODY));
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED) 
     public Long add(AddLocalBodyRequest request) {
 
         ValidationUtils.validateRequestBody(request);
@@ -100,7 +131,7 @@ public class LocalBodyService {
     }
 
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED) 
     public void update(UpdateLocalBodyRequest request) {
 
         ValidationUtils.validateRequestBody(request);
@@ -136,7 +167,7 @@ public class LocalBodyService {
     }
 
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED) 
     public void deleteById(Long id, boolean value) {
         ValidationUtils.validateId(id);
 

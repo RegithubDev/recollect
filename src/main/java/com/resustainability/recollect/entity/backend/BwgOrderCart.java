@@ -40,4 +40,109 @@ public class BwgOrderCart {
 
     @Column(name = "scrap_hsn", length = 10)
     private String scrapHsn;
+    
+    
+    
+    public BwgOrderCart() {
+    	
+    }
+    
+
+	public BwgOrderCart(Long id, Double scrapWeight, Double scrapPrice, Double totalPrice, Boolean isDeleted,
+			BioWasteType bioWasteType, BwgOrders bwgOrder, ScrapType scrapType, Double scrapGst, String scrapHsn) {
+		super();
+		this.id = id;
+		this.scrapWeight = scrapWeight;
+		this.scrapPrice = scrapPrice;
+		this.totalPrice = totalPrice;
+		this.isDeleted = isDeleted;
+		this.bioWasteType = bioWasteType;
+		this.bwgOrder = bwgOrder;
+		this.scrapType = scrapType;
+		this.scrapGst = scrapGst;
+		this.scrapHsn = scrapHsn;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Double getScrapWeight() {
+		return scrapWeight;
+	}
+
+	public void setScrapWeight(Double scrapWeight) {
+		this.scrapWeight = scrapWeight;
+	}
+
+	public Double getScrapPrice() {
+		return scrapPrice;
+	}
+
+	public void setScrapPrice(Double scrapPrice) {
+		this.scrapPrice = scrapPrice;
+	}
+
+	public Double getTotalPrice() {
+		return totalPrice;
+	}
+
+	public void setTotalPrice(Double totalPrice) {
+		this.totalPrice = totalPrice;
+	}
+
+	public Boolean getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(Boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+
+	public BioWasteType getBioWasteType() {
+		return bioWasteType;
+	}
+
+	public void setBioWasteType(BioWasteType bioWasteType) {
+		this.bioWasteType = bioWasteType;
+	}
+
+	public BwgOrders getBwgOrder() {
+		return bwgOrder;
+	}
+
+	public void setBwgOrder(BwgOrders bwgOrder) {
+		this.bwgOrder = bwgOrder;
+	}
+
+	public ScrapType getScrapType() {
+		return scrapType;
+	}
+
+	public void setScrapType(ScrapType scrapType) {
+		this.scrapType = scrapType;
+	}
+
+	public Double getScrapGst() {
+		return scrapGst;
+	}
+
+	public void setScrapGst(Double scrapGst) {
+		this.scrapGst = scrapGst;
+	}
+
+	public String getScrapHsn() {
+		return scrapHsn;
+	}
+
+	public void setScrapHsn(String scrapHsn) {
+		this.scrapHsn = scrapHsn;
+	}
+    
+    
+    
 }

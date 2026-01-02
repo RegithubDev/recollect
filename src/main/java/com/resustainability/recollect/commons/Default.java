@@ -79,6 +79,8 @@ public class Default {
     
     public static final String ERROR_NOT_FOUND_BWG_CLIENT ="BWG Client not found";
     
+    public static final String ERROR_NOT_FOUND_BWG_CLIENT_STATE ="State Not mapped to client";
+    
 
     public static final String SUCCESS_LOGIN = "Login success. Session created.";
     public static final String SUCCESS_LOGOUT = "You're logged out! Session has been terminated.";

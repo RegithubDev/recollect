@@ -7,9 +7,9 @@ import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.AddLocalBodyRequest;
 import com.resustainability.recollect.dto.request.UpdateLocalBodyRequest;
 import com.resustainability.recollect.dto.response.ILocalBodyResponse;
+import com.resustainability.recollect.dto.response.ILocalBodyResponseByDistrictId;
 import com.resustainability.recollect.service.LocalBodyService;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -39,6 +39,17 @@ public class LocalBodyController {
     public APIResponse<ILocalBodyResponse> getById(@PathVariable Long id) {
         return new APIResponse<>(localBodyService.getById(id));
     }
+    
+    @GetMapping("/details-localbody/{districtId}")
+    public APIResponse<Pager<ILocalBodyResponseByDistrictId>> listByDistrict(
+            @PathVariable Long districtId,
+            @ModelAttribute SearchCriteria criteria
+    ) {
+        return new APIResponse<>(
+                localBodyService.listByDistrict(districtId, criteria)
+        );
+    }
+  
 
     @PostMapping("/add")
     public APIResponse<Long> add(@RequestBody AddLocalBodyRequest request) {
