@@ -26,8 +26,8 @@ public class SchedulerRestController {
     ) {
         this.jobs = jobList.stream()
                 .collect(Collectors.toUnmodifiableMap(
-                        job -> job.getJobName().toLowerCase(),
-                        job -> job::run
+                        job -> (String) job.getJobName().toLowerCase(),
+                        job -> (Runnable) job::run
                 ));
     }
 
