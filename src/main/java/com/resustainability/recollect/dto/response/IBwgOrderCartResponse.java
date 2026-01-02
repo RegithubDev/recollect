@@ -12,6 +12,7 @@ public interface IBwgOrderCartResponse {
     Double getScrapGst();
     String getScrapHsn();
     Double getTotalPrice();
+    
     Long getBioWasteTypeId();
     String getBiowasteName();
     

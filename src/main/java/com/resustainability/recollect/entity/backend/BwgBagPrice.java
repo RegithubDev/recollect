@@ -101,6 +101,8 @@ public class BwgBagPrice {
 	public void setClient(BwgClient client) {
 		this.client = client;
 	}
+
+	
     
 	
     
