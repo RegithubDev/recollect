@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -18,6 +19,7 @@ public interface ScrapRegionAvailabilityRepository extends JpaRepository<ScrapRe
     @Query("""
         SELECT
             sra.id AS id,
+            sra.scrapRegion.id AS scrapRegionId,
             sra.availableDate AS date,
             sra.limit AS limit,
             sra.remainingSlots AS remainingSlots
@@ -33,6 +35,53 @@ public interface ScrapRegionAvailabilityRepository extends JpaRepository<ScrapRe
             @Param("onlyWithRemainingSlots") boolean onlyWithRemainingSlots
     );
 
+    @Query(nativeQuery = true, value = """
+        SELECT
+            sra.id AS id,
+            sr.id AS scrapRegionId,
+            sra.available_date AS date,
+            sra.`limit` AS `limit`,
+            sra.remaining_slots AS remainingSlots
+        FROM backend_scrapregionavailability sra
+        JOIN backend_scrapregion sr
+            ON sr.id = sra.scrap_region_id
+        JOIN (
+            SELECT
+                scrap_region_id,
+                MAX(available_date) AS last_date
+            FROM backend_scrapregionavailability
+            GROUP BY scrap_region_id
+        ) last_entries
+            ON last_entries.scrap_region_id = sra.scrap_region_id
+        WHERE sra.available_date BETWEEN
+              DATE_SUB(last_entries.last_date, INTERVAL :months MONTH)
+              AND last_entries.last_date;
+    """)
+    List<IScrapRegionAvailabilityResponse> findAllWhereLastEntryOlderThanXMonths(
+            @Param("months") int months
+    );
+
+    @Query("""
+        SELECT sra
+        FROM ScrapRegionAvailability sra
+        WHERE sra.scrapRegion.id = :scrapRegionId
+          AND sra.availableDate BETWEEN :fromDate AND :toDate
+    """)
+    List<ScrapRegionAvailability> findBetween(
+            @Param("scrapRegionId") Long scrapRegionId,
+            @Param("fromDate") LocalDate fromDate,
+            @Param("toDate") LocalDate toDate
+    );
+
+    @Query("""
+        SELECT MAX(sra.availableDate)
+        FROM ScrapRegionAvailability sra
+        WHERE sra.scrapRegion.id = :scrapRegionId
+    """)
+    Optional<LocalDate> findMaxDate(
+            @Param("scrapRegionId") Long scrapRegionId
+    );
+
     @Query("""
         SELECT sra
         FROM ScrapRegionAvailability sra
@@ -42,6 +91,17 @@ public interface ScrapRegionAvailabilityRepository extends JpaRepository<ScrapRe
     List<ScrapRegionAvailability> findAllByScrapRegionIdAndDates(
             @Param("scrapRegionId") Long scrapRegionId,
             @Param("availableDates") Set<LocalDate> availableDates
+    );
+
+    @Query("""
+        SELECT sra.availableDate
+        FROM ScrapRegionAvailability sra
+        WHERE sra.scrapRegion.id = :scrapRegionId
+          AND sra.availableDate IN :dates
+    """)
+    Set<LocalDate> findExistingDates(
+            @Param("scrapRegionId") Long scrapRegionId,
+            @Param("dates") Set<LocalDate> dates
     );
 
     @Modifying
