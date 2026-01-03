@@ -421,7 +421,8 @@ public class OrderService {
                         null,
                         scrapOrder,
                         state,
-                        customer
+                        customer,
+                        null
                 )
         );
 

@@ -1,7 +1,9 @@
 package com.resustainability.recollect.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import com.resustainability.recollect.dto.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -16,7 +18,6 @@ import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.AddBwgOrderRequest;
 import com.resustainability.recollect.dto.request.UpdateBwgOrderRequest;
-import com.resustainability.recollect.dto.response.IBwgOrderResponse;
 import com.resustainability.recollect.entity.backend.BwgClient;
 import com.resustainability.recollect.entity.backend.BwgOrders;
 import com.resustainability.recollect.entity.backend.CompleteOrderLog;
@@ -70,13 +71,19 @@ public class BwgOrdersService {
 
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public IBwgOrderResponse getById(Long id) {
+    public BwgOrderResponse getById(Long id) {
         ValidationUtils.validateId(id);
-        return ordersRepository.findOrderById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                		Default.ERROR_NOT_FOUND_ORDER
-                		)
-                	);
+        final IBwgOrderResponse details = ordersRepository
+                .findOrderById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
+
+        final List<ItemCategoryTypeResponse> types = null;
+
+        final List<IBwgOrderUsedBagResponse> usedBags = null;
+
+        final IInvoiceResponse invoice = null;
+
+        return new BwgOrderResponse(details, types, usedBags, invoice);
     }
     
     
@@ -165,7 +172,8 @@ public class BwgOrdersService {
                         null,
                         null,
                         state,
-                        null
+                        null,
+                        client.getClientPrice()
                 )
         );
         

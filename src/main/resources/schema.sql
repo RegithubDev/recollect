@@ -154,3 +154,21 @@ SET @sql := IF(
 PREPARE stmt FROM @sql;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
+
+SET @exists := (
+    SELECT COUNT(*)
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'backend_completeorders'
+      AND COLUMN_NAME = 'client_price'
+);
+
+SET @sql := IF(
+    @exists = 0,
+    'ALTER TABLE backend_completeorders ADD COLUMN client_price double NULL',
+    'SELECT 1'
+);
+
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;

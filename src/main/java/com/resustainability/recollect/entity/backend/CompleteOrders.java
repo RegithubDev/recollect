@@ -118,10 +118,13 @@ public class CompleteOrders {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
+    @Column(name = "client_price")
+    private Double clientPrice;
+
     public CompleteOrders() {
     }
 
-    public CompleteOrders(Long id, LocalDate scheduleDate, String orderType, String orderStatus, Double bioTotalBillAmount, Double bioSubsidyAmount, Double bioBillAmount, Double bioCgstAmount, Double bioSgstAmount, Double bioBagAmount, Double bioTotalBill, Double bioWalletDeduct, Double bioWeight, Double scrapTotalBill, Double scrapWalletDeduct, Double scrapServiceCharge, Double scrapRoundoff, Double finalBill, String paymentMethod, Boolean isSelected, LocalDateTime billedAt, Boolean isDeleted, Boolean cancelRequest, BioWasteOrders bioWasteOrder, BwgOrders bwgOrder, BwgClient client, District district, PickupVehicle vehicle, Provider provider, ScrapOrders scrapOrder, State state, Customer customer) {
+    public CompleteOrders(Long id, LocalDate scheduleDate, String orderType, String orderStatus, Double bioTotalBillAmount, Double bioSubsidyAmount, Double bioBillAmount, Double bioCgstAmount, Double bioSgstAmount, Double bioBagAmount, Double bioTotalBill, Double bioWalletDeduct, Double bioWeight, Double scrapTotalBill, Double scrapWalletDeduct, Double scrapServiceCharge, Double scrapRoundoff, Double finalBill, String paymentMethod, Boolean isSelected, LocalDateTime billedAt, Boolean isDeleted, Boolean cancelRequest, BioWasteOrders bioWasteOrder, BwgOrders bwgOrder, BwgClient client, District district, PickupVehicle vehicle, Provider provider, ScrapOrders scrapOrder, State state, Customer customer, Double clientPrice) {
         this.id = id;
         this.scheduleDate = scheduleDate;
         this.orderType = orderType;
@@ -154,6 +157,7 @@ public class CompleteOrders {
         this.scrapOrder = scrapOrder;
         this.state = state;
         this.customer = customer;
+        this.clientPrice = clientPrice;
     }
 
     @Override
@@ -423,5 +427,13 @@ public class CompleteOrders {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+
+    public Double getClientPrice() {
+        return clientPrice;
+    }
+
+    public void setClientPrice(Double clientPrice) {
+        this.clientPrice = clientPrice;
     }
 }

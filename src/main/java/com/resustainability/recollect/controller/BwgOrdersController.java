@@ -1,5 +1,6 @@
 package com.resustainability.recollect.controller;
 
+import com.resustainability.recollect.dto.response.BwgOrderResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -53,10 +54,10 @@ public class BwgOrdersController {
 
 
     @GetMapping("/details/{id}")
-    public APIResponse<IBwgOrderResponse> get(@PathVariable Long id) {
+    public APIResponse<BwgOrderResponse> get(@PathVariable Long id) {
         return new APIResponse<>(
-        		ordersService.getById(id)
-        	);
+                ordersService.getById(id)
+        );
     }
 
     

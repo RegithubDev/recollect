@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public interface IBwgOrderResponse {
-
     Long getId();
     String getOrderCode();
     LocalDateTime getOrderDate();
@@ -16,6 +15,13 @@ public interface IBwgOrderResponse {
     Long getClientId();
     String getClientName();
     String getPhoneNumber();
+
+    Long getProviderId();
+    String getProviderName();
+
+    Long getVehicleId();
+    String getVehicleName();
+    String getVehicleNumber();
     
     Long getDistrictId();
     String getDistrictName();
@@ -25,7 +31,6 @@ public interface IBwgOrderResponse {
     
     Long getScrapRegionId();
     String getScrapRegionName();
-    
-    
-       
+
+    String getComment();
 }
