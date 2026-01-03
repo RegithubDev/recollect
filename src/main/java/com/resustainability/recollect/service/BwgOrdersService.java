@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.resustainability.recollect.dto.response.*;
+import com.resustainability.recollect.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -24,36 +25,32 @@ import com.resustainability.recollect.entity.backend.CompleteOrderLog;
 import com.resustainability.recollect.entity.backend.CompleteOrders;
 import com.resustainability.recollect.entity.backend.State;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
-import com.resustainability.recollect.repository.BwgClientRepository;
-import com.resustainability.recollect.repository.BwgOrdersRepository;
-import com.resustainability.recollect.repository.CompleteOrderLogRepository;
-import com.resustainability.recollect.repository.CompleteOrdersRepository;
-import com.resustainability.recollect.repository.OrderCancelReasonRepository;
-import com.resustainability.recollect.repository.StateRepository;
 import com.resustainability.recollect.tag.OrderStatus;
 import com.resustainability.recollect.tag.OrderType;
 
 
 @Service
 public class BwgOrdersService {
-
     private final BwgOrdersRepository ordersRepository;
+    private final BwgOrderCartRepository bwgOrderCartRepository;
+    private final BwgOrderUsedBagRepository bwgOrderUsedBagRepository;
     private final BwgClientRepository clientRepository;
     private final CompleteOrdersRepository completeOrdersRepository;
     private final CompleteOrderLogRepository completeOrderLogRepository;
-
 
     @Autowired
     public BwgOrdersService(
             BwgOrdersRepository ordersRepository,
             BwgClientRepository clientRepository,
-            StateRepository stateRepository,
-            OrderCancelReasonRepository reasonRepository,
+            BwgOrderCartRepository bwgOrderCartRepository,
+            BwgOrderUsedBagRepository bwgOrderUsedBagRepository,
             CompleteOrdersRepository completeOrdersRepository,
             CompleteOrderLogRepository completeOrderLogRepository
     ) {
         this.ordersRepository = ordersRepository;
         this.clientRepository = clientRepository;
+        this.bwgOrderCartRepository = bwgOrderCartRepository;
+        this.bwgOrderUsedBagRepository = bwgOrderUsedBagRepository;
         this.completeOrdersRepository = completeOrdersRepository;
         this.completeOrderLogRepository = completeOrderLogRepository;
 
@@ -69,24 +66,36 @@ public class BwgOrdersService {
         );
     }
 
-
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public BwgOrderResponse getById(Long id) {
         ValidationUtils.validateId(id);
+
         final IBwgOrderResponse details = ordersRepository
                 .findOrderById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
 
-        final List<ItemCategoryTypeResponse> types = null;
+        final List<ItemCategoryTypeResponse> types = bwgOrderCartRepository
+                .findAllTypesByOrderId(id);
 
-        final List<IBwgOrderUsedBagResponse> usedBags = null;
+        final List<IBwgOrderUsedBagResponse> usedBags = bwgOrderUsedBagRepository
+                .findAllUsedBagsByOrderId(id);
 
-        final IInvoiceResponse invoice = null;
+        final InvoiceResponse invoice = completeOrdersRepository
+                .findInvoiceDetailsByBwgOrderId(id)
+                .orElseGet(() -> new InvoiceResponse(
+                        id,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                ));
 
         return new BwgOrderResponse(details, types, usedBags, invoice);
     }
-    
-    
+
     @Transactional(
             isolation = Isolation.READ_COMMITTED,
             propagation = Propagation.REQUIRED

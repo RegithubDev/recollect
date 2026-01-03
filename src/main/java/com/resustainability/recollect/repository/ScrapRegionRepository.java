@@ -145,7 +145,7 @@ public interface ScrapRegionRepository extends JpaRepository<ScrapRegion, Long> 
               )
         )
     """)
-    boolean existsContainingGeometryById(
+    Long existsContainingGeometryById(
             @Param("scrapRegionId") Long scrapRegionId,
             @Param("lat") double lat,
             @Param("lon") double lon,

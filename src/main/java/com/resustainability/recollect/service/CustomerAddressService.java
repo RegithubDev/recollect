@@ -150,14 +150,12 @@ public class CustomerAddressService {
             final double[] coordinates = ValidationUtils
                     .validateAndParseCoordinates(request.latitude(), request.longitude());
 
-            boolean inside = Boolean.TRUE.equals(
-                    scrapRegionRepository.existsContainingGeometryById(
-                            request.scrapRegionId(),
-                            coordinates[0],
-                            coordinates[1],
-                            GeometryNormalizer.SRID
-                    )
-            );
+            boolean inside = scrapRegionRepository.existsContainingGeometryById(
+                    request.scrapRegionId(),
+                    coordinates[0],
+                    coordinates[1],
+                    GeometryNormalizer.SRID
+            ) == 1L;
 
             if (!inside) {
                 throw new InvalidDataException(

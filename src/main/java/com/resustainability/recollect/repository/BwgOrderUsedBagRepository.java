@@ -11,9 +11,30 @@ import org.springframework.stereotype.Repository;
 import com.resustainability.recollect.dto.response.IBwgOrderUsedBagResponse;
 import com.resustainability.recollect.entity.backend.BwgOrderUsedBag;
 
+import java.util.List;
+
 @Repository
-public interface BwgOrderUsedBagRepository
-        extends JpaRepository<BwgOrderUsedBag, Long> {
+public interface BwgOrderUsedBagRepository extends JpaRepository<BwgOrderUsedBag, Long> {
+    @Query("""
+        SELECT
+            ub.id AS id,
+            ub.numberOfBags AS numberOfBags,
+            ub.totalBagPrice AS totalBagPrice,
+            ub.finalPrice AS finalPrice,
+            ub.cgstPrice AS cgstPrice,
+            ub.sgstPrice AS sgstPrice,
+            b.id AS bagId,
+            b.bagSize AS bagSize,
+            o.id AS orderId
+        FROM BwgOrderUsedBag ub
+        JOIN ub.bag b
+        JOIN ub.order o
+        WHERE ub.isDeleted = false
+        AND o.id = :orderId
+    """)
+    List<IBwgOrderUsedBagResponse> findAllUsedBagsByOrderId(
+            @Param("orderId") Long orderId
+    );
 
     @Query("""
         SELECT 

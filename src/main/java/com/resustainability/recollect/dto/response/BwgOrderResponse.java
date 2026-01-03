@@ -6,5 +6,5 @@ public record BwgOrderResponse(
 		IBwgOrderResponse details,
 		List<ItemCategoryTypeResponse> types,
 		List<IBwgOrderUsedBagResponse> usedBags,
-		IInvoiceResponse invoice
+		InvoiceResponse invoice
 ) {}

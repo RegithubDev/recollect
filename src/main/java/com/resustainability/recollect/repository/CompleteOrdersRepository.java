@@ -1,6 +1,7 @@
 package com.resustainability.recollect.repository;
 
 import com.resustainability.recollect.dto.response.IOrderHistoryResponse;
+import com.resustainability.recollect.dto.response.InvoiceResponse;
 import com.resustainability.recollect.entity.backend.CompleteOrders;
 
 import org.springframework.data.domain.Page;
@@ -328,6 +329,24 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
     Optional<IOrderHistoryResponse> findByCompleteOrderIdIfBelongs(
             @Param("customerId") Long customerId,
             @Param("id") Long completeOrderId
+    );
+
+    @Query("""
+        SELECT
+            o.id AS id,
+            o.bioWeight AS weight,
+            o.clientPrice AS clientPrice,
+            o.bioBillAmount AS subTotal,
+            o.bioCgstAmount AS cgstAmount,
+            o.bioSgstAmount AS sgstAmount,
+            o.bioBagAmount AS bagAmount,
+            o.bioTotalBill AS totalBill
+        FROM CompleteOrders o
+        JOIN o.bwgOrder bwg
+        WHERE bwg.id = :id
+    """)
+    Optional<InvoiceResponse> findInvoiceDetailsByBwgOrderId(
+            @Param("id") Long bwgOrderId
     );
 
     @Modifying(clearAutomatically = true)
