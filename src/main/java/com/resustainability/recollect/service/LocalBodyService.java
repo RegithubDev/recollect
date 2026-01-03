@@ -129,7 +129,9 @@ public class LocalBodyService {
                 .findAllByLocalBodyIdAndBetween(
                         id,
                         today.withDayOfMonth(1),
-                        today.withDayOfMonth(today.lengthOfMonth()),
+                        today.plusMonths(1).withDayOfMonth(
+                                today.plusMonths(1).lengthOfMonth()
+                        ),
                         false
                 );
 

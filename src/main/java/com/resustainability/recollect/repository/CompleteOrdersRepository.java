@@ -35,6 +35,7 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
           LEFT JOIN o.provider p
         WHERE o.isDeleted = false
             AND (so.id IS NOT NULL OR bo.id IS NOT NULL)
+            AND (:orderStatuses IS NULL OR o.orderStatus IN :orderStatuses)
             AND (
                 :searchTerm IS NULL OR :searchTerm = '' OR
                 c.fullName LIKE CONCAT(:searchTerm, '%') OR
@@ -44,6 +45,7 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
             ) 
     """)
     Page<IOrderHistoryResponse> findAllPaged(
+            @Param("orderStatuses") Set<String> orderStatuses,
             @Param("searchTerm") String searchTerm,
             Pageable pageable
     );
@@ -65,6 +67,7 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
         WHERE o.isDeleted = false
             AND (so.id IS NOT NULL OR bo.id IS NOT NULL)
             AND c.id = :customerId
+            AND (:orderStatuses IS NULL OR o.orderStatus IN :orderStatuses)
             AND (
                 :searchTerm IS NULL OR :searchTerm = '' OR
                 c.fullName LIKE CONCAT(:searchTerm, '%') OR
@@ -73,8 +76,64 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
                 o.orderStatus LIKE CONCAT(:searchTerm, '%')
             )
     """)
-    Page<IOrderHistoryResponse> findAllPagedIfBelongs(
+    Page<IOrderHistoryResponse> findAllPagedIfBelongsToCustomer(
             @Param("customerId") Long customerId,
+            @Param("orderStatuses") Set<String> orderStatuses,
+            @Param("searchTerm") String searchTerm,
+            Pageable pageable
+    );
+
+    @Query("""
+        SELECT
+            o.id AS id,
+            so.id AS scrapOrderId,
+            sr.id AS scrapRegionId,
+            sr.regionName AS scrapRegionName,
+            d.id AS districtId,
+            d.districtName AS districtName,
+            d.districtCode AS districtCode,
+            p.id AS providerId,
+            p.fullName AS providerName,
+            bo.id AS bioWasteOrderId,
+            c.id AS customerId,
+            c.fullName AS fullName,
+            COALESCE(so.orderCode, bo.orderCode) AS code,
+            o.orderType AS type,
+            o.scheduleDate AS scheduleDate,
+            COALESCE(so.orderDate, bo.orderDate) AS orderDate,
+            o.orderStatus AS status,
+            COALESCE(aso.id, abo.id) AS addressId,
+            COALESCE(aso.residenceType, abo.residenceType) AS residenceType,
+            COALESCE(aso.residenceDetails, abo.residenceDetails) AS residenceDetails,
+            COALESCE(aso.landmark, abo.landmark) AS landmark,
+            COALESCE(aso.latitude, abo.latitude) AS latitude,
+            COALESCE(aso.longitude, abo.longitude) AS longitude,
+            COALESCE(aso.isDeleted, abo.isDeleted) AS isAddressDeleted
+        FROM CompleteOrders o
+        JOIN o.customer c
+        JOIN o.district d
+        JOIN o.provider p
+        LEFT JOIN o.scrapOrder so
+        LEFT JOIN so.address aso
+        LEFT JOIN so.scrapRegion sr
+        LEFT JOIN o.bioWasteOrder bo
+        LEFT JOIN bo.address abo
+        WHERE o.isDeleted = false
+            AND (so.id IS NOT NULL OR bo.id IS NOT NULL)
+            AND p.id = :providerId
+            AND (:orderStatuses IS NULL OR o.orderStatus IN :orderStatuses)
+            AND (
+                :searchTerm IS NULL OR :searchTerm = '' OR
+                sr.regionName LIKE CONCAT(:searchTerm, '%') OR
+                c.fullName LIKE CONCAT(:searchTerm, '%') OR
+                COALESCE(so.orderCode, bo.orderCode) LIKE CONCAT(:searchTerm, '%') OR
+                o.orderType LIKE CONCAT(:searchTerm, '%') OR
+                o.orderStatus LIKE CONCAT(:searchTerm, '%')
+            )
+    """)
+    Page<IOrderHistoryResponse> findAllPagedIfBelongsToProvider(
+            @Param("providerId") Long providerId,
+            @Param("orderStatuses") Set<String> orderStatuses,
             @Param("searchTerm") String searchTerm,
             Pageable pageable
     );

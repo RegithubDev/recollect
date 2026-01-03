@@ -16,10 +16,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/order")
-@PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
+@PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN', 'PROVIDER')")
 public class OrderController {
     private final OrderService orderService;
 
@@ -37,10 +38,11 @@ public class OrderController {
 
     @GetMapping("/list-history")
     public APIResponse<Pager<IOrderHistoryResponse>> listHistory(
+            @RequestParam(value = "status", required = false) Set<String> status,
             @ModelAttribute SearchCriteria searchCriteria
     ) {
         return new APIResponse<>(
-                orderService.listHistory(searchCriteria)
+                orderService.listHistory(status, searchCriteria)
         );
     }
 

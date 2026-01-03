@@ -105,7 +105,10 @@ public class OrderService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public Pager<IOrderHistoryResponse> listHistory(SearchCriteria searchCriteria) {
+    public Pager<IOrderHistoryResponse> listHistory(
+            Set<String> orderStatuses,
+            SearchCriteria searchCriteria
+    ) {
         final IUserContext user = securityService
                 .getCurrentUser()
                 .orElseThrow(UnauthorizedException::new);
@@ -115,14 +118,25 @@ public class OrderService {
         if (Boolean.TRUE.equals(user.getIsAdmin())) {
             return Pager.of(
                     completeOrdersRepository.findAllPaged(
+                            CollectionUtils.isBlank(orderStatuses) ? null : orderStatuses,
                             searchCriteria.getQ(),
                             pageable
                     )
             );
         } else if (Boolean.TRUE.equals(user.getIsCustomer())) {
             return Pager.of(
-                    completeOrdersRepository.findAllPagedIfBelongs(
+                    completeOrdersRepository.findAllPagedIfBelongsToCustomer(
                             user.getId(),
+                            CollectionUtils.isBlank(orderStatuses) ? null : orderStatuses,
+                            searchCriteria.getQ(),
+                            pageable
+                    )
+            );
+        } else if (Boolean.TRUE.equals(user.getIsProvider())) {
+            return Pager.of(
+                    completeOrdersRepository.findAllPagedIfBelongsToProvider(
+                            user.getId(),
+                            CollectionUtils.isBlank(orderStatuses) ? null : orderStatuses,
                             searchCriteria.getQ(),
                             pageable
                     )

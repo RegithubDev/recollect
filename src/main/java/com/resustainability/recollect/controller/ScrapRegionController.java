@@ -22,7 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/scrap-region")
-@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
+@PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'PROVIDER')")
 public class ScrapRegionController {
     private final ScrapRegionService scrapRegionService;
 
