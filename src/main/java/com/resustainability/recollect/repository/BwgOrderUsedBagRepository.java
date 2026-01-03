@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.resustainability.recollect.dto.response.IBwgOrderUsedBagResponse;
 import com.resustainability.recollect.entity.backend.BwgOrderUsedBag;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -65,4 +66,7 @@ public interface BwgOrderUsedBagRepository extends JpaRepository<BwgOrderUsedBag
         WHERE ub.id = :id
     """)
     int softDelete(@Param("id") Long id, @Param("isDeleted") Boolean isDeleted);
+
+    // TODO
+    List<BwgOrderUsedBag> findAllWhereOrderIdIs(Long id);
 }

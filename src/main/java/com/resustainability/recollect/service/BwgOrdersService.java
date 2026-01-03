@@ -2,37 +2,37 @@ package com.resustainability.recollect.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import com.resustainability.recollect.commons.*;
+import com.resustainability.recollect.dto.request.AddBwgOrderCartRequest;
+import com.resustainability.recollect.dto.request.UpdateBwgOrderCartRequest;
 import com.resustainability.recollect.dto.response.*;
+import com.resustainability.recollect.entity.backend.*;
 import com.resustainability.recollect.repository.*;
+import com.resustainability.recollect.dto.pagination.Pager;
+import com.resustainability.recollect.dto.pagination.SearchCriteria;
+import com.resustainability.recollect.dto.request.AddBwgOrderRequest;
+import com.resustainability.recollect.dto.request.UpdateBwgOrderRequest;
+import com.resustainability.recollect.exception.ResourceNotFoundException;
+import com.resustainability.recollect.tag.OrderStatus;
+import com.resustainability.recollect.tag.OrderType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.resustainability.recollect.commons.DateTimeFormatUtils;
-import com.resustainability.recollect.commons.Default;
-import com.resustainability.recollect.commons.IdGenerator;
-import com.resustainability.recollect.commons.ValidationUtils;
-import com.resustainability.recollect.dto.pagination.Pager;
-import com.resustainability.recollect.dto.pagination.SearchCriteria;
-import com.resustainability.recollect.dto.request.AddBwgOrderRequest;
-import com.resustainability.recollect.dto.request.UpdateBwgOrderRequest;
-import com.resustainability.recollect.entity.backend.BwgClient;
-import com.resustainability.recollect.entity.backend.BwgOrders;
-import com.resustainability.recollect.entity.backend.CompleteOrderLog;
-import com.resustainability.recollect.entity.backend.CompleteOrders;
-import com.resustainability.recollect.entity.backend.State;
-import com.resustainability.recollect.exception.ResourceNotFoundException;
-import com.resustainability.recollect.tag.OrderStatus;
-import com.resustainability.recollect.tag.OrderType;
-
-
 @Service
 public class BwgOrdersService {
     private final BwgOrdersRepository ordersRepository;
     private final BwgOrderCartRepository bwgOrderCartRepository;
+    private final BioWasteTypeRepository bioWasteTypeRepository;
+    private final ScrapTypeRepository scrapTypeRepository;
     private final BwgOrderUsedBagRepository bwgOrderUsedBagRepository;
     private final BwgClientRepository clientRepository;
     private final CompleteOrdersRepository completeOrdersRepository;
@@ -41,20 +41,22 @@ public class BwgOrdersService {
     @Autowired
     public BwgOrdersService(
             BwgOrdersRepository ordersRepository,
+            BioWasteTypeRepository bioWasteTypeRepository,
             BwgClientRepository clientRepository,
             BwgOrderCartRepository bwgOrderCartRepository,
+            ScrapTypeRepository scrapTypeRepository,
             BwgOrderUsedBagRepository bwgOrderUsedBagRepository,
             CompleteOrdersRepository completeOrdersRepository,
             CompleteOrderLogRepository completeOrderLogRepository
     ) {
         this.ordersRepository = ordersRepository;
+        this.bioWasteTypeRepository = bioWasteTypeRepository;
         this.clientRepository = clientRepository;
         this.bwgOrderCartRepository = bwgOrderCartRepository;
+        this.scrapTypeRepository = scrapTypeRepository;
         this.bwgOrderUsedBagRepository = bwgOrderUsedBagRepository;
         this.completeOrdersRepository = completeOrdersRepository;
         this.completeOrderLogRepository = completeOrderLogRepository;
-
-
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
@@ -206,18 +208,13 @@ public class BwgOrdersService {
         return entity.getId();
     }
 
-    
-    
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void update(UpdateBwgOrderRequest request) {
-
         ValidationUtils.validateRequestBody(request);
 
-        BwgOrders order = ordersRepository.findById(request.id())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                		Default.ERROR_NOT_FOUND_ORDER
-                		)
-                	);
+        BwgOrders order = ordersRepository
+                .findById(request.id())
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
 
         if (request.scheduleDate() != null) {
             order.setScheduleDate(request.scheduleDate());
@@ -236,10 +233,107 @@ public class BwgOrdersService {
         }
 
         ordersRepository.save(order);
+
+        // Types
+        final Map<Long, BwgOrderCart> existingTypesEntity = bwgOrderCartRepository
+                .findAllWhereOrderIdIs(request.id())
+                .stream()
+                .collect(Collectors.toMap(
+                        BwgOrderCart::getId,
+                        Function.identity(),
+                        (existing, replacement) -> existing
+                ));
+
+        final Map<Long, BioWasteType> indexedBioWasteType = bioWasteTypeRepository
+                .findAllById(request
+                        .types()
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .map(UpdateBwgOrderCartRequest::bioWasteTypeId)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toSet())
+                )
+                .stream()
+                .collect(Collectors.toMap(
+                        BioWasteType::getId,
+                        Function.identity(),
+                        (existing, replacement) -> existing
+                ));
+
+        final Map<Long, ScrapType> indexedScrapType = scrapTypeRepository
+                .findAllById(request
+                        .types()
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .map(UpdateBwgOrderCartRequest::scrapTypeId)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toSet())
+                )
+                .stream()
+                .collect(Collectors.toMap(
+                        ScrapType::getId,
+                        Function.identity(),
+                        (existing, replacement) -> existing
+                ));
+
+        final List<BwgOrderCart> typesEntityToSave = request
+                .types()
+                .stream()
+                .filter(Objects::nonNull)
+                .map(cartRequest -> {
+                    final BioWasteType bioWasteType = indexedBioWasteType.getOrDefault(cartRequest.bioWasteTypeId(), null);
+                    final ScrapType scrapType = indexedScrapType.getOrDefault(cartRequest.scrapTypeId(), null);
+                    final Double totalPrice = null == cartRequest.scrapWeight() || null == cartRequest.scrapPrice()
+                            ? null
+                            : cartRequest.scrapWeight() * cartRequest.scrapPrice();
+
+                    if (null == cartRequest.id() || !existingTypesEntity.containsKey(cartRequest.id())) {
+                        return new BwgOrderCart(
+                                null,
+                                cartRequest.scrapWeight(),
+                                cartRequest.scrapPrice(),
+                                totalPrice,
+                                false,
+                                bioWasteType,
+                                order,
+                                scrapType,
+                                cartRequest.scrapGst(),
+                                cartRequest.scrapHsn()
+                        );
+                    }
+
+                    final BwgOrderCart orderCart = existingTypesEntity.remove(cartRequest.id());
+                    orderCart.setScrapType(scrapType);
+                    orderCart.setBioWasteType(bioWasteType);
+                    orderCart.setScrapWeight(cartRequest.scrapWeight());
+                    orderCart.setScrapPrice(cartRequest.scrapPrice());
+                    orderCart.setScrapGst(cartRequest.scrapGst());
+                    orderCart.setScrapHsn(cartRequest.scrapHsn());
+                    orderCart.setTotalPrice(totalPrice);
+                    return orderCart;
+                })
+                .toList();
+
+        if (CollectionUtils.isNonBlank(typesEntityToSave)) {
+            bwgOrderCartRepository.saveAll(typesEntityToSave);
+        }
+
+        if (!existingTypesEntity.isEmpty()) {
+            bwgOrderCartRepository.deleteAllInBatch(existingTypesEntity.values());
+        }
+
+        // Used bags
+        // TODO
+        final Map<Long, BwgOrderUsedBag> existingUsedBagsEntity = bwgOrderUsedBagRepository
+                .findAllWhereOrderIdIs(request.id())
+                .stream()
+                .collect(Collectors.toMap(
+                        BwgOrderUsedBag::getId,
+                        Function.identity(),
+                        (existing, replacement) -> existing
+                ));
     }
 
-
-    
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void softDelete(Long id, boolean isDeleted) {
 

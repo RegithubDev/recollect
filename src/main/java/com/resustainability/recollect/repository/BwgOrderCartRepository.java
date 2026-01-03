@@ -98,4 +98,12 @@ public interface BwgOrderCartRepository extends JpaRepository<BwgOrderCart, Long
             AND c.id = :id
         """)
         Optional<BwgOrderCart> findActiveEntityById(Long id);
+
+	@Query("""
+		SELECT oc
+		FROM BwgOrderCart oc
+		WHERE oc.isDeleted = false
+		AND oc.bwgOrder.id = :id
+	""")
+	List<BwgOrderCart> findAllWhereOrderIdIs(@Param("id") Long bwgOrderId);
 }
