@@ -10,4 +10,7 @@ public interface IBioWasteCategoryTypeResponse {
     String getTypeName();
     String getTypeIcon();
     Boolean getTypeIsActive();
+
+    Double getResidentialPrice();
+    Double getCommercialPrice();
 }

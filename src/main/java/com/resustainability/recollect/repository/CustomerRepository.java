@@ -38,8 +38,10 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
             c.district.id AS districtId,
             c.state.id AS stateId,
             c.scrapRegion.id AS scrapRegionId,
-            c.ward.id AS wardId
+            w.id AS wardId,
+            w.localbody.id AS localBodyId
         FROM Customer c
+        LEFT JOIN c.ward w
         WHERE c.phoneNumber = :username
     """)
     Optional<IUserContext> loadUserByUsername(@Param("username") String username);
@@ -65,8 +67,10 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
             c.district.id AS districtId,
             c.state.id AS stateId,
             c.scrapRegion.id AS scrapRegionId,
-            c.ward.id AS wardId
+            w.id AS wardId,
+            w.localbody.id AS localBodyId
         FROM Customer c
+        LEFT JOIN c.ward w
         WHERE c.id = :id
     """)
     Optional<IUserContext> loadUserById(@Param("id") Long id);

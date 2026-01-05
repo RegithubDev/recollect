@@ -362,7 +362,9 @@ public class OrderService {
             scrapOrder = null;
 
             final Set<Long> indexedTypes = mobileService
-                    .listBioWasteCategories()
+                    .listBioWasteCategories(
+                            null == address.getLocalBodyId() ? user.getLocalBodyId() : address.getLocalBodyId()
+                    )
                     .stream()
                     .map(ItemCategoryResponse::types)
                     .filter(Objects::nonNull)

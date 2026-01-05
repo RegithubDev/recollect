@@ -67,6 +67,13 @@ public interface BwgOrderUsedBagRepository extends JpaRepository<BwgOrderUsedBag
     """)
     int softDelete(@Param("id") Long id, @Param("isDeleted") Boolean isDeleted);
 
-    // TODO
-    List<BwgOrderUsedBag> findAllWhereOrderIdIs(Long id);
+    @Query("""
+        SELECT ub
+        FROM BwgOrderUsedBag ub
+        JOIN ub.bag b
+        JOIN ub.order o
+        WHERE ub.isDeleted = false
+        AND o.id = :orderId
+    """)
+    List<BwgOrderUsedBag> findAllWhereOrderIdIs(@Param("orderId") Long orderId);
 }

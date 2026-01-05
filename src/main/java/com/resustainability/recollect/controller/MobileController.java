@@ -34,9 +34,11 @@ public class MobileController {
     }
 
     @GetMapping("/list-bio-waste-categories")
-    public APIResponse<Collection<ItemCategoryResponse>> listBioWasteCategories() {
+    public APIResponse<Collection<ItemCategoryResponse>> listBioWasteCategories(
+            @RequestParam(value = "localBodyId", required = false) Long localBodyId
+    ) {
         return new APIResponse<>(
-                mobileService.listBioWasteCategories()
+                mobileService.listBioWasteCategories(localBodyId)
         );
     }
 

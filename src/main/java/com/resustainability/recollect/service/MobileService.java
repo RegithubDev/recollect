@@ -40,9 +40,14 @@ public class MobileService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public Collection<ItemCategoryResponse> listBioWasteCategories() {
+    public Collection<ItemCategoryResponse> listBioWasteCategories(Long addressLocalBodyId) {
+        final Long localBodyId = null != addressLocalBodyId ? addressLocalBodyId : securityService
+                .getCurrentUser()
+                .map(IUserContext::getLocalBodyId)
+                .orElse(null);
+
         final List<IBioWasteCategoryTypeResponse> rows = bioWasteCategoryRepository
-                .findAllActiveCategoryTypes();
+                .findAllActiveCategoryTypes(localBodyId);
 
         if (CollectionUtils.isBlank(rows)) {
             return Collections.emptyList();
@@ -65,9 +70,9 @@ public class MobileService {
                             r.getTypeId(),
                             r.getTypeName(),
                             r.getTypeIcon(),
-                            false,
-                            false,
-                            null,
+                            null != r.getResidentialPrice(),
+                            true,
+                            r.getResidentialPrice(),
                             null,
                             null
                     )

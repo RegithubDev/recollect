@@ -22,6 +22,7 @@ public interface IUserContext {
     Long getStateId();
     Long getScrapRegionId();
     Long getWardId();
+    Long getLocalBodyId();
 
     Long getRoleId();
     String getRoleName();
