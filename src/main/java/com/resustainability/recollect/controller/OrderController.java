@@ -6,6 +6,7 @@ import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.PlaceOrderRequest;
 import com.resustainability.recollect.dto.request.CancelOrderRequest;
+import com.resustainability.recollect.dto.response.EnumOrdinalResponse;
 import com.resustainability.recollect.dto.response.IOrderHistoryResponse;
 import com.resustainability.recollect.dto.response.IOrderCancelReasonResponse;
 import com.resustainability.recollect.service.OrderService;
@@ -33,6 +34,13 @@ public class OrderController {
     public APIResponse<List<IOrderCancelReasonResponse>> listCancellationReasons() {
         return new APIResponse<>(
                 orderService.listCancellationReasons()
+        );
+    }
+
+    @GetMapping("/list-status")
+    public APIResponse<List<EnumOrdinalResponse>> listStatusesInOrdinals() {
+        return new APIResponse<>(
+                orderService.listStatusesInOrdinals()
         );
     }
 

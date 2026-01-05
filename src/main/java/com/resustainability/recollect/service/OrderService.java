@@ -105,6 +105,17 @@ public class OrderService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public List<EnumOrdinalResponse> listStatusesInOrdinals() {
+        return Arrays.stream(OrderStatus.values())
+                .map(value -> new EnumOrdinalResponse(
+                        value.getOrdinal(),
+                        value.name(),
+                        value.getAbbreviation()
+                ))
+                .toList();
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Pager<IOrderHistoryResponse> listHistory(
             Set<String> orderStatuses,
             SearchCriteria searchCriteria
