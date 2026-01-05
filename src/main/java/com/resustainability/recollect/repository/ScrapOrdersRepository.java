@@ -26,6 +26,17 @@ public interface ScrapOrdersRepository extends JpaRepository<ScrapOrders, Long> 
     @Modifying(clearAutomatically = true)
     @Query("""
         UPDATE ScrapOrders so
+        SET so.orderStatus = :orderStatus
+        WHERE so.id = :id
+    """)
+    int updateStatusByScrapOrderId(
+            @Param("id") Long scrapOrderId,
+            @Param("orderStatus") String orderStatus
+    );
+
+    @Modifying(clearAutomatically = true)
+    @Query("""
+        UPDATE ScrapOrders so
         SET so.isDeleted = :isDeleted
         WHERE so.id = :id
     """)

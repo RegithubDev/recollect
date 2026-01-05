@@ -387,6 +387,17 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
     @Modifying(clearAutomatically = true)
     @Query("""
         UPDATE CompleteOrders o
+        SET o.orderStatus = :orderStatus
+        WHERE o.id = :id
+    """)
+    int updateStatusByCompleteOrderId(
+            @Param("id") Long completeOrderId,
+            @Param("orderStatus") String orderStatus
+    );
+
+    @Modifying(clearAutomatically = true)
+    @Query("""
+        UPDATE CompleteOrders o
         SET o.cancelRequest = :isCancelled,
             o.orderStatus = :orderStatus
         WHERE o.id = :id

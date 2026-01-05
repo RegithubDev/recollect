@@ -85,6 +85,24 @@ public class OrderController {
         );
     }
 
+    @PostMapping("/self-head-address/{orderId}")
+    @PreAuthorize("hasRole('PROVIDER')")
+    public APIResponse<Void> logEventHeadedToAddress(
+            @PathVariable(value = "orderId", required = false) Long orderId
+    ) {
+        orderService.logEventHeadedToAddress(orderId);
+        return new APIResponse<>(Default.SUCCESS_HEADED_TO_ORDER_LOCATION);
+    }
+
+    @PostMapping("/self-reach-address/{orderId}")
+    @PreAuthorize("hasRole('PROVIDER')")
+    public APIResponse<Void> logEventReachedToAddress(
+            @PathVariable(value = "orderId", required = false) Long orderId
+    ) {
+        orderService.logEventReachedToAddress(orderId);
+        return new APIResponse<>(Default.SUCCESS_REACHED_TO_ORDER_LOCATION);
+    }
+
     @PostMapping("/place-scrap-order")
     @PreAuthorize("hasRole('CUSTOMER')")
     public APIResponse<IOrderHistoryResponse> placeScrapOrder(

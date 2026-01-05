@@ -439,16 +439,7 @@ public class OrderService {
         completeOrderLogRepository.save(
                 new CompleteOrderLog(
                         null,
-                        String.format(
-                                "%s%s%s",
-                                user.getFullName(),
-                                StringUtils.isNotBlank(user.getPhoneNumber())
-                                        ? String.format("/%s", user.getPhoneNumber())
-                                        : Default.EMPTY,
-                                StringUtils.isNotBlank(userRole)
-                                        ? String.format(" - (%s)", userRole)
-                                        : Default.EMPTY
-                        ),
+                        toFormattedDoneBy(user, userRole),
                         String.format(
                                 "Order Placed with Schedule Date %s by ",
                                 DateTimeFormatUtils.toIsoDate(request.scheduleDate())
@@ -502,16 +493,7 @@ public class OrderService {
         completeOrderLogRepository.save(
                 new CompleteOrderLog(
                         null,
-                        String.format(
-                                "%s%s%s",
-                                user.getFullName(),
-                                StringUtils.isNotBlank(user.getPhoneNumber())
-                                        ? String.format("/%s", user.getPhoneNumber())
-                                        : Default.EMPTY,
-                                StringUtils.isNotBlank(userRole)
-                                        ? String.format(" - (%s)", userRole)
-                                        : Default.EMPTY
-                        ),
+                        toFormattedDoneBy(user, userRole),
                         String.format(
                                 "Order Accepted on %s by ",
                                 DateTimeFormatUtils.toDbTimestamp(now)
@@ -526,6 +508,142 @@ public class OrderService {
         );
 
         return order.getId();
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public void logEventHeadedToAddress(Long completeOrderId) {
+        ValidationUtils.validateId(completeOrderId);
+
+        final IUserContext user = securityService
+                .getCurrentUser()
+                .filter(usr -> Boolean.TRUE.equals(usr.getIsProvider()))
+                .orElseThrow(UnauthorizedException::new);
+
+        final IOrderHistoryResponse order = completeOrdersRepository
+                .findByCompleteOrderId(completeOrderId)
+                .filter(ord -> null != ord.getType())
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
+
+        if (OrderStatus.is(order.getStatus(), OrderStatus.COMPLETED, OrderStatus.CANCELLED)) {
+            throw new InvalidDataException(
+                    String.format("Once an order is %s, it can no longer be marked as headed to pickup.", order.getStatus())
+            );
+        }
+
+        final String orderStatus = OrderStatus.PENDING.getAbbreviation();
+
+        if (OrderType.is(order.getType(), OrderType.SCRAP)) {
+            if (0 == scrapOrdersRepository.updateStatusByScrapOrderId(
+                    order.getScrapOrderId(),
+                    orderStatus
+            )) {
+                throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
+            }
+        }
+
+        if (OrderType.is(order.getType(), OrderType.BIO_WASTE)) {
+            if (0 == bioWasteOrdersRepository.updateStatusByBioWasteOrderId(
+                    order.getBioWasteOrderId(),
+                    orderStatus
+            )) {
+                throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
+            }
+        }
+
+        if (0 == completeOrdersRepository.updateStatusByCompleteOrderId(
+                completeOrderId,
+                orderStatus
+        )) {
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
+        }
+
+        final LocalDateTime now = LocalDateTime.now();
+        final String userRole = Role.fromUserContext(user);
+
+        completeOrderLogRepository.save(
+                new CompleteOrderLog(
+                        null,
+                        toFormattedDoneBy(user, userRole),
+                        String.format(
+                                "Started Travelling to address on %s by ",
+                                DateTimeFormatUtils.toDbTimestamp(now)
+                        ),
+                        now,
+                        null,
+                        null,
+                        completeOrdersRepository.getReferenceById(order.getId()),
+                        providerRepository.getReferenceById(user.getId()),
+                        null != order.getCustomerId() ? customerRepository.getReferenceById(order.getCustomerId()) : null
+                )
+        );
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public void logEventReachedToAddress(Long completeOrderId) {
+        ValidationUtils.validateId(completeOrderId);
+
+        final IUserContext user = securityService
+                .getCurrentUser()
+                .filter(usr -> Boolean.TRUE.equals(usr.getIsProvider()))
+                .orElseThrow(UnauthorizedException::new);
+
+        final IOrderHistoryResponse order = completeOrdersRepository
+                .findByCompleteOrderId(completeOrderId)
+                .filter(ord -> null != ord.getType())
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
+
+        if (OrderStatus.is(order.getStatus(), OrderStatus.COMPLETED, OrderStatus.CANCELLED)) {
+            throw new InvalidDataException(
+                    String.format("Once an order is %s, it can no longer be marked as headed to pickup.", order.getStatus())
+            );
+        }
+
+        final String orderStatus = OrderStatus.PENDING.getAbbreviation();
+
+        if (OrderType.is(order.getType(), OrderType.SCRAP)) {
+            if (0 == scrapOrdersRepository.updateStatusByScrapOrderId(
+                    order.getScrapOrderId(),
+                    orderStatus
+            )) {
+                throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
+            }
+        }
+
+        if (OrderType.is(order.getType(), OrderType.BIO_WASTE)) {
+            if (0 == bioWasteOrdersRepository.updateStatusByBioWasteOrderId(
+                    order.getBioWasteOrderId(),
+                    orderStatus
+            )) {
+                throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
+            }
+        }
+
+        if (0 == completeOrdersRepository.updateStatusByCompleteOrderId(
+                completeOrderId,
+                orderStatus
+        )) {
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
+        }
+
+        final LocalDateTime now = LocalDateTime.now();
+        final String userRole = Role.fromUserContext(user);
+
+        completeOrderLogRepository.save(
+                new CompleteOrderLog(
+                        null,
+                        toFormattedDoneBy(user, userRole),
+                        String.format(
+                                "Reached address location on %s by ",
+                                DateTimeFormatUtils.toDbTimestamp(now)
+                        ),
+                        now,
+                        null,
+                        null,
+                        completeOrdersRepository.getReferenceById(order.getId()),
+                        providerRepository.getReferenceById(user.getId()),
+                        null != order.getCustomerId() ? customerRepository.getReferenceById(order.getCustomerId()) : null
+                )
+        );
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
@@ -613,5 +731,18 @@ public class OrderService {
         )) {
             throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
         }
+    }
+
+    private String toFormattedDoneBy(IUserContext user, String userRole) {
+        return String.format(
+                "%s%s%s",
+                user.getFullName(),
+                StringUtils.isNotBlank(user.getPhoneNumber())
+                        ? String.format("/%s", user.getPhoneNumber())
+                        : Default.EMPTY,
+                StringUtils.isNotBlank(userRole)
+                        ? String.format(" - (%s)", userRole)
+                        : Default.EMPTY
+        );
     }
 }

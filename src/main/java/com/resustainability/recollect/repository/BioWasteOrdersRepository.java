@@ -26,6 +26,17 @@ public interface BioWasteOrdersRepository extends JpaRepository<BioWasteOrders, 
     @Modifying(clearAutomatically = true)
     @Query("""
         UPDATE BioWasteOrders bo
+        SET bo.orderStatus = :orderStatus
+        WHERE bo.id = :id
+    """)
+    int updateStatusByBioWasteOrderId(
+            @Param("id") Long bioWasteOrderId,
+            @Param("orderStatus") String orderStatus
+    );
+
+    @Modifying(clearAutomatically = true)
+    @Query("""
+        UPDATE BioWasteOrders bo
         SET bo.isDeleted = :isDeleted
         WHERE bo.id = :id
     """)
