@@ -157,7 +157,7 @@ public class OrderService {
         if (Boolean.TRUE.equals(user.getIsAdmin())) {
             return Pager.of(
                     completeOrdersRepository.findAllAssignablePaged(
-                            OrderStatus.PENDING.getAbbreviation(),
+                            OrderStatus.OPEN.getAbbreviation(),
                             searchCriteria.getQ(),
                             pageable
                     )
@@ -168,7 +168,7 @@ public class OrderService {
 
             return Pager.of(
                     completeOrdersRepository.findAllAssignablePagedIfBelongs(
-                            OrderStatus.PENDING.getAbbreviation(),
+                            OrderStatus.OPEN.getAbbreviation(),
                             districtIds,
                             searchCriteria.getQ(),
                             pageable

@@ -1,6 +1,7 @@
 package com.resustainability.recollect.util;
 
 import com.resustainability.recollect.commons.FileUtils;
+import com.resustainability.recollect.service.GeometryCache;
 import com.resustainability.recollect.service.LocalBodyService;
 import com.resustainability.recollect.service.ScrapRegionService;
 
@@ -25,16 +26,19 @@ public class StartupSyncListener implements ApplicationListener<ContextRefreshed
 
     private final ScrapRegionService scrapRegionService;
     private final LocalBodyService localBodyService;
+    private final GeometryCache geometryCache;
 
     @Autowired
     public StartupSyncListener(
             @Value("${app.file.uploadPath}") String fileUploadPath,
             ScrapRegionService scrapRegionService,
-            LocalBodyService localBodyService
+            LocalBodyService localBodyService,
+            GeometryCache geometryCache
     ) {
         this.fileUploadPath = fileUploadPath;
         this.scrapRegionService = scrapRegionService;
         this.localBodyService = localBodyService;
+        this.geometryCache = geometryCache;
         this.alreadySynced = new AtomicBoolean(false);
         this.log = LoggerFactory.getLogger(StartupSyncListener.class);
     }
@@ -48,6 +52,9 @@ public class StartupSyncListener implements ApplicationListener<ContextRefreshed
 
             scrapRegionService.normalizeAllToGeometry();
             localBodyService.normalizeAllToGeometry();
+
+            geometryCache.refreshScrapRegion();
+            geometryCache.refreshLocalBody();
         }
     }
 }

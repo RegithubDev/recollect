@@ -4,6 +4,8 @@ import com.resustainability.recollect.dto.response.IGeometryResponse;
 import com.resustainability.recollect.dto.response.IScrapRegionResponse;
 import com.resustainability.recollect.entity.backend.ScrapRegion;
 
+import org.locationtech.jts.geom.MultiPolygon;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @Repository
 public interface ScrapRegionRepository extends JpaRepository<ScrapRegion, Long> {
@@ -94,6 +97,12 @@ public interface ScrapRegionRepository extends JpaRepository<ScrapRegion, Long> 
     Optional<IGeometryResponse> findBorderByScrapRegionId(
             @Param("scrapRegionId") Long scrapRegionId
     );
+
+    @Query("""
+        SELECT sr.geometry
+        FROM ScrapRegion sr
+    """)
+    Stream<MultiPolygon> streamAllActiveGeometries();
 
     @Modifying(clearAutomatically = true)
     @Query("""

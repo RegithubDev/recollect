@@ -1,13 +1,17 @@
 package com.resustainability.recollect.util;
 
+import com.resustainability.recollect.commons.CollectionUtils;
 import com.resustainability.recollect.exception.InvalidDataException;
 
 import org.locationtech.jts.geom.*;
 
+import org.locationtech.jts.operation.union.UnaryUnionOp;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -89,5 +93,41 @@ public class GeometryNormalizer {
         }
 
         return toMultiPolygon(fixed);
+    }
+
+    /**
+     * Merge multiple MultiPolygons into a single MultiPolygon
+     */
+    public MultiPolygon merge(Collection<MultiPolygon> multiPolygons) {
+
+        if (CollectionUtils.isBlank(multiPolygons)) {
+            throw new IllegalArgumentException("No geometries provided for merge");
+        }
+
+        // Filter nulls & fix SRID
+        List<Geometry> geometries = multiPolygons.stream()
+                .filter(Objects::nonNull)
+                .map(g -> {
+                    g.setSRID(SRID);
+                    return g.isValid() ? (Geometry) g : g.buffer(0);
+                })
+                .toList();
+
+        final Geometry unioned = UnaryUnionOp.union(geometries);
+        unioned.setSRID(SRID);
+
+        // Ensure MultiPolygon return
+        if (unioned instanceof MultiPolygon mp) {
+            return mp;
+        }
+
+        if (unioned instanceof Polygon p) {
+            return geometryFactory.createMultiPolygon(new Polygon[]{p});
+        }
+
+        throw new IllegalStateException(
+                "Union result is not Polygon/MultiPolygon: " +
+                        unioned.getGeometryType()
+        );
     }
 }

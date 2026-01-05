@@ -11,7 +11,10 @@ import com.resustainability.recollect.dto.response.IGeometryResponse;
 import com.resustainability.recollect.dto.response.IScrapRegionAvailabilityResponse;
 import com.resustainability.recollect.dto.response.IScrapRegionResponse;
 import com.resustainability.recollect.dto.response.ScrapRegionResponse;
+import com.resustainability.recollect.service.GeometryCache;
 import com.resustainability.recollect.service.ScrapRegionService;
+
+import org.locationtech.jts.geom.MultiPolygon;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,12 +28,15 @@ import java.util.List;
 @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'PROVIDER')")
 public class ScrapRegionController {
     private final ScrapRegionService scrapRegionService;
+    private final GeometryCache geometryCache;
 
     @Autowired
     public ScrapRegionController(
-            ScrapRegionService scrapRegionService
+            ScrapRegionService scrapRegionService,
+            GeometryCache geometryCache
     ) {
         this.scrapRegionService = scrapRegionService;
+        this.geometryCache = geometryCache;
     }
 
     @GetMapping("/list")
@@ -48,6 +54,15 @@ public class ScrapRegionController {
     ) {
         return new APIResponse<>(
                 scrapRegionService.getBorderById(scrapRegionId),
+                Default.SUCCESS,
+                null
+        );
+    }
+
+    @GetMapping("/border-all")
+    public APIResponse<MultiPolygon> getAllBorder() {
+        return new APIResponse<>(
+                geometryCache.getScrapRegionGeometry(),
                 Default.SUCCESS,
                 null
         );

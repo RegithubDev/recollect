@@ -8,8 +8,12 @@ import com.resustainability.recollect.dto.request.AddLocalBodyRequest;
 import com.resustainability.recollect.dto.request.UpdateBorderRequest;
 import com.resustainability.recollect.dto.request.UpdateLocalBodyRequest;
 import com.resustainability.recollect.dto.response.*;
+import com.resustainability.recollect.service.GeometryCache;
 import com.resustainability.recollect.service.LocalBodyService;
 
+import org.locationtech.jts.geom.MultiPolygon;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,11 +24,16 @@ import java.util.List;
 @RequestMapping("/api/v1/localbody")
 @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER', 'PROVIDER')")
 public class LocalBodyController {
-
     private final LocalBodyService localBodyService;
+    private final GeometryCache geometryCache;
 
-    public LocalBodyController(LocalBodyService localBodyService) {
+    @Autowired
+    public LocalBodyController(
+            LocalBodyService localBodyService,
+            GeometryCache geometryCache
+    ) {
         this.localBodyService = localBodyService;
+        this.geometryCache = geometryCache;
     }
 
     @GetMapping("/list")
@@ -45,6 +54,15 @@ public class LocalBodyController {
     ) {
         return new APIResponse<>(
                 localBodyService.getBorderById(localBodyId),
+                Default.SUCCESS,
+                null
+        );
+    }
+
+    @GetMapping("/border-all")
+    public APIResponse<MultiPolygon> getAllBorder() {
+        return new APIResponse<>(
+                geometryCache.getLocalBodyGeometry(),
                 Default.SUCCESS,
                 null
         );
