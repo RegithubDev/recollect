@@ -116,6 +116,11 @@ public class OrderService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public List<IOrderCartItemResponse> listAllCartItems(Long completeOrderId) {
+        return completeOrdersRepository.findAllCartItemsByOrderId(completeOrderId);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Pager<IOrderHistoryResponse> listHistory(
             Set<String> orderStatuses,
             SearchCriteria searchCriteria

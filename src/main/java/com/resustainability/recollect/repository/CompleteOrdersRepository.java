@@ -1,5 +1,6 @@
 package com.resustainability.recollect.repository;
 
+import com.resustainability.recollect.dto.response.IOrderCartItemResponse;
 import com.resustainability.recollect.dto.response.IOrderHistoryResponse;
 import com.resustainability.recollect.dto.response.InvoiceResponse;
 import com.resustainability.recollect.entity.backend.CompleteOrders;
@@ -12,6 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -400,6 +402,57 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
         WHERE o.id = :id
     """)
     Optional<InvoiceResponse> findInvoiceDetailsByOrderId(
+            @Param("id") Long completeOrderId
+    );
+
+    @Query(nativeQuery = true, value = """
+        SELECT
+            co.id AS id,
+            co.order_type AS orderType,
+            soc.scrap_weight AS weight,
+            soc.scrap_price AS price,
+            soc.total_price AS totalPrice,
+
+            st.id AS typeId,
+            st.scrap_name AS typeName,
+            st.image AS typeIcon,
+            st.is_active AS typeIsActive,
+            soc.scrap_price AS typePrice
+        FROM backend_completeorders co
+        JOIN backend_scraporders so
+            ON so.id = co.scrap_order_id
+        JOIN backend_scrapordercart soc
+            ON soc.scrap_order_id = so.id
+            AND soc.is_deleted = false
+        JOIN backend_scraptype st
+            ON st.id = soc.scrap_type_id
+        WHERE co.id = :id
+    
+        UNION ALL
+    
+        SELECT
+            co.id AS id,
+            co.order_type AS orderType,
+            NULL AS weight,
+            NULL AS price,
+            NULL AS totalPrice,
+    
+            bt.id AS typeId,
+            bt.biowaste_name AS typeName,
+            bt.image AS typeIcon,
+            bt.is_active AS typeIsActive,
+            NULL AS typePrice
+        FROM backend_completeorders co
+        JOIN backend_biowasteorders bo
+            ON bo.id = co.biowaste_order_id
+        JOIN backend_biowasteordercart boc
+            ON boc.biowaste_order_id = bo.id
+            AND boc.is_deleted = false
+        JOIN backend_biowastetype bt
+            ON bt.id = boc.biowaste_type_id
+        WHERE co.id = :id
+    """)
+    List<IOrderCartItemResponse> findAllCartItemsByOrderId(
             @Param("id") Long completeOrderId
     );
 

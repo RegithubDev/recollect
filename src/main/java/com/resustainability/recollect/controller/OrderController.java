@@ -6,10 +6,7 @@ import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.PlaceOrderRequest;
 import com.resustainability.recollect.dto.request.CancelOrderRequest;
-import com.resustainability.recollect.dto.response.EnumOrdinalResponse;
-import com.resustainability.recollect.dto.response.IOrderHistoryResponse;
-import com.resustainability.recollect.dto.response.IOrderCancelReasonResponse;
-import com.resustainability.recollect.dto.response.InvoiceResponse;
+import com.resustainability.recollect.dto.response.*;
 import com.resustainability.recollect.service.OrderService;
 import com.resustainability.recollect.tag.OrderType;
 
@@ -42,6 +39,15 @@ public class OrderController {
     public APIResponse<List<EnumOrdinalResponse>> listStatusesInOrdinals() {
         return new APIResponse<>(
                 orderService.listStatusesInOrdinals()
+        );
+    }
+
+    @GetMapping("/list-cart/{orderId}")
+    public APIResponse<List<IOrderCartItemResponse>> listAllCartItems(
+            @PathVariable(value = "orderId", required = false) Long orderId
+    ) {
+        return new APIResponse<>(
+                orderService.listAllCartItems(orderId)
         );
     }
 
