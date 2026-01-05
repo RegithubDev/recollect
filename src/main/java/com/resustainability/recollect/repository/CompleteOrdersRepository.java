@@ -369,19 +369,38 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
     @Query("""
         SELECT
             o.id AS id,
+            o.orderType AS type,
             o.bioWeight AS weight,
             o.clientPrice AS clientPrice,
             o.bioBillAmount AS subTotal,
             o.bioCgstAmount AS cgstAmount,
             o.bioSgstAmount AS sgstAmount,
             o.bioBagAmount AS bagAmount,
-            o.bioTotalBill AS totalBill
+            COALESCE(o.bioTotalBill, o.scrapTotalBill) AS totalBill
         FROM CompleteOrders o
         JOIN o.bwgOrder bwg
         WHERE bwg.id = :id
     """)
     Optional<InvoiceResponse> findInvoiceDetailsByBwgOrderId(
             @Param("id") Long bwgOrderId
+    );
+
+    @Query("""
+        SELECT
+            o.id AS id,
+            o.orderType AS type,
+            o.bioWeight AS weight,
+            o.clientPrice AS clientPrice,
+            o.bioBillAmount AS subTotal,
+            o.bioCgstAmount AS cgstAmount,
+            o.bioSgstAmount AS sgstAmount,
+            o.bioBagAmount AS bagAmount,
+            COALESCE(o.bioTotalBill, o.scrapTotalBill) AS totalBill
+        FROM CompleteOrders o
+        WHERE o.id = :id
+    """)
+    Optional<InvoiceResponse> findInvoiceDetailsByOrderId(
+            @Param("id") Long completeOrderId
     );
 
     @Modifying(clearAutomatically = true)

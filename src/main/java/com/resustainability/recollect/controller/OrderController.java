@@ -9,9 +9,10 @@ import com.resustainability.recollect.dto.request.CancelOrderRequest;
 import com.resustainability.recollect.dto.response.EnumOrdinalResponse;
 import com.resustainability.recollect.dto.response.IOrderHistoryResponse;
 import com.resustainability.recollect.dto.response.IOrderCancelReasonResponse;
+import com.resustainability.recollect.dto.response.InvoiceResponse;
 import com.resustainability.recollect.service.OrderService;
-
 import com.resustainability.recollect.tag.OrderType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -69,6 +70,15 @@ public class OrderController {
     ) {
         return new APIResponse<>(
                 orderService.getById(orderId)
+        );
+    }
+
+    @GetMapping("/invoice/{orderId}")
+    public APIResponse<InvoiceResponse> getInvoiceById(
+            @PathVariable(value = "orderId", required = false) Long orderId
+    ) {
+        return new APIResponse<>(
+                orderService.getInvoiceById(orderId)
         );
     }
 

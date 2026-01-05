@@ -212,6 +212,15 @@ public class OrderService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public InvoiceResponse getInvoiceById(Long completeOrderId) {
+        ValidationUtils.validateId(completeOrderId);
+
+        return completeOrdersRepository
+                .findInvoiceDetailsByOrderId(completeOrderId)
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Long placeOrder(PlaceOrderRequest request, OrderType orderType) {
         Objects.requireNonNull(orderType);
         ValidationUtils.validateRequestBody(request);
