@@ -574,6 +574,8 @@ public class OrderService {
         )) {
             throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
         }
+
+        // TODO - Log order cancellation in completeorderslog table
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
