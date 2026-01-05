@@ -22,6 +22,14 @@ public interface IOrderHistoryResponse {
 
 	Long getScrapRegionId();
 	String getScrapRegionName();
+
+	Long getWardId();
+	Integer getWardNo();
+	String getWardName();
+
+	Long getLocalBodyId();
+	String getLocalBodyName();
+
 	String getVehicle();
 	Long getProviderId();
 	String getProviderName();

@@ -43,7 +43,7 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
                 COALESCE(so.orderCode, bo.orderCode) LIKE CONCAT(:searchTerm, '%') OR
                 o.orderType LIKE CONCAT(:searchTerm, '%') OR
                 o.orderStatus LIKE CONCAT(:searchTerm, '%')
-            ) 
+            )
     """)
     Page<IOrderHistoryResponse> findAllPaged(
             @Param("orderStatuses") Set<String> orderStatuses,
@@ -90,6 +90,11 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
             so.id AS scrapOrderId,
             sr.id AS scrapRegionId,
             sr.regionName AS scrapRegionName,
+            w.id AS wardId,
+            w.wardNo AS wardNo,
+            w.wardName AS wardName,
+            lb.id AS localBodyId,
+            lb.localBodyName AS localBodyName,
             d.id AS districtId,
             d.districtName AS districtName,
             d.districtCode AS districtCode,
@@ -119,6 +124,8 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
         LEFT JOIN so.scrapRegion sr
         LEFT JOIN o.bioWasteOrder bo
         LEFT JOIN bo.address abo
+        LEFT JOIN abo.ward w
+        LEFT JOIN w.localbody lb
         WHERE o.isDeleted = false
             AND (so.id IS NOT NULL OR bo.id IS NOT NULL)
             AND p.id = :providerId
@@ -145,6 +152,11 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
             so.id AS scrapOrderId,
             sr.id AS scrapRegionId,
             sr.regionName AS scrapRegionName,
+            w.id AS wardId,
+            w.wardNo AS wardNo,
+            w.wardName AS wardName,
+            lb.id AS localBodyId,
+            lb.localBodyName AS localBodyName,
             d.id AS districtId,
             d.districtName AS districtName,
             d.districtCode AS districtCode,
@@ -174,6 +186,8 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
         LEFT JOIN so.scrapRegion sr
         LEFT JOIN o.bioWasteOrder bo
         LEFT JOIN bo.address abo
+        LEFT JOIN abo.ward w
+        LEFT JOIN w.localbody lb
         WHERE o.isDeleted = false
             AND p IS NULL
             AND o.orderStatus = :orderStatus
@@ -197,6 +211,11 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
             so.id AS scrapOrderId,
             sr.id AS scrapRegionId,
             sr.regionName AS scrapRegionName,
+            w.id AS wardId,
+            w.wardNo AS wardNo,
+            w.wardName AS wardName,
+            lb.id AS localBodyId,
+            lb.localBodyName AS localBodyName,
             d.id AS districtId,
             d.districtName AS districtName,
             d.districtCode AS districtCode,
@@ -226,6 +245,8 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
         LEFT JOIN so.scrapRegion sr
         LEFT JOIN o.bioWasteOrder bo
         LEFT JOIN bo.address abo
+        LEFT JOIN abo.ward w
+        LEFT JOIN w.localbody lb
         WHERE o.isDeleted = false
             AND p IS NULL
             AND o.orderStatus = :orderStatus
@@ -251,6 +272,11 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
             so.id AS scrapOrderId,
             sr.id AS scrapRegionId,
             sr.regionName AS scrapRegionName,
+            w.id AS wardId,
+            w.wardNo AS wardNo,
+            w.wardName AS wardName,
+            lb.id AS localBodyId,
+            lb.localBodyName AS localBodyName,
             d.id AS districtId,
             d.districtName AS districtName,
             d.districtCode AS districtCode,
@@ -280,6 +306,8 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
         LEFT JOIN so.scrapRegion sr
         LEFT JOIN o.bioWasteOrder bo
         LEFT JOIN bo.address abo
+        LEFT JOIN abo.ward w
+        LEFT JOIN w.localbody lb
         WHERE (so.id IS NOT NULL OR bo.id IS NOT NULL)
         AND o.id = :id
     """)
@@ -293,6 +321,11 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
             so.id AS scrapOrderId,
             sr.id AS scrapRegionId,
             sr.regionName AS scrapRegionName,
+            w.id AS wardId,
+            w.wardNo AS wardNo,
+            w.wardName AS wardName,
+            lb.id AS localBodyId,
+            lb.localBodyName AS localBodyName,
             d.id AS districtId,
             d.districtName AS districtName,
             d.districtCode AS districtCode,
@@ -322,6 +355,8 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
         LEFT JOIN so.scrapRegion sr
         LEFT JOIN o.bioWasteOrder bo
         LEFT JOIN bo.address abo
+        LEFT JOIN abo.ward w
+        LEFT JOIN w.localbody lb
         WHERE (so.id IS NOT NULL OR bo.id IS NOT NULL)
         AND o.id = :id
         AND c.id = :customerId

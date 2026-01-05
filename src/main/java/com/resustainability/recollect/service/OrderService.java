@@ -311,12 +311,6 @@ public class OrderService {
                 scrapOrderCartRepository.saveAll(orderItems);
             }
         } else if (OrderType.BIO_WASTE.equals(orderType)) {
-            final Ward ward = null != address.getWardId()
-                    ? wardRepository.getReferenceById(address.getWardId())
-                    : null;
-
-            // TODO - Biowaste availability check
-            /*
             if (null == address.getWardId()) {
                 throw new InvalidDataException("Ward is required, Set ward in your address.");
             }
@@ -332,7 +326,6 @@ public class OrderService {
                         )
                 );
             }
-             */
 
             bioWasteOrder = bioWasteOrdersRepository.save(
                     new BioWasteOrders(
@@ -563,9 +556,8 @@ public class OrderService {
                 throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
             }
 
-           // TODO - Slot free for BIO WASTE
-//            localBodyAvailabilityService
-//                    .freeSlot(order.getLocalBodyId(), order.getScheduleDate());
+            localBodyAvailabilityService
+                    .freeSlot(order.getLocalBodyId(), order.getScheduleDate());
         }
 
         if (0 == completeOrdersRepository.cancelByCompleteOrderId(
