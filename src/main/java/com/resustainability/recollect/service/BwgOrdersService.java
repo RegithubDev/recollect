@@ -1,6 +1,7 @@
 package com.resustainability.recollect.service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -244,7 +245,7 @@ public class BwgOrdersService {
                         (existing, replacement) -> existing
                 ));
 
-        final Map<Long, BioWasteType> indexedBioWasteType = bioWasteTypeRepository
+        final Map<Long, BioWasteType> indexedBioWasteType = CollectionUtils.isBlank(request.types()) ? Collections.emptyMap() : bioWasteTypeRepository
                 .findAllById(request
                         .types()
                         .stream()
@@ -260,7 +261,7 @@ public class BwgOrdersService {
                         (existing, replacement) -> existing
                 ));
 
-        final Map<Long, ScrapType> indexedScrapType = scrapTypeRepository
+        final Map<Long, ScrapType> indexedScrapType = CollectionUtils.isBlank(request.types()) ? Collections.emptyMap() : scrapTypeRepository
                 .findAllById(request
                         .types()
                         .stream()
@@ -276,7 +277,7 @@ public class BwgOrdersService {
                         (existing, replacement) -> existing
                 ));
 
-        final List<BwgOrderCart> typesEntityToSave = request
+        final List<BwgOrderCart> typesEntityToSave = CollectionUtils.isBlank(request.types()) ? Collections.emptyList() : request
                 .types()
                 .stream()
                 .filter(Objects::nonNull)

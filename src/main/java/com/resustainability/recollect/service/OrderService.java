@@ -187,11 +187,13 @@ public class OrderService {
                 .getCurrentUser()
                 .orElseThrow(UnauthorizedException::new);
 
+        /*
         if (!Boolean.TRUE.equals(user.getIsAdmin())) {
             return completeOrdersRepository
                     .findByCompleteOrderIdIfBelongs(user.getId(), completeOrderId)
                     .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
         }
+         */
 
         return completeOrdersRepository
                 .findByCompleteOrderId(completeOrderId)
@@ -463,10 +465,10 @@ public class OrderService {
 
         final IOrderHistoryResponse order = completeOrdersRepository
                 .findByCompleteOrderId(completeOrderId)
-                .filter(ord -> null != ord.getType())
+                .filter(ord -> StringUtils.isNotBlank(ord.getType()))
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
 
-        final Set<Long> districtIds = providerDistrictRepository
+            final Set<Long> districtIds = providerDistrictRepository
                 .listAllActiveProviderDistrictIds(user.getId());
 
         if (!OrderStatus.is(order.getStatus(), OrderStatus.OPEN)) {
