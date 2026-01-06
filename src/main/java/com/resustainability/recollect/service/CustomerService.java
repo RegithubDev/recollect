@@ -229,6 +229,7 @@ public class CustomerService {
                 .findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_USER));
 
+        /*
         final boolean hasPhoneUpdated = !Objects.equals(entity.getPhoneNumber(), request.phoneNumber());
 
         if (hasPhoneUpdated && customerRepository.existsByPhoneNumber(request.phoneNumber())) {
@@ -237,10 +238,11 @@ public class CustomerService {
             );
         }
 
-        entity.setFullName(request.name());
         entity.setPhoneNumber(request.phoneNumber());
-        entity.setEmail(request.email());
+         */
 
+        entity.setFullName(request.name());
+        entity.setEmail(request.email());
         customerRepository.save(entity);
     }
 

@@ -6,13 +6,13 @@ import com.resustainability.recollect.dto.commons.RequestBodyValidator;
 
 public record UpdateCustomerProfileRequest(
         String name,
-        String phoneNumber,
+//        String phoneNumber,
         String email
 ) implements RequestBodyValidator {
     @Override
     public void validate() {
         ValidationUtils.validateName(name);
-        ValidationUtils.validatePhone(phoneNumber);
+//        ValidationUtils.validatePhone(phoneNumber);
         if (StringUtils.isNotBlank(email)) {
             ValidationUtils.validateEmail(email);
         }

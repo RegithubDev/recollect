@@ -113,6 +113,7 @@ public class CustomerAddressService {
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER_ADDRESS));
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public boolean isInScrapRegionBoundaries(String latitude, String longitude, Long scrapRegionId) {
         if (StringUtils.isBlank(latitude) || StringUtils.isBlank(longitude)) {
             return false;
@@ -127,6 +128,7 @@ public class CustomerAddressService {
         );
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public boolean isInLocalBodyBoundaries(String latitude, String longitude, Long localBodyId) {
         if (StringUtils.isBlank(latitude) || StringUtils.isBlank(longitude)) {
             return false;

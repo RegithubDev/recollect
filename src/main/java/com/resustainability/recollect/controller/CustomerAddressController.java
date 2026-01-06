@@ -56,6 +56,28 @@ public class CustomerAddressController {
         );
     }
 
+    @GetMapping("/scrap-boundary/{scrapRegionId}")
+    public APIResponse<Boolean> isInScrapRegionBoundaries(
+            @PathVariable(value = "scrapRegionId") Long scrapRegionId,
+            @PathVariable(value = "latitude") String latitude,
+            @PathVariable(value = "longitude") String longitude
+    ) {
+        return new APIResponse<>(
+                customerAddressService.isInScrapRegionBoundaries(latitude, longitude, scrapRegionId)
+        );
+    }
+
+    @GetMapping("/bio-boundary/{localBodyId}")
+    public APIResponse<Boolean> isInLocalBodyBoundaries(
+            @PathVariable(value = "localBodyId") Long localBodyId,
+            @RequestParam(value = "latitude") String latitude,
+            @RequestParam(value = "longitude") String longitude
+    ) {
+        return new APIResponse<>(
+                customerAddressService.isInLocalBodyBoundaries(latitude, longitude, localBodyId)
+        );
+    }
+
     @PostMapping("/add")
     public APIResponse<Long> add(
             @RequestBody(required = false) AddCustomerAddressRequest request

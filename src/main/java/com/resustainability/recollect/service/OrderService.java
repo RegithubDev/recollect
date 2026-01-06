@@ -202,11 +202,11 @@ public class OrderService {
     public IOrderHistoryResponse getById(Long completeOrderId) {
         ValidationUtils.validateId(completeOrderId);
 
+        /*
         final IUserContext user = securityService
                 .getCurrentUser()
                 .orElseThrow(UnauthorizedException::new);
 
-        /*
         if (!Boolean.TRUE.equals(user.getIsAdmin())) {
             return completeOrdersRepository
                     .findByCompleteOrderIdIfBelongs(user.getId(), completeOrderId)
