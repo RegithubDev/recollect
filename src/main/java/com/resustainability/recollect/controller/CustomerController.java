@@ -33,7 +33,7 @@ public class CustomerController {
     }
 
     @GetMapping("/whoami")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
     public APIResponse<ICustomerResponse> self() {
         final Long userId = securityService
                 .getCurrentUserId()

@@ -59,6 +59,20 @@ public interface ProviderAddOrderLimitRepository extends JpaRepository<ProviderA
             pr.id AS providerId
         FROM ProviderAddOrderLimit p
         JOIN p.provider pr
+        WHERE pr.id = :providerId
+    """)
+    List<IProviderAddOrderLimitResponse> listAllProviderAddOrderLimitById(
+            @Param("providerId") Long providerId
+    );
+
+    @Query("""
+        SELECT
+            p.id AS id,
+            p.maxLimit AS maxLimit,
+            p.currentLimit AS currentLimit,
+            pr.id AS providerId
+        FROM ProviderAddOrderLimit p
+        JOIN p.provider pr
         WHERE p.id = :id
     """)
     Optional<IProviderAddOrderLimitResponse> findDetailsById(@Param("id") Long id);

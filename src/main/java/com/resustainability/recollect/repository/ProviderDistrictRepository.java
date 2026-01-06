@@ -65,6 +65,29 @@ public interface ProviderDistrictRepository extends JpaRepository<ProviderDistri
 
     @Query("""
         SELECT
+            pd.id AS id,
+            pd.scrapAllowed AS scrapAllowed,
+            pd.bioAllowed AS bioAllowed,
+            pd.isActive AS isActive,
+
+            d.id AS districtId,
+            d.districtCode AS districtCode,
+            d.districtName AS districtName,
+
+            p.id AS providerId
+
+        FROM ProviderDistrict pd
+        JOIN pd.district d
+        JOIN pd.provider p
+        WHERE p.id = :providerId
+          AND pd.isActive = true
+    """)
+    List<IProviderDistrictResponse> listAllActiveProviderDistrictsById(
+            @Param("providerId") Long providerId
+    );
+
+    @Query("""
+        SELECT
             d.id AS districtId
         FROM ProviderDistrict pd
         JOIN pd.district d

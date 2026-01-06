@@ -131,6 +131,43 @@ public interface ProviderRepository extends JpaRepository<Provider, Long> {
             p.id AS id,
             p.providerCode AS code,
             p.fullName AS fullName,
+            p.phoneNumber AS phoneNumber,
+
+            p.scrapCashInHand AS scrapCashInHand,
+            p.bioCashInHand AS bioCashInHand,
+            p.bwgScrapCashInHand AS bwgScrapCashInHand,
+            p.bwgBioCashInHand AS bwgBioCashInHand,
+            p.totalCashInHand AS totalCashInHand,
+
+            p.plainPassword AS password,
+
+            p.scrapPickup AS scrapPickup,
+            p.biowastePickup AS biowastePickup,
+            p.bwgBioPickup AS bwgBioPickup,
+            p.bwgScrapPickup AS bwgScrapPickup,
+            p.orderPickupLimit AS orderPickupLimit,
+
+            p.isActive AS isActive,
+            p.isDeleted AS isDeleted,
+
+            s.id AS stateId,
+            s.stateName AS stateName,
+            s.stateCode AS stateCode
+
+        FROM Provider p
+        LEFT JOIN p.state s
+        WHERE p.isDeleted = false
+            AND p.id = :id
+    """)
+    Optional<IProviderResponse> findProviderById(
+            @Param("id") Long providerId
+    );
+
+    @Query("""
+        SELECT
+            p.id AS id,
+            p.providerCode AS code,
+            p.fullName AS fullName,
             p.scrapCashInHand AS scrapCashInHand,
             p.bioCashInHand AS bioCashInHand,
             p.bwgScrapCashInHand AS bwgScrapCashInHand,

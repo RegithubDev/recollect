@@ -24,4 +24,16 @@ public interface ProviderCashLimitRepository extends JpaRepository<ProviderCashL
     List<IProviderCashLimitResponse> listAllProvidersCashLimit(
             @Param("providerIds") Set<Long> providerIds
     );
+
+    @Query("""
+        SELECT
+            pcl.id AS id,
+            pcl.cashLimit AS cashLimit,
+            pcl.provider.id AS providerId
+        FROM ProviderCashLimit pcl
+        WHERE pcl.provider.id = :providerId
+    """)
+    List<IProviderCashLimitResponse> listAllProviderCashLimitById(
+            @Param("providerId") Long providerId
+    );
 }

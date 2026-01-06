@@ -183,4 +183,23 @@ public interface LocalBodyRepository extends JpaRepository<LocalBody, Long> {
             @Param("isActive") boolean isActive,
             @Param("isDeleted") boolean isDeleted
     );
+
+
+	@Query(nativeQuery = true, value = """
+        SELECT EXISTS (
+            SELECT 1
+            FROM backend_localbody lb
+            WHERE lb.id = :localBodyId
+              AND ST_Contains(
+                  lb.geometry,
+                  ST_SRID(POINT(:lon, :lat), :srid)
+              )
+        )
+    """)
+	Long existsContainingGeometryById(
+			@Param("localBodyId") Long localBodyId,
+			@Param("lat") double lat,
+			@Param("lon") double lon,
+			@Param("srid") int srid
+	);
 }

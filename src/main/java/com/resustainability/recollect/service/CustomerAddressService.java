@@ -11,15 +11,11 @@ import com.resustainability.recollect.dto.response.ICustomerAddressResponse;
 import com.resustainability.recollect.dto.response.IUserContext;
 import com.resustainability.recollect.entity.backend.Customer;
 import com.resustainability.recollect.entity.backend.CustomerAddress;
-import com.resustainability.recollect.exception.InvalidDataException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
 import com.resustainability.recollect.exception.UnauthorizedException;
-import com.resustainability.recollect.repository.CustomerAddressRepository;
-import com.resustainability.recollect.repository.CustomerRepository;
-import com.resustainability.recollect.repository.ScrapRegionRepository;
-import com.resustainability.recollect.repository.WardRepository;
-
+import com.resustainability.recollect.repository.*;
 import com.resustainability.recollect.util.GeometryNormalizer;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,6 +31,7 @@ public class CustomerAddressService {
     private final SecurityService securityService;
     private final CustomerAddressRepository customerAddressRepository;
     private final ScrapRegionRepository scrapRegionRepository;
+    private final LocalBodyRepository localBodyRepository;
     private final WardRepository wardRepository;
     private final CustomerRepository customerRepository;
 
@@ -43,12 +40,14 @@ public class CustomerAddressService {
             SecurityService securityService,
             CustomerAddressRepository customerAddressRepository,
             ScrapRegionRepository scrapRegionRepository,
+            LocalBodyRepository localBodyRepository,
             WardRepository wardRepository,
             CustomerRepository customerRepository
     ) {
         this.securityService = securityService;
         this.customerAddressRepository = customerAddressRepository;
         this.scrapRegionRepository = scrapRegionRepository;
+        this.localBodyRepository = localBodyRepository;
         this.wardRepository = wardRepository;
         this.customerRepository = customerRepository;
     }
@@ -114,6 +113,34 @@ public class CustomerAddressService {
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER_ADDRESS));
     }
 
+    public boolean isInScrapRegionBoundaries(String latitude, String longitude, Long scrapRegionId) {
+        if (StringUtils.isBlank(latitude) || StringUtils.isBlank(longitude)) {
+            return false;
+        }
+        final double[] coordinates = ValidationUtils
+                .validateAndParseCoordinates(latitude, longitude);
+        return 1L == scrapRegionRepository.existsContainingGeometryById(
+                scrapRegionId,
+                coordinates[0],
+                coordinates[1],
+                GeometryNormalizer.SRID
+        );
+    }
+
+    public boolean isInLocalBodyBoundaries(String latitude, String longitude, Long localBodyId) {
+        if (StringUtils.isBlank(latitude) || StringUtils.isBlank(longitude)) {
+            return false;
+        }
+        final double[] coordinates = ValidationUtils
+                .validateAndParseCoordinates(latitude, longitude);
+        return 1L == localBodyRepository.existsContainingGeometryById(
+                localBodyId,
+                coordinates[0],
+                coordinates[1],
+                GeometryNormalizer.SRID
+        );
+    }
+
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Long add(AddCustomerAddressRequest request) {
         ValidationUtils.validateRequestBody(request);
@@ -144,24 +171,6 @@ public class CustomerAddressService {
         if (request.wardId() != null &&
                 !wardRepository.existsById(request.wardId())) {
             throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_WARD);
-        }
-
-        if (StringUtils.isNotBlank(request.latitude()) && StringUtils.isNotBlank(request.longitude())) {
-            final double[] coordinates = ValidationUtils
-                    .validateAndParseCoordinates(request.latitude(), request.longitude());
-
-            boolean inside = scrapRegionRepository.existsContainingGeometryById(
-                    request.scrapRegionId(),
-                    coordinates[0],
-                    coordinates[1],
-                    GeometryNormalizer.SRID
-            ) == 1L;
-
-            if (!inside) {
-                throw new InvalidDataException(
-                        "Address is outside the selected scrap region service area"
-                );
-            }
         }
 
         return customerAddressRepository.save(

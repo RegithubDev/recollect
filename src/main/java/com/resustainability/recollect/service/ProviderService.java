@@ -1,10 +1,12 @@
 package com.resustainability.recollect.service;
 
+import com.resustainability.recollect.commons.Default;
 import com.resustainability.recollect.commons.ValidationUtils;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.response.*;
 import com.resustainability.recollect.entity.backend.Provider;
+import com.resustainability.recollect.exception.ResourceNotFoundException;
 import com.resustainability.recollect.repository.ProviderAddOrderLimitRepository;
 import com.resustainability.recollect.repository.ProviderCashLimitRepository;
 import com.resustainability.recollect.repository.ProviderDistrictRepository;
@@ -194,6 +196,57 @@ public class ProviderService {
                                 )
                         )
                 )
+        );
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public ProviderResponse getById(Long providerId) {
+        ValidationUtils.validateId(providerId);
+
+        final IProviderResponse provider = providerRepository
+                .findProviderById(providerId)
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_PROVIDER));
+
+        final Set<String> providerDistricts = providerDistrictRepository
+                .listAllActiveProviderDistrictsById(providerId)
+                .stream()
+                .map(IProviderDistrictResponse::getDistrictName)
+                .collect(Collectors.toSet());
+
+        final Integer providerCashLimit = providerCashLimitRepository
+                .listAllProviderCashLimitById(providerId)
+                .stream()
+                .findFirst()
+                .map(IProviderCashLimitResponse::getCashLimit)
+                .orElse(0);
+
+        final Integer providerAddOrderLimit = providerAddOrderLimitRepository
+                .listAllProviderAddOrderLimitById(providerId)
+                .stream()
+                .findFirst()
+                .map(IProviderAddOrderLimitResponse::getCurrentLimit)
+                .orElse(0);
+
+        return new ProviderResponse(
+                provider.getId(),
+                provider.getCode(),
+                provider.getFullName(),
+                provider.getPhoneNumber(),
+                provider.getStateId(),
+                provider.getStateName(),
+                provider.getStateCode(),
+                "Service Provider",
+                provider.getPassword(),
+                Boolean.TRUE.equals(provider.getScrapPickup()),
+                Boolean.TRUE.equals(provider.getBiowastePickup()),
+                Boolean.TRUE.equals(provider.getBwgBioPickup()),
+                Boolean.TRUE.equals(provider.getBwgScrapPickup()),
+                Boolean.TRUE.equals(provider.getIsActive()),
+                provider.getOrderPickupLimit(),
+                providerCashLimit,
+                providerAddOrderLimit,
+                0,
+                providerDistricts
         );
     }
 }
