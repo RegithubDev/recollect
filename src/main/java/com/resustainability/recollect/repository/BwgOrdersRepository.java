@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.resustainability.recollect.dto.response.IBwgOrderResponse;
 import com.resustainability.recollect.entity.backend.BwgOrders;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -25,6 +26,7 @@ public interface BwgOrdersRepository extends JpaRepository<BwgOrders, Long> {
 		        o.scheduleDate AS scheduleDate,
 		        o.orderStatus AS orderStatus,
 		        o.dueSettled AS dueSettled,
+				o.orderType AS orderType,
 
 		        c.id AS clientId,
 		        c.fullName AS clientName,
@@ -63,6 +65,8 @@ public interface BwgOrdersRepository extends JpaRepository<BwgOrders, Long> {
 		        o.orderStatus AS orderStatus,
 		        o.dueSettled AS dueSettled,
 		        o.preferredPaymentMethod AS preferredPaymentMethod,
+				o.orderType AS orderType,
+				o.comment AS comment,
 
 		        c.id AS clientId,
 		        c.fullName AS clientName,
@@ -85,7 +89,16 @@ public interface BwgOrdersRepository extends JpaRepository<BwgOrders, Long> {
 		""")
 		Optional<IBwgOrderResponse> findOrderById(@Param("id") Long id);
 
-
+	@Modifying
+	@Query("""
+        UPDATE BwgOrders o
+        SET o.scheduleDate = :scheduledDate
+        WHERE o.id = :id
+    """)
+	int updateScheduledDate(
+			@Param("id") Long id,
+			@Param("scheduledDate") LocalDate scheduledDate
+	);
 
     @Modifying
     @Query("""

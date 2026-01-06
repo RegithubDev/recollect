@@ -1,5 +1,6 @@
 package com.resustainability.recollect.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -9,15 +10,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.resustainability.recollect.commons.*;
-import com.resustainability.recollect.dto.request.AddBwgOrderCartRequest;
-import com.resustainability.recollect.dto.request.UpdateBwgOrderCartRequest;
+import com.resustainability.recollect.dto.request.*;
 import com.resustainability.recollect.dto.response.*;
 import com.resustainability.recollect.entity.backend.*;
 import com.resustainability.recollect.repository.*;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
-import com.resustainability.recollect.dto.request.AddBwgOrderRequest;
-import com.resustainability.recollect.dto.request.UpdateBwgOrderRequest;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
 import com.resustainability.recollect.tag.OrderStatus;
 import com.resustainability.recollect.tag.OrderType;
@@ -87,7 +85,7 @@ public class BwgOrdersService {
                 .findInvoiceDetailsByBwgOrderId(id)
                 .orElseGet(() -> new InvoiceResponse(
                         id,
-                        null,
+                        details.getOrderType(),
                         null,
                         null,
                         null,
@@ -334,6 +332,14 @@ public class BwgOrdersService {
                         Function.identity(),
                         (existing, replacement) -> existing
                 ));
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public void updateScheduledDate(UpdateBwgOrderScheduleDateRequest request) {
+        ValidationUtils.validateRequestBody(request);
+        if (ordersRepository.updateScheduledDate(request.id(), request.scheduleDate()) == 0) {
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
+        }
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)

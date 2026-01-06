@@ -1,17 +1,7 @@
 package com.resustainability.recollect.controller;
 
+import com.resustainability.recollect.dto.request.UpdateBwgOrderScheduleDateRequest;
 import com.resustainability.recollect.dto.response.BwgOrderResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.resustainability.recollect.commons.Default;
 import com.resustainability.recollect.dto.commons.APIResponse;
 import com.resustainability.recollect.dto.pagination.Pager;
@@ -21,6 +11,10 @@ import com.resustainability.recollect.dto.request.UpdateBwgOrderRequest;
 import com.resustainability.recollect.dto.response.IBwgOrderResponse;
 import com.resustainability.recollect.service.BwgOrdersService;
 import com.resustainability.recollect.tag.OrderType;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/bwg-orders")
@@ -86,7 +80,14 @@ public class BwgOrdersController {
         		Default.SUCCESS_UPDATE_ORDER_DETAILS
         	);
     }
- 
+
+    @PatchMapping("/reschedule")
+    public APIResponse<Void> updateScheduledDate(@RequestBody UpdateBwgOrderScheduleDateRequest request) {
+        ordersService.updateScheduledDate(request);
+        return new APIResponse<>(
+                Default.SUCCESS_UPDATE_ORDER_SCHEDULE_DATE
+        );
+    }
     
     @DeleteMapping("/delete/{orderId}")
     public APIResponse<Void> delete(@PathVariable Long orderId) {

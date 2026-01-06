@@ -11,6 +11,7 @@ public interface IBwgOrderResponse {
     String getOrderStatus();
     Boolean getDueSettled();
     String getPreferredPaymentMethod();
+    String getOrderType();
     
     Long getClientId();
     String getClientName();

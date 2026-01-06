@@ -130,6 +130,7 @@ public class Default {
     public static final String SUCCESS_ORDER_PLACED = "Order placed.";
     public static final String SUCCESS_ORDER_SELF_ASSIGNED = "Order assigned to you.";
     public static final String SUCCESS_UPDATE_ORDER_DETAILS = "Order details have been updated successfully.";
+    public static final String SUCCESS_UPDATE_ORDER_SCHEDULE_DATE = "Order schedule date have been updated successfully.";
     public static final String SUCCESS_HEADED_TO_ORDER_LOCATION = "All done! you're departure marked successfully.";
     public static final String SUCCESS_REACHED_TO_ORDER_LOCATION = "All done! you're arrival marked successfully.";
     public static final String SUCCESS_CANCEL_ORDER = "Order has been cancelled.";
