@@ -53,8 +53,8 @@ public class StartupSyncListener implements ApplicationListener<ContextRefreshed
             scrapRegionService.normalizeAllToGeometry();
             localBodyService.normalizeAllToGeometry();
 
-            geometryCache.refreshScrapRegion();
-            geometryCache.refreshLocalBody();
+            geometryCache.requestScrapRegionRefresh();
+            geometryCache.requestLocalBodyRefresh();
         }
     }
 }

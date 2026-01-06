@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class ScrapRegionService {
+    private final GeometryCache geometryCache;
     private final GeometryNormalizer geometryNormalizer;
     private final ScrapRegionRepository scrapRegionRepository;
     private final ScrapRegionAvailabilityRepository scrapRegionAvailabilityRepository;
@@ -44,11 +45,13 @@ public class ScrapRegionService {
 
     @Autowired
     public ScrapRegionService(
+            GeometryCache geometryCache,
             GeometryNormalizer geometryNormalizer,
             ScrapRegionRepository scrapRegionRepository,
             ScrapRegionAvailabilityRepository scrapRegionAvailabilityRepository,
             DistrictRepository districtRepository
     ) {
+        this.geometryCache = geometryCache;
         this.geometryNormalizer = geometryNormalizer;
         this.scrapRegionRepository = scrapRegionRepository;
         this.scrapRegionAvailabilityRepository = scrapRegionAvailabilityRepository;
@@ -244,6 +247,8 @@ public class ScrapRegionService {
                 geometryNormalizer.toMultiPolygon(request.geometry())
         );
         scrapRegionRepository.save(entity);
+
+        geometryCache.requestScrapRegionRefresh();
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)

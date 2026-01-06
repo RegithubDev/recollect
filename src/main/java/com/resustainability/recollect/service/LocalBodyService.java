@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class LocalBodyService {
+    private final GeometryCache geometryCache;
     private final GeometryNormalizer geometryNormalizer;
     private final LocalBodyRepository localBodyRepository;
     private final LocalBodyLimitRepository localBodyLimitRepository;
@@ -41,12 +42,14 @@ public class LocalBodyService {
     private final LocalBodyTypeRepository localBodyTypeRepository;
 
     public LocalBodyService(
+            GeometryCache geometryCache,
             GeometryNormalizer geometryNormalizer,
             LocalBodyRepository localBodyRepository,
             LocalBodyLimitRepository localBodyLimitRepository,
             DistrictRepository districtRepository,
             LocalBodyTypeRepository localBodyTypeRepository
     ) {
+        this.geometryCache = geometryCache;
         this.geometryNormalizer = geometryNormalizer;
         this.localBodyRepository = localBodyRepository;
         this.localBodyLimitRepository = localBodyLimitRepository;
@@ -302,6 +305,8 @@ public class LocalBodyService {
                 geometryNormalizer.toMultiPolygon(request.geometry())
         );
         localBodyRepository.save(entity);
+
+        geometryCache.requestLocalBodyRefresh();
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)

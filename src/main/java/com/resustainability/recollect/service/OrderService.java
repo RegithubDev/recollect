@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
     private final SecurityService securityService;
+    private final CustomerAddressService customerAddressService;
     private final ScrapRegionAvailabilityService scrapRegionAvailabilityService;
     private final LocalBodyAvailabilityService localBodyAvailabilityService;
     private final MobileService mobileService;
@@ -55,6 +56,7 @@ public class OrderService {
     @Autowired
     public OrderService(
             SecurityService securityService,
+            CustomerAddressService customerAddressService,
             ScrapRegionAvailabilityService scrapRegionAvailabilityService,
             LocalBodyAvailabilityService localBodyAvailabilityService,
             MobileService mobileService,
@@ -77,6 +79,7 @@ public class OrderService {
             ProviderDistrictRepository providerDistrictRepository
     ) {
         this.securityService = securityService;
+        this.customerAddressService = customerAddressService;
         this.scrapRegionAvailabilityService = scrapRegionAvailabilityService;
         this.localBodyAvailabilityService = localBodyAvailabilityService;
         this.mobileService = mobileService;
@@ -262,6 +265,16 @@ public class OrderService {
                 throw new InvalidDataException("Scrap region is required, Set region in your address.");
             }
 
+            if (!customerAddressService.isInScrapRegionBoundaries(
+                    address.getLatitude(),
+                    address.getLongitude(),
+                    address.getScrapRegionId()
+            )) {
+                throw new InvalidDataException(
+                        "Address is outside the selected scrap region service area"
+                );
+            }
+
             final ScrapRegion scrapRegion = scrapRegionRepository
                     .getReferenceById(address.getScrapRegionId());
 
@@ -340,6 +353,16 @@ public class OrderService {
         } else if (OrderType.BIO_WASTE.equals(orderType)) {
             if (null == address.getWardId()) {
                 throw new InvalidDataException("Ward is required, Set ward in your address.");
+            }
+
+            if (!customerAddressService.isInLocalBodyBoundaries(
+                    address.getLatitude(),
+                    address.getLongitude(),
+                    address.getLocalBodyId()
+            )) {
+                throw new InvalidDataException(
+                        "Address is outside the selected localbody/ward region service area"
+                );
             }
 
             final Ward ward = wardRepository

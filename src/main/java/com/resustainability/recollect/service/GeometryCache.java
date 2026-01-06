@@ -1,5 +1,6 @@
 package com.resustainability.recollect.service;
 
+import com.resustainability.recollect.commons.RateLimitedRefresher;
 import com.resustainability.recollect.repository.LocalBodyRepository;
 import com.resustainability.recollect.repository.ScrapRegionRepository;
 import com.resustainability.recollect.util.GeometryNormalizer;
@@ -10,18 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.time.Duration;
 import java.util.Objects;
 
 @Service
 public class GeometryCache {
-    private final ScrapRegionRepository scrapRegionRepository;
-    private final LocalBodyRepository localBodyRepository;
-    private final GeometryNormalizer geometryNormalizer;
-
-    // Thread-safe visibility
-    private volatile MultiPolygon scrapRegionGeometry;
-    private volatile MultiPolygon localBodyGeometry;
+    private final RateLimitedRefresher<MultiPolygon> scrapRegionRefresher;
+    private final RateLimitedRefresher<MultiPolygon> localBodyRefresher;
 
     @Autowired
     public GeometryCache(
@@ -29,50 +25,62 @@ public class GeometryCache {
             LocalBodyRepository localBodyRepository,
             GeometryNormalizer geometryNormalizer
     ) {
-        this.scrapRegionRepository = scrapRegionRepository;
-        this.localBodyRepository = localBodyRepository;
-        this.geometryNormalizer = geometryNormalizer;
+        this.scrapRegionRefresher =
+                new RateLimitedRefresher<>(
+                        Duration.ofSeconds(5),
+                        Duration.ofSeconds(30),
+                        () -> loadScrapRegion(scrapRegionRepository, geometryNormalizer)
+                );
+
+        this.localBodyRefresher =
+                new RateLimitedRefresher<>(
+                        Duration.ofSeconds(5),
+                        Duration.ofSeconds(30),
+                        () -> loadLocalBody(localBodyRepository, geometryNormalizer)
+                );
     }
 
-    /**
-     * Rebuild merged geometry from DB
-     */
     @Transactional(readOnly = true)
-    public void refreshScrapRegion() {
-        try (var stream = scrapRegionRepository.streamAllActiveGeometries()) {
-            List<MultiPolygon> polygons = stream
-                    .filter(Objects::nonNull)
-                    .map(geometryNormalizer::toMultiPolygon)
-                    .toList();
-            this.scrapRegionGeometry = geometryNormalizer.merge(polygons);
+    protected MultiPolygon loadScrapRegion(
+            ScrapRegionRepository repo,
+            GeometryNormalizer normalizer
+    ) {
+        try (var stream = repo.streamAllActiveGeometries()) {
+            return normalizer.merge(
+                    stream.filter(Objects::nonNull)
+                            .map(normalizer::toMultiPolygon)
+                            .toList()
+            );
         }
     }
 
     @Transactional(readOnly = true)
-    public void refreshLocalBody() {
-        try (var stream = localBodyRepository.streamAllActiveGeometries()) {
-            List<MultiPolygon> polygons = stream
-                    .filter(Objects::nonNull)
-                    .map(geometryNormalizer::toMultiPolygon)
-                    .toList();
-            this.localBodyGeometry = geometryNormalizer.merge(polygons);
+    protected MultiPolygon loadLocalBody(
+            LocalBodyRepository repo,
+            GeometryNormalizer normalizer
+    ) {
+        try (var stream = repo.streamAllActiveGeometries()) {
+            return normalizer.merge(
+                    stream.filter(Objects::nonNull)
+                            .map(normalizer::toMultiPolygon)
+                            .toList()
+            );
         }
     }
 
-    /**
-     * Read-only access
-     */
+    public void requestScrapRegionRefresh() {
+        scrapRegionRefresher.requestRefresh();
+    }
+
+    public void requestLocalBodyRefresh() {
+        localBodyRefresher.requestRefresh();
+    }
+
     public MultiPolygon getScrapRegionGeometry() {
-        if (scrapRegionGeometry == null) {
-            throw new IllegalStateException("Scrap region geometry not initialized");
-        }
-        return scrapRegionGeometry;
+        return scrapRegionRefresher.get();
     }
 
     public MultiPolygon getLocalBodyGeometry() {
-        if (localBodyGeometry == null) {
-            throw new IllegalStateException("Local body geometry not initialized");
-        }
-        return localBodyGeometry;
+        return localBodyRefresher.get();
     }
 }
