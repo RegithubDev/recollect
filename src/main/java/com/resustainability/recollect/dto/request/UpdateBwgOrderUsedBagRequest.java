@@ -8,10 +8,8 @@ public record UpdateBwgOrderUsedBagRequest(
         Long bagId,
         Integer numberOfBags
 ) implements RequestBodyValidator {
-
     @Override
     public void validate() {
-        ValidationUtils.validateId(id);
         ValidationUtils.validateId(bagId);
         ValidationUtils.validateNonNegative(numberOfBags, "Number of Bags");
     }

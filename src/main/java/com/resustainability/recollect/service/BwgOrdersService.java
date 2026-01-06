@@ -1,5 +1,7 @@
 package com.resustainability.recollect.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -323,7 +325,6 @@ public class BwgOrdersService {
         }
 
         // Used bags
-        // TODO
         final Map<Long, BwgOrderUsedBag> existingUsedBagsEntity = bwgOrderUsedBagRepository
                 .findAllWhereOrderIdIs(request.id())
                 .stream()
@@ -332,6 +333,80 @@ public class BwgOrdersService {
                         Function.identity(),
                         (existing, replacement) -> existing
                 ));
+
+        final BigDecimal divisor = BigDecimal.valueOf(100);
+        final int scale = 2;
+
+        /*
+        final List<BwgOrderUsedBag> usedBagsEntityToSave = CollectionUtils.isBlank(request.usedBags()) ? Collections.emptyList() : request
+                .usedBags()
+                .stream()
+                .filter(Objects::nonNull)
+                .map(usedBagRequest -> {
+                    // Compute
+                    final BigDecimal quantity = BigDecimal.valueOf(
+                            usedBagRequest.numberOfBags() == null || usedBagRequest.numberOfBags() < 1
+                                    ? 1
+                                    : usedBagRequest.numberOfBags()
+                    );
+
+                    final BigDecimal bagPrice = BigDecimal.valueOf(bag.getBagPrice());
+                    final BigDecimal totalBagPrice = bagPrice.multiply(quantity);
+
+                    final BigDecimal cgst = totalBagPrice
+                            .multiply(BigDecimal.valueOf(bag.getBagCgst()))
+                            .divide(divisor, scale, RoundingMode.HALF_UP);
+
+                    final BigDecimal sgst = totalBagPrice
+                            .multiply(BigDecimal.valueOf(bag.getBagSgst()))
+                            .divide(divisor, scale, RoundingMode.HALF_UP);
+
+                    final BigDecimal finalPrice = totalBagPrice.add(cgst).add(sgst);
+
+                    if (null == usedBagRequest.id() || !existingUsedBagsEntity.containsKey(usedBagRequest.id())) {
+                        return new BwgOrderUsedBag(
+                                null,
+                                quantity.intValue(),
+                                totalBagPrice.setScale(scale, RoundingMode.HALF_UP).doubleValue(),
+                                cgst,
+                                sgst,
+                                finalPrice.setScale(scale, RoundingMode.HALF_UP).doubleValue(),
+                                LocalDateTime.now(),
+                                false,
+                                bag,
+                                completeOrder
+                        );
+                    }
+
+                    final BwgOrderUsedBag usedBag = existingUsedBagsEntity.remove(usedBagRequest.id());
+                    usedBag.setOrder(completeOrder);
+                    usedBag.setBag(bag);
+                    usedBag.setNumberOfBags(quantity.intValue());
+
+                    usedBag.setTotalBagPrice(
+                            totalBagPrice.setScale(scale, RoundingMode.HALF_UP).doubleValue()
+                    );
+
+                    usedBag.setCgstPrice(cgst);
+                    usedBag.setSgstPrice(sgst);
+
+                    usedBag.setFinalPrice(
+                            finalPrice.setScale(scale, RoundingMode.HALF_UP).doubleValue()
+                    );
+                    return usedBag;
+                })
+                .toList();
+
+        if (CollectionUtils.isNonBlank(usedBagsEntityToSave)) {
+            bwgOrderUsedBagRepository.saveAll(usedBagsEntityToSave);
+        }
+
+        if (!existingUsedBagsEntity.isEmpty()) {
+            bwgOrderUsedBagRepository.deleteAllInBatch(existingUsedBagsEntity.values());
+        }
+
+        // TODO - INVOICE COMPUTE
+         */
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)

@@ -14,13 +14,17 @@ public record UpdateBwgOrderRequest(
         LocalDate scheduleDate,
         String preferredPaymentMethod,
         String orderStatus,
-        List<UpdateBwgOrderCartRequest> types
+        List<UpdateBwgOrderCartRequest> types,
+        List<UpdateBwgOrderUsedBagRequest> usedBags
 ) implements RequestBodyValidator {
     @Override
     public void validate() {
         ValidationUtils.validateId(id);
         if (CollectionUtils.isNonBlank(types)) {
             types.stream().filter(Objects::nonNull).forEach(UpdateBwgOrderCartRequest::validate);
+        }
+        if (CollectionUtils.isNonBlank(usedBags)) {
+            usedBags.stream().filter(Objects::nonNull).forEach(UpdateBwgOrderUsedBagRequest::validate);
         }
     }
 }

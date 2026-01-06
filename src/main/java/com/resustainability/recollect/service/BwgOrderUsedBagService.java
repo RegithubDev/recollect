@@ -1,6 +1,7 @@
 package com.resustainability.recollect.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 import org.springframework.data.domain.Page;
@@ -50,30 +51,44 @@ public class BwgOrderUsedBagService {
         BwgBagPrice bag = bagRepository.findById(request.bagId())
                 .orElseThrow(() -> new ResourceNotFoundException("Bag not found"));
 
-        int qty = request.numberOfBags();
+        // Compute
+        final BigDecimal quantity = BigDecimal.valueOf(
+                request.numberOfBags() == null || request.numberOfBags() < 1
+                        ? 1
+                        : request.numberOfBags()
+        );
 
-        double totalBagPrice = qty * bag.getBagPrice();
+        final BigDecimal bagPrice = BigDecimal.valueOf(bag.getBagPrice());
+        final BigDecimal totalBagPrice = bagPrice.multiply(quantity);
+        final BigDecimal divisor = BigDecimal.valueOf(100);
+        final int scale = 2;
 
-        BigDecimal cgst = BigDecimal.valueOf(totalBagPrice)
+        final BigDecimal cgst = totalBagPrice
                 .multiply(BigDecimal.valueOf(bag.getBagCgst()))
-                .divide(BigDecimal.valueOf(100));
+                .divide(divisor, scale, RoundingMode.HALF_UP);
 
-        BigDecimal sgst = BigDecimal.valueOf(totalBagPrice)
+        final BigDecimal sgst = totalBagPrice
                 .multiply(BigDecimal.valueOf(bag.getBagSgst()))
-                .divide(BigDecimal.valueOf(100));
+                .divide(divisor, scale, RoundingMode.HALF_UP);
 
-        double finalPrice = totalBagPrice
-                + cgst.doubleValue()
-                + sgst.doubleValue();
+        final BigDecimal finalPrice = totalBagPrice.add(cgst).add(sgst);
 
-        BwgOrderUsedBag entity = new BwgOrderUsedBag();
+        final BwgOrderUsedBag entity = new BwgOrderUsedBag();
         entity.setOrder(order);
         entity.setBag(bag);
-        entity.setNumberOfBags(qty);
-        entity.setTotalBagPrice(totalBagPrice);
+        entity.setNumberOfBags(quantity.intValue());
+
+        entity.setTotalBagPrice(
+                totalBagPrice.setScale(scale, RoundingMode.HALF_UP).doubleValue()
+        );
+
         entity.setCgstPrice(cgst);
         entity.setSgstPrice(sgst);
-        entity.setFinalPrice(finalPrice);
+
+        entity.setFinalPrice(
+                finalPrice.setScale(scale, RoundingMode.HALF_UP).doubleValue()
+        );
+
         entity.setBagDate(LocalDateTime.now());
         entity.setIsDeleted(false);
 
@@ -83,7 +98,7 @@ public class BwgOrderUsedBagService {
     
     @Transactional
     public void update(UpdateBwgOrderUsedBagRequest request) {
-
+        ValidationUtils.validateId(request.id());
         ValidationUtils.validateRequestBody(request);
 
         BwgOrderUsedBag entity = repository.findById(request.id())
@@ -92,28 +107,41 @@ public class BwgOrderUsedBagService {
         BwgBagPrice bag = bagRepository.findById(request.bagId())
                 .orElseThrow(() -> new ResourceNotFoundException("Bag not found"));
 
-        int qty = request.numberOfBags();
+        // Compute
+        final BigDecimal quantity = BigDecimal.valueOf(
+                request.numberOfBags() == null || request.numberOfBags() < 1
+                        ? 1
+                        : request.numberOfBags()
+        );
 
-        double totalBagPrice = qty * bag.getBagPrice();
+        final BigDecimal bagPrice = BigDecimal.valueOf(bag.getBagPrice());
+        final BigDecimal totalBagPrice = bagPrice.multiply(quantity);
+        final BigDecimal divisor = BigDecimal.valueOf(100);
+        final int scale = 2;
 
-        BigDecimal cgst = BigDecimal.valueOf(totalBagPrice)
+        final BigDecimal cgst = totalBagPrice
                 .multiply(BigDecimal.valueOf(bag.getBagCgst()))
-                .divide(BigDecimal.valueOf(100));
+                .divide(divisor, scale, RoundingMode.HALF_UP);
 
-        BigDecimal sgst = BigDecimal.valueOf(totalBagPrice)
+        final BigDecimal sgst = totalBagPrice
                 .multiply(BigDecimal.valueOf(bag.getBagSgst()))
-                .divide(BigDecimal.valueOf(100));
+                .divide(divisor, scale, RoundingMode.HALF_UP);
 
-        double finalPrice = totalBagPrice
-                + cgst.doubleValue()
-                + sgst.doubleValue();
+        final BigDecimal finalPrice = totalBagPrice.add(cgst).add(sgst);
 
         entity.setBag(bag);
-        entity.setNumberOfBags(qty);
-        entity.setTotalBagPrice(totalBagPrice);
+        entity.setNumberOfBags(quantity.intValue());
+
+        entity.setTotalBagPrice(
+                totalBagPrice.setScale(scale, RoundingMode.HALF_UP).doubleValue()
+        );
+
         entity.setCgstPrice(cgst);
         entity.setSgstPrice(sgst);
-        entity.setFinalPrice(finalPrice);
+
+        entity.setFinalPrice(
+                finalPrice.setScale(scale, RoundingMode.HALF_UP).doubleValue()
+        );
 
         repository.save(entity);
     }

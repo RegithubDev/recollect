@@ -14,8 +14,6 @@ public record UpdateBwgOrderCartRequest(
 ) implements RequestBodyValidator {
     @Override
     public void validate() {
-        ValidationUtils.validateId(id);
-
         if (null == scrapTypeId) {
             ValidationUtils.validateId(bioWasteTypeId);
         } else {

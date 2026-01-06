@@ -99,6 +99,7 @@ public class BwgOrderCartService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void update(UpdateBwgOrderCartRequest request) {
+        ValidationUtils.validateId(request.id());
         ValidationUtils.validateRequestBody(request);
 
         BwgOrderCart cart = cartRepository.findActiveEntityById(request.id())
