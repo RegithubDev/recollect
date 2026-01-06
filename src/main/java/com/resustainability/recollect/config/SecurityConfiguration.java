@@ -36,8 +36,8 @@ public class SecurityConfiguration {
     private final UserDetailsServiceImpl userDetailsService;
 
     private final List<String> allowedOrigins = List.of(
-            "*",
-            "https://appmint.resustainability.com/"
+            "http://localhost:3000",
+            "https://dev.recollect.in"
     );
     private final List<String> allowedHeaders = List.of(
             "Authorization",
@@ -85,6 +85,7 @@ public class SecurityConfiguration {
         configuration.setAllowedHeaders(allowedHeaders);
         configuration.setExposedHeaders(allowedExposedHeaders);
         configuration.setAllowedMethods(allowedMethods);
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
