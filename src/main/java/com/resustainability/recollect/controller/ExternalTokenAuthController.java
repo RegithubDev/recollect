@@ -4,6 +4,7 @@ import com.resustainability.recollect.dto.response.ExternalTokenResponse;
 import com.resustainability.recollect.dto.response.IUserContext;
 import com.resustainability.recollect.exception.UnauthorizedException;
 import com.resustainability.recollect.service.SecurityService;
+import com.resustainability.recollect.tag.KYCStatus;
 import com.resustainability.recollect.tag.Role;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,8 @@ public class ExternalTokenAuthController {
                         String.valueOf(user.getId()),
                         Role.fromUserContext(user),
                         user.getEmail(),
-                        user.getPhoneNumber()
+                        user.getPhoneNumber(),
+                        KYCStatus.FULL_KYC
                 )
         );
     }
