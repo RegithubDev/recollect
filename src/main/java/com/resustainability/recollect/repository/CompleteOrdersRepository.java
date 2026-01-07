@@ -5,6 +5,7 @@ import com.resustainability.recollect.dto.response.IOrderHistoryResponse;
 import com.resustainability.recollect.dto.response.InvoiceResponse;
 import com.resustainability.recollect.entity.backend.CompleteOrders;
 
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,136 +20,292 @@ import java.util.Set;
 
 @Repository
 public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, Long> {
-    @Query("""
-        SELECT
-            o.id AS id,
-            c.id AS customerId,
-            c.fullName AS fullName,
-            c.phoneNumber AS customerPhoneNumber,
-            COALESCE(so.orderCode, bo.orderCode) AS code,
-            o.orderType AS type,
-            o.scheduleDate AS scheduleDate,
-            COALESCE(so.orderDate, bo.orderDate) AS orderDate,
-            o.orderStatus AS status, pv.vehicleNumber as vehicle, so.platform, p.fullName as providerName
-            , p.id as providerId,p.phoneNumber as providerPhoneNumber, so.billType as scrapBillType, bo.billType as dhbillType
-        FROM CompleteOrders o
-        JOIN o.customer c
-        LEFT JOIN o.scrapOrder so
-        LEFT JOIN o.bioWasteOrder bo
-        LEFT JOIN o.vehicle pv
-          LEFT JOIN o.provider p
-        WHERE o.isDeleted = false
-            AND (so.id IS NOT NULL OR bo.id IS NOT NULL)
-            AND (:orderStatuses IS NULL OR o.orderStatus IN :orderStatuses)
-            AND (
-                :searchTerm IS NULL OR :searchTerm = '' OR
-                c.fullName LIKE CONCAT(:searchTerm, '%') OR
-                COALESCE(so.orderCode, bo.orderCode) LIKE CONCAT(:searchTerm, '%') OR
-                o.orderType LIKE CONCAT(:searchTerm, '%') OR
-                o.orderStatus LIKE CONCAT(:searchTerm, '%')
-            )
-    """)
-    Page<IOrderHistoryResponse> findAllPaged(
-            @Param("orderStatuses") Set<String> orderStatuses,
-            @Param("searchTerm") String searchTerm,
-            Pageable pageable
-    );
+//    @Query("""
+//        SELECT
+//            o.id AS id,
+//            c.id AS customerId,
+//            c.fullName AS fullName,
+//            c.phoneNumber AS customerPhoneNumber,
+//            d.id AS districtId,
+//            d.districtName AS districtName,
+//            d.districtCode AS districtCode, 
+//            sr.id AS scrapRegionId,
+//            sr.regionName AS scrapRegionName,        
+//            COALESCE(so.orderCode, bo.orderCode) AS code,
+//            o.orderType AS type,
+//            o.scheduleDate AS scheduleDate,
+//            COALESCE(so.orderDate, bo.orderDate) AS orderDate,
+//            o.orderStatus AS status, pv.vehicleNumber as vehicle, so.platform, p.fullName as providerName
+//            , p.id as providerId,p.phoneNumber as providerPhoneNumber, so.billType as scrapBillType, bo.billType as dhbillType
+//        FROM CompleteOrders o
+//        JOIN o.customer c
+//        LEFT JOIN c.scrapRegion sr
+//        LEFT JOIN c.district d
+//        LEFT JOIN o.scrapOrder so
+//        LEFT JOIN o.bioWasteOrder bo
+//        LEFT JOIN o.vehicle pv
+//          LEFT JOIN o.provider p
+//        WHERE o.isDeleted = false
+//            AND (so.id IS NOT NULL OR bo.id IS NOT NULL)
+//            AND (:orderStatuses IS NULL OR o.orderStatus IN :orderStatuses)
+//            AND (
+//                :searchTerm IS NULL OR :searchTerm = '' OR
+//                c.fullName LIKE CONCAT(:searchTerm, '%') OR
+//                COALESCE(so.orderCode, bo.orderCode) LIKE CONCAT(:searchTerm, '%') OR
+//                o.orderType LIKE CONCAT(:searchTerm, '%') OR
+//                o.orderStatus LIKE CONCAT(:searchTerm, '%')
+//            )
+//    """)
+//    Page<IOrderHistoryResponse> findAllPaged(
+//            @Param("orderStatuses") Set<String> orderStatuses,
+//            @Param("searchTerm") String searchTerm,
+//            Pageable pageable
+//    );
+	
+	@Query("""
+		    SELECT
+		        o.id AS id,
+		        c.id AS customerId,
+		        c.fullName AS fullName,
+		        c.phoneNumber AS customerPhoneNumber,
+		        d.id AS districtId,
+		        d.districtName AS districtName,
+		        d.districtCode AS districtCode, 
+		        sr.id AS scrapRegionId,
+		        sr.regionName AS scrapRegionName,        
+		        COALESCE(so.orderCode, bo.orderCode) AS code,
+		        o.orderType AS type,
+		        o.scheduleDate AS scheduleDate,
+		        COALESCE(so.orderDate, bo.orderDate) AS orderDate,
+		        o.orderStatus AS status,
+		        pv.vehicleNumber AS vehicle,
+		        so.platform,
+		        p.fullName AS providerName,
+		        p.id AS providerId,
+		        p.phoneNumber AS providerPhoneNumber,
+		        so.billType AS scrapBillType,
+		        bo.billType AS dhbillType
+		    FROM CompleteOrders o
+		    JOIN o.customer c
+		    LEFT JOIN c.scrapRegion sr
+		    LEFT JOIN c.district d
+		    LEFT JOIN o.scrapOrder so
+		    LEFT JOIN o.bioWasteOrder bo
+		    LEFT JOIN o.vehicle pv
+		    LEFT JOIN o.provider p
+		    WHERE o.isDeleted = false
+		      AND o.orderType = :orderType
+		      AND (so.id IS NOT NULL OR bo.id IS NOT NULL)
+		      AND (
+		          :searchTerm IS NULL OR :searchTerm = '' OR
+		          c.fullName LIKE CONCAT(:searchTerm, '%') OR
+		          COALESCE(so.orderCode, bo.orderCode) LIKE CONCAT(:searchTerm, '%') OR
+		          o.orderStatus LIKE CONCAT(:searchTerm, '%')
+		      )
+		""")
+		Page<IOrderHistoryResponse> findAllPaged(
+		        @Param("orderType") String  orderType,
+		        @Param("searchTerm") String searchTerm,
+		        Pageable pageable
+		);
 
-    @Query("""
-        SELECT
-            o.id AS id,
-            c.id AS customerId,
-            c.fullName AS fullName,
-            c.phoneNumber AS customerPhoneNumber,
-            COALESCE(so.orderCode, bo.orderCode) AS code,
-            o.orderType AS type,
-            o.scheduleDate AS scheduleDate,
-            COALESCE(so.orderDate, bo.orderDate) AS orderDate,
-            o.orderStatus AS status
-        FROM CompleteOrders o
-        JOIN o.customer c
-        LEFT JOIN o.scrapOrder so
-        LEFT JOIN o.bioWasteOrder bo
-        WHERE o.isDeleted = false
-            AND (so.id IS NOT NULL OR bo.id IS NOT NULL)
-            AND c.id = :customerId
-            AND (:orderStatuses IS NULL OR o.orderStatus IN :orderStatuses)
-            AND (
-                :searchTerm IS NULL OR :searchTerm = '' OR
-                c.fullName LIKE CONCAT(:searchTerm, '%') OR
-                COALESCE(so.orderCode, bo.orderCode) LIKE CONCAT(:searchTerm, '%') OR
-                o.orderType LIKE CONCAT(:searchTerm, '%') OR
-                o.orderStatus LIKE CONCAT(:searchTerm, '%')
-            )
-    """)
-    Page<IOrderHistoryResponse> findAllPagedIfBelongsToCustomer(
-            @Param("customerId") Long customerId,
-            @Param("orderStatuses") Set<String> orderStatuses,
-            @Param("searchTerm") String searchTerm,
-            Pageable pageable
-    );
+ 
 
+//    @Query("""
+//        SELECT
+//            o.id AS id,
+//            c.id AS customerId,
+//            c.fullName AS fullName,
+//            c.phoneNumber AS customerPhoneNumber,
+//            COALESCE(so.orderCode, bo.orderCode) AS code,
+//            o.orderType AS type,
+//            o.scheduleDate AS scheduleDate,
+//            COALESCE(so.orderDate, bo.orderDate) AS orderDate,
+//            o.orderStatus AS status
+//        FROM CompleteOrders o
+//        JOIN o.customer c
+//        LEFT JOIN o.scrapOrder so
+//        LEFT JOIN o.bioWasteOrder bo
+//        WHERE o.isDeleted = false
+//            AND (so.id IS NOT NULL OR bo.id IS NOT NULL)
+//            AND c.id = :customerId
+//            AND (:orderStatuses IS NULL OR o.orderStatus IN :orderStatuses)
+//            AND (
+//                :searchTerm IS NULL OR :searchTerm = '' OR
+//                c.fullName LIKE CONCAT(:searchTerm, '%') OR
+//                COALESCE(so.orderCode, bo.orderCode) LIKE CONCAT(:searchTerm, '%') OR
+//                o.orderType LIKE CONCAT(:searchTerm, '%') OR
+//                o.orderStatus LIKE CONCAT(:searchTerm, '%')
+//            )
+//    """)
+//    Page<IOrderHistoryResponse> findAllPagedIfBelongsToCustomer(
+//            @Param("customerId") Long customerId,
+//            @Param("orderStatuses") Set<String> orderStatuses,
+//            @Param("searchTerm") String searchTerm,
+//            Pageable pageable
+//    );
+    
     @Query("""
-        SELECT
-            o.id AS id,
-            so.id AS scrapOrderId,
-            sr.id AS scrapRegionId,
-            sr.regionName AS scrapRegionName,
-            w.id AS wardId,
-            w.wardNo AS wardNo,
-            w.wardName AS wardName,
-            lb.id AS localBodyId,
-            lb.localBodyName AS localBodyName,
-            d.id AS districtId,
-            d.districtName AS districtName,
-            d.districtCode AS districtCode,
-            p.id AS providerId,
-            p.fullName AS providerName,
-            bo.id AS bioWasteOrderId,
-            c.id AS customerId,
-            c.fullName AS fullName,
-            COALESCE(so.orderCode, bo.orderCode) AS code,
-            o.orderType AS type,
-            o.scheduleDate AS scheduleDate,
-            COALESCE(so.orderDate, bo.orderDate) AS orderDate,
-            o.orderStatus AS status,
-            COALESCE(aso.id, abo.id) AS addressId,
-            COALESCE(aso.residenceType, abo.residenceType) AS residenceType,
-            COALESCE(aso.residenceDetails, abo.residenceDetails) AS residenceDetails,
-            COALESCE(aso.landmark, abo.landmark) AS landmark,
-            COALESCE(aso.latitude, abo.latitude) AS latitude,
-            COALESCE(aso.longitude, abo.longitude) AS longitude,
-            COALESCE(aso.isDeleted, abo.isDeleted) AS isAddressDeleted
-        FROM CompleteOrders o
-        JOIN o.customer c
-        JOIN o.district d
-        JOIN o.provider p
-        LEFT JOIN o.scrapOrder so
-        LEFT JOIN so.address aso
-        LEFT JOIN so.scrapRegion sr
-        LEFT JOIN o.bioWasteOrder bo
-        LEFT JOIN bo.address abo
-        LEFT JOIN abo.ward w
-        LEFT JOIN w.localbody lb
-        WHERE o.isDeleted = false
-            AND (so.id IS NOT NULL OR bo.id IS NOT NULL)
-            AND p.id = :providerId
-            AND (:orderStatuses IS NULL OR o.orderStatus IN :orderStatuses)
-            AND (
-                :searchTerm IS NULL OR :searchTerm = '' OR
-                sr.regionName LIKE CONCAT(:searchTerm, '%') OR
-                c.fullName LIKE CONCAT(:searchTerm, '%') OR
-                COALESCE(so.orderCode, bo.orderCode) LIKE CONCAT(:searchTerm, '%') OR
-                o.orderType LIKE CONCAT(:searchTerm, '%') OR
-                o.orderStatus LIKE CONCAT(:searchTerm, '%')
-            )
-    """)
-    Page<IOrderHistoryResponse> findAllPagedIfBelongsToProvider(
-            @Param("providerId") Long providerId,
-            @Param("orderStatuses") Set<String> orderStatuses,
-            @Param("searchTerm") String searchTerm,
-            Pageable pageable
-    );
+    	    SELECT
+    	        o.id AS id,
+    	        c.id AS customerId,
+    	        c.fullName AS fullName,
+    	        c.phoneNumber AS customerPhoneNumber,
+
+    	        COALESCE(so.orderCode, bo.orderCode) AS code,
+    	        o.orderType AS type,
+    	        o.scheduleDate AS scheduleDate,
+    	        COALESCE(so.orderDate, bo.orderDate) AS orderDate,
+    	        o.orderStatus AS status
+
+    	    FROM CompleteOrders o
+    	    JOIN o.customer c
+    	    LEFT JOIN o.scrapOrder so
+    	    LEFT JOIN o.bioWasteOrder bo
+
+    	    WHERE o.isDeleted = false
+    	      AND c.id = :customerId
+    	      AND o.orderType = :orderType             
+    	      AND (so.id IS NOT NULL OR bo.id IS NOT NULL)
+    	      AND (
+    	          :searchTerm IS NULL OR :searchTerm = '' OR
+    	          c.fullName LIKE CONCAT(:searchTerm, '%') OR
+    	          COALESCE(so.orderCode, bo.orderCode) LIKE CONCAT(:searchTerm, '%') OR
+    	          o.orderStatus LIKE CONCAT(:searchTerm, '%')
+    	      )
+    	""")
+    	Page<IOrderHistoryResponse> findAllPagedIfBelongsToCustomer(
+    	        @Param("customerId") Long customerId,
+    	        @Param("orderType") String orderType,
+    	        @Param("searchTerm") String searchTerm,
+    	        Pageable pageable
+    	);
+
+
+//    @Query("""
+//        SELECT
+//            o.id AS id,
+//            so.id AS scrapOrderId,
+//            sr.id AS scrapRegionId,
+//            sr.regionName AS scrapRegionName,
+//            w.id AS wardId,
+//            w.wardNo AS wardNo,
+//            w.wardName AS wardName,
+//            lb.id AS localBodyId,
+//            lb.localBodyName AS localBodyName,
+//            d.id AS districtId,
+//            d.districtName AS districtName,
+//            d.districtCode AS districtCode,
+//            p.id AS providerId,
+//            p.fullName AS providerName,
+//            bo.id AS bioWasteOrderId,
+//            c.id AS customerId,
+//            c.fullName AS fullName,
+//            COALESCE(so.orderCode, bo.orderCode) AS code,
+//            o.orderType AS type,
+//            o.scheduleDate AS scheduleDate,
+//            COALESCE(so.orderDate, bo.orderDate) AS orderDate,
+//            o.orderStatus AS status,
+//            COALESCE(aso.id, abo.id) AS addressId,
+//            COALESCE(aso.residenceType, abo.residenceType) AS residenceType,
+//            COALESCE(aso.residenceDetails, abo.residenceDetails) AS residenceDetails,
+//            COALESCE(aso.landmark, abo.landmark) AS landmark,
+//            COALESCE(aso.latitude, abo.latitude) AS latitude,
+//            COALESCE(aso.longitude, abo.longitude) AS longitude,
+//            COALESCE(aso.isDeleted, abo.isDeleted) AS isAddressDeleted
+//        FROM CompleteOrders o
+//        JOIN o.customer c
+//        JOIN o.district d
+//        JOIN o.provider p
+//        LEFT JOIN o.scrapOrder so
+//        LEFT JOIN so.address aso
+//        LEFT JOIN so.scrapRegion sr
+//        LEFT JOIN o.bioWasteOrder bo
+//        LEFT JOIN bo.address abo
+//        LEFT JOIN abo.ward w
+//        LEFT JOIN w.localbody lb
+//        WHERE o.isDeleted = false
+//            AND (so.id IS NOT NULL OR bo.id IS NOT NULL)
+//            AND p.id = :providerId
+//            AND (:orderStatuses IS NULL OR o.orderStatus IN :orderStatuses)
+//            AND (
+//                :searchTerm IS NULL OR :searchTerm = '' OR
+//                sr.regionName LIKE CONCAT(:searchTerm, '%') OR
+//                c.fullName LIKE CONCAT(:searchTerm, '%') OR
+//                COALESCE(so.orderCode, bo.orderCode) LIKE CONCAT(:searchTerm, '%') OR
+//                o.orderType LIKE CONCAT(:searchTerm, '%') OR
+//                o.orderStatus LIKE CONCAT(:searchTerm, '%')
+//            )
+//    """)
+//    Page<IOrderHistoryResponse> findAllPagedIfBelongsToProvider(
+//            @Param("providerId") Long providerId,
+//            @Param("orderStatuses") Set<String> orderStatuses,
+//            @Param("searchTerm") String searchTerm,
+//            Pageable pageable
+//    );
+
+    
+    @Query("""
+    	    SELECT
+    	        o.id AS id,
+    	        so.id AS scrapOrderId,
+    	        sr.id AS scrapRegionId,
+    	        sr.regionName AS scrapRegionName,
+    	        w.id AS wardId,
+    	        w.wardNo AS wardNo,
+    	        w.wardName AS wardName,
+    	        lb.id AS localBodyId,
+    	        lb.localBodyName AS localBodyName,
+    	        d.id AS districtId,
+    	        d.districtName AS districtName,
+    	        d.districtCode AS districtCode,
+    	        p.id AS providerId,
+    	        p.fullName AS providerName,
+    	        bo.id AS bioWasteOrderId,
+    	        c.id AS customerId,
+    	        c.fullName AS fullName,
+    	        COALESCE(so.orderCode, bo.orderCode) AS code,
+    	        o.orderType AS type,
+    	        o.scheduleDate AS scheduleDate,
+    	        COALESCE(so.orderDate, bo.orderDate) AS orderDate,
+    	        o.orderStatus AS status,
+    	        COALESCE(aso.id, abo.id) AS addressId,
+    	        COALESCE(aso.residenceType, abo.residenceType) AS residenceType,
+    	        COALESCE(aso.residenceDetails, abo.residenceDetails) AS residenceDetails,
+    	        COALESCE(aso.landmark, abo.landmark) AS landmark,
+    	        COALESCE(aso.latitude, abo.latitude) AS latitude,
+    	        COALESCE(aso.longitude, abo.longitude) AS longitude,
+    	        COALESCE(aso.isDeleted, abo.isDeleted) AS isAddressDeleted
+    	    FROM CompleteOrders o
+    	    JOIN o.customer c
+    	    JOIN o.district d
+    	    JOIN o.provider p
+    	    LEFT JOIN o.scrapOrder so
+    	    LEFT JOIN so.address aso
+    	    LEFT JOIN so.scrapRegion sr
+    	    LEFT JOIN o.bioWasteOrder bo
+    	    LEFT JOIN bo.address abo
+    	    LEFT JOIN abo.ward w
+    	    LEFT JOIN w.localbody lb
+    	    WHERE o.isDeleted = false
+    	      AND (so.id IS NOT NULL OR bo.id IS NOT NULL)
+    	      AND p.id = :providerId
+    	      AND o.orderType = :orderType
+    	      AND (
+    	          :searchTerm IS NULL OR :searchTerm = '' OR
+    	          sr.regionName LIKE CONCAT(:searchTerm, '%') OR
+    	          c.fullName LIKE CONCAT(:searchTerm, '%') OR
+    	          COALESCE(so.orderCode, bo.orderCode) LIKE CONCAT(:searchTerm, '%') OR
+    	          o.orderType LIKE CONCAT(:searchTerm, '%') OR
+    	          o.orderStatus LIKE CONCAT(:searchTerm, '%')
+    	      )
+    	""")
+    	Page<IOrderHistoryResponse> findAllPagedIfBelongsToProvider(
+    	        @Param("providerId") Long providerId,
+    	        @Param("orderType") String orderType,
+    	        @Param("searchTerm") String searchTerm,
+    	        Pageable pageable
+    	);
 
     @Query("""
         SELECT
