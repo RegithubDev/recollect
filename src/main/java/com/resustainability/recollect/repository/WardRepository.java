@@ -13,7 +13,6 @@ import java.util.Optional;
 
 @Repository
 public interface WardRepository extends JpaRepository<Ward, Long> {
-
     @Query("""
         SELECT
             w.id AS id,
@@ -80,6 +79,14 @@ public interface WardRepository extends JpaRepository<Ward, Long> {
         WHERE w.id = :id
     """)
     Optional<IWardResponse> findWardById(@Param("id") Long wardId);
+
+    @Query(value = """
+        SELECT
+            w.localbody.id AS id
+        FROM Ward w
+        WHERE w.id = :wardId
+    """)
+    Long findLocalBodyIdById(@Param("wardId") Long wardId);
 
     @Modifying
     @Query("""

@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Propagation;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -162,7 +163,7 @@ public class LocalBodyService {
         lb.setLocalBodyName(request.name());
         lb.setDistrict(district);
         lb.setLocalBodyType(type);
-        lb.setBorderPolygon(request.borderPolygon());
+        lb.setBorderPolygon(null);
 
         lb.setBioProcessingCharge(request.bioProcessingCharge());
         lb.setBioServiceCharge(request.bioServiceCharge());
@@ -221,7 +222,7 @@ public class LocalBodyService {
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCAL_BODY));
 
         lb.setLocalBodyName(request.name());
-        lb.setBorderPolygon(request.borderPolygon());
+        lb.setBorderPolygon(null);
         lb.setActive(Boolean.TRUE.equals(request.isActive()));
 
         lb.setBioProcessingCharge(request.bioProcessingCharge());

@@ -7,7 +7,6 @@ public interface IScrapRegionResponse {
 	String getNextWeekday();
 	Boolean getIsActive();
 	Boolean getIsDeleted();
-	String getBorderPolygon();
 	Long getDistrictId();
 	String getDistrictName();
 	String getDistrictCode();

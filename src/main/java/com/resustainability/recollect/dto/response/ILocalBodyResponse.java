@@ -5,7 +5,6 @@ public interface ILocalBodyResponse {
     String getLocalBodyName();
     Boolean getIsActive();
     Boolean getIsDeleted();
-    String getBorderPolygon();
 
     Double getBioProcessingCharge();
     Double getBioServiceCharge();

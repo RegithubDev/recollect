@@ -113,9 +113,8 @@ public class CustomerAddressService {
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER_ADDRESS));
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public boolean isInScrapRegionBoundaries(String latitude, String longitude, Long scrapRegionId) {
-        if (StringUtils.isBlank(latitude) || StringUtils.isBlank(longitude)) {
+        if (StringUtils.isBlank(latitude) || StringUtils.isBlank(longitude) || null == scrapRegionId) {
             return false;
         }
         final double[] coordinates = ValidationUtils
@@ -128,9 +127,23 @@ public class CustomerAddressService {
         );
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public boolean isInWardBoundaries(String latitude, String longitude, Long wardId) {
+        final Long localBodyId;
+        if (StringUtils.isBlank(latitude) || StringUtils.isBlank(longitude) || null == wardId || null == (localBodyId = wardRepository.findLocalBodyIdById(wardId))) {
+            return false;
+        }
+        final double[] coordinates = ValidationUtils
+                .validateAndParseCoordinates(latitude, longitude);
+        return 1L == localBodyRepository.existsContainingGeometryById(
+                localBodyId,
+                coordinates[0],
+                coordinates[1],
+                GeometryNormalizer.SRID
+        );
+    }
+
     public boolean isInLocalBodyBoundaries(String latitude, String longitude, Long localBodyId) {
-        if (StringUtils.isBlank(latitude) || StringUtils.isBlank(longitude)) {
+        if (StringUtils.isBlank(latitude) || StringUtils.isBlank(longitude) || null == localBodyId) {
             return false;
         }
         final double[] coordinates = ValidationUtils
@@ -178,9 +191,17 @@ public class CustomerAddressService {
         return customerAddressRepository.save(
                 new CustomerAddress(
                         null,
-                        Boolean.TRUE.equals(request.isScrapService()),
+                        isInScrapRegionBoundaries(
+                                request.latitude(),
+                                request.longitude(),
+                                request.scrapRegionId()
+                        ),
                         Boolean.TRUE.equals(request.isScrapLocationActive()),
-                        Boolean.TRUE.equals(request.isBioWasteService()),
+                        isInWardBoundaries(
+                                request.latitude(),
+                                request.longitude(),
+                                request.wardId()
+                        ),
                         Boolean.TRUE.equals(request.isBioWasteLocationActive()),
                         request.residenceType(),
                         request.residenceDetails(),
@@ -254,13 +275,21 @@ public class CustomerAddressService {
         }
 
         entity.setScrapService(
-                Boolean.TRUE.equals(request.isScrapService())
+                isInScrapRegionBoundaries(
+                        request.latitude(),
+                        request.longitude(),
+                        request.scrapRegionId()
+                )
         );
         entity.setScrapLocationActive(
                 Boolean.TRUE.equals(request.isScrapLocationActive())
         );
         entity.setBioWasteService(
-                Boolean.TRUE.equals(request.isBioWasteService())
+                isInWardBoundaries(
+                        request.latitude(),
+                        request.longitude(),
+                        request.wardId()
+                )
         );
         entity.setBioWasteLocationActive(
                 Boolean.TRUE.equals(request.isBioWasteLocationActive())

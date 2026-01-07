@@ -4,20 +4,39 @@ import com.resustainability.recollect.commons.Default;
 import com.resustainability.recollect.dto.commons.APIResponse;
 import com.resustainability.recollect.dto.request.LoginViaCredentialsRequest;
 import com.resustainability.recollect.dto.request.LoginViaPhoneNumberRequest;
+import com.resustainability.recollect.dto.response.IUserContext;
 import com.resustainability.recollect.dto.response.TokenResponse;
+import com.resustainability.recollect.exception.UnauthorizedException;
 import com.resustainability.recollect.service.AuthService;
+import com.resustainability.recollect.service.SecurityService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
     private final AuthService authService;
+    private final SecurityService securityService;
 
 	@Autowired
-    public AuthController(AuthService authService) {
+    public AuthController(
+            AuthService authService,
+            SecurityService securityService
+    ) {
         this.authService = authService;
+        this.securityService = securityService;
+    }
+
+    @GetMapping("/whoami")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN', 'PROVIDER')")
+    public APIResponse<IUserContext> self() {
+        return new APIResponse<>(
+                securityService
+                        .getCurrentUser()
+                        .orElseThrow(UnauthorizedException::new)
+        );
     }
 
     @PostMapping("/get-customer-token")

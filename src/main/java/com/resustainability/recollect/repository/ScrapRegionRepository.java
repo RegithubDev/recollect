@@ -28,7 +28,6 @@ public interface ScrapRegionRepository extends JpaRepository<ScrapRegion, Long> 
             sr.regionWeekdayNext AS nextWeekday,
             sr.isActive AS isActive,
             sr.isDeleted AS isDeleted,
-    		sr.borderPolygon as borderPolygon,
             d.id AS districtId,
             d.districtName AS districtName,
             d.districtCode AS districtCode,

@@ -327,10 +327,10 @@ public class OrderService {
             final List<ScrapOrderCart> orderItems = request
                     .items()
                     .stream()
-                    .filter(item -> null != item.id() && indexedTypes.containsKey(item.id()))
+                    .filter(item -> null != item.id() && null != item.quantity() && item.quantity() > 0 && indexedTypes.containsKey(item.id()))
                     .map(item -> {
                         final ItemCategoryTypeResponse type = indexedTypes.get(item.id());
-                        final double quantity = type.kg() && null != item.quantity() && item.quantity() > 0
+                        final double quantity = type.kg()
                                 ? item.quantity()
                                 : 0;
                         final double price = null != type.price() && type.price() > 0

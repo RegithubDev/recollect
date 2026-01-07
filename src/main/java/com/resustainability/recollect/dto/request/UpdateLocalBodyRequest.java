@@ -12,7 +12,6 @@ public record UpdateLocalBodyRequest(
         String name,
         Long districtId,
         Long localBodyTypeId,
-        String borderPolygon,
         Double bioProcessingCharge,
         Double bioServiceCharge,
         Double bioSubsidyAmount,
