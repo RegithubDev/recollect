@@ -7,6 +7,7 @@ public interface IOrderHistoryResponse {
 	Long getId();
 	Long getCustomerId();
 	String getFullName();
+	String getCustomerPhoneNumber();
 	String getCode();
 	String getType();
 	LocalDate getScheduleDate();
@@ -34,6 +35,8 @@ public interface IOrderHistoryResponse {
 	Long getProviderId();
 	String getProviderName();
 	String getPlatform();
+	String getProviderPhoneNumber();
+	
 
 	Long getAddressId();
 	String getResidenceType();
