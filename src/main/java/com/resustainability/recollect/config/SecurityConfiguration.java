@@ -37,7 +37,8 @@ public class SecurityConfiguration {
 
     private final List<String> allowedOrigins = List.of(
             "http://localhost:3000",
-            "https://dev.recollect.in"
+            "https://dev.recollect.in",
+            "https://recollect-blue.vercel.app"
     );
     private final List<String> allowedHeaders = List.of(
             "Authorization",
