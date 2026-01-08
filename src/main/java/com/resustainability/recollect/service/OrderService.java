@@ -142,7 +142,7 @@ public class OrderService {
             return Pager.of(
                     completeOrdersRepository.findAllPaged(
                             CollectionUtils.isBlank(orderStatuses) ? null : orderStatuses,
-                            orderType.getAbbreviation(),
+                            null == orderType ? null : orderType.getAbbreviation(),
                             searchCriteria.getQ(),
                             pageable
                     )
@@ -153,7 +153,7 @@ public class OrderService {
                     completeOrdersRepository.findAllPagedIfBelongsToCustomer(
                             user.getId(),
                             CollectionUtils.isBlank(orderStatuses) ? null : orderStatuses,
-                            orderType.getAbbreviation(),
+                            null == orderType ? null : orderType.getAbbreviation(),
                             searchCriteria.getQ(),
                             pageable
                     )
@@ -164,7 +164,7 @@ public class OrderService {
                     completeOrdersRepository.findAllPagedIfBelongsToProvider(
                             user.getId(),
                             CollectionUtils.isBlank(orderStatuses) ? null : orderStatuses,
-                            orderType.getAbbreviation(),
+                            null == orderType ? null : orderType.getAbbreviation(),
                             searchCriteria.getQ(),
                             pageable
                     )
