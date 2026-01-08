@@ -6,6 +6,7 @@ import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.AddCustomerAddressRequest;
 import com.resustainability.recollect.dto.request.UpdateCustomerAddressRequest;
+import com.resustainability.recollect.dto.response.BoundariesResponse;
 import com.resustainability.recollect.dto.response.ICustomerAddressResponse;
 import com.resustainability.recollect.service.CustomerAddressService;
 
@@ -38,7 +39,7 @@ public class CustomerAddressController {
     }
 
     @GetMapping("/list-overlap-regions")
-    public APIResponse<Set<Long>> listAllContainingGeometry(
+    public APIResponse<BoundariesResponse> listAllContainingGeometry(
             @RequestParam(value = "latitude", required = false) String latitude,
             @RequestParam(value = "longitude", required = false) String longitude
     ) {

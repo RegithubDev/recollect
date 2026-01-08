@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/verifying")
-public class ExternalTokenAuthController {
+public class AuthTokenController {
     private final SecurityService securityService;
 
 	@Autowired
-    public ExternalTokenAuthController(SecurityService securityService) {
+    public AuthTokenController(SecurityService securityService) {
         this.securityService = securityService;
     }
 

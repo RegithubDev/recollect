@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 
 @RestController
@@ -51,22 +52,22 @@ public class OrderController {
         );
     }
 
-//    @GetMapping("/list-history-scrap")
-//    public APIResponse<Pager<IOrderHistoryResponse>> listScrapHistory(
-//            @RequestParam(value = "status", required = false) Set<String> status,
-//            @ModelAttribute SearchCriteria searchCriteria
-//    ) {
-//        return new APIResponse<>(
-//                orderService.listHistory(status , searchCriteria)
-//        );
-//    }
+    @GetMapping("/list-history")
+    public APIResponse<Pager<IOrderHistoryResponse>> listScrapHistory(
+            @RequestParam(value = "status", required = false) Set<String> status,
+            @ModelAttribute SearchCriteria searchCriteria
+    ) {
+        return new APIResponse<>(
+                orderService.listHistory(status, null, searchCriteria)
+        );
+    }
     
     @GetMapping("/list-history-scrap")
     public APIResponse<Pager<IOrderHistoryResponse>> listHistoryScrap(
             @ModelAttribute SearchCriteria searchCriteria
     ) {
         return new APIResponse<>(
-                orderService.listHistory(OrderType.SCRAP, searchCriteria)
+                orderService.listHistory(null, OrderType.SCRAP, searchCriteria)
         );
     }
 
@@ -76,7 +77,7 @@ public class OrderController {
             @ModelAttribute SearchCriteria searchCriteria
     ) {
         return new APIResponse<>(
-                orderService.listHistory(OrderType.BIO_WASTE, searchCriteria)
+                orderService.listHistory(null, OrderType.BIO_WASTE, searchCriteria)
         );
     }
 

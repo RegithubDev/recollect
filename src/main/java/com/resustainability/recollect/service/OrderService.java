@@ -123,51 +123,9 @@ public class OrderService {
         return completeOrdersRepository.findAllCartItemsByOrderId(completeOrderId);
     }
 
-//    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-//    public Pager<IOrderHistoryResponse> listHistory(
-//            Set<String> orderStatuses,
-//            SearchCriteria searchCriteria
-//    ) {
-//        final IUserContext user = securityService
-//                .getCurrentUser()
-//                .orElseThrow(UnauthorizedException::new);
-//
-//        final Pageable pageable = searchCriteria.toPageRequest();
-//
-//        if (Boolean.TRUE.equals(user.getIsAdmin())) {
-//            return Pager.of(
-//                    completeOrdersRepository.findAllPaged(
-//                            CollectionUtils.isBlank(orderStatuses) ? null : orderStatuses,
-//                            searchCriteria.getQ(),
-//                            pageable
-//                    )
-//            );
-//        } else if (Boolean.TRUE.equals(user.getIsCustomer())) {
-//            return Pager.of(
-//                    completeOrdersRepository.findAllPagedIfBelongsToCustomer(
-//                            user.getId(),
-//                            CollectionUtils.isBlank(orderStatuses) ? null : orderStatuses,
-//                            searchCriteria.getQ(),
-//                            pageable
-//                    )
-//            );
-//        } else if (Boolean.TRUE.equals(user.getIsProvider())) {
-//            return Pager.of(
-//                    completeOrdersRepository.findAllPagedIfBelongsToProvider(
-//                            user.getId(),
-//                            CollectionUtils.isBlank(orderStatuses) ? null : orderStatuses,
-//                            searchCriteria.getQ(),
-//                            pageable
-//                    )
-//            );
-//        }
-//
-//        return Pager.empty(pageable);
-//    }
-
-    
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Pager<IOrderHistoryResponse> listHistory(
+            Set<String> orderStatuses,
             OrderType orderType,
             SearchCriteria searchCriteria
     ) {
@@ -180,6 +138,7 @@ public class OrderService {
         if (Boolean.TRUE.equals(user.getIsAdmin())) {
             return Pager.of(
                     completeOrdersRepository.findAllPaged(
+                            CollectionUtils.isBlank(orderStatuses) ? null : orderStatuses,
                             orderType.getAbbreviation(),
                             searchCriteria.getQ(),
                             pageable
@@ -190,6 +149,7 @@ public class OrderService {
             return Pager.of(
                     completeOrdersRepository.findAllPagedIfBelongsToCustomer(
                             user.getId(),
+                            CollectionUtils.isBlank(orderStatuses) ? null : orderStatuses,
                             orderType.getAbbreviation(),
                             searchCriteria.getQ(),
                             pageable
@@ -200,6 +160,7 @@ public class OrderService {
             return Pager.of(
                     completeOrdersRepository.findAllPagedIfBelongsToProvider(
                             user.getId(),
+                            CollectionUtils.isBlank(orderStatuses) ? null : orderStatuses,
                             orderType.getAbbreviation(),
                             searchCriteria.getQ(),
                             pageable

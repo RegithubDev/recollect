@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -129,14 +130,14 @@ public interface ScrapRegionRepository extends JpaRepository<ScrapRegion, Long> 
     );
 
     @Query(nativeQuery = true, value = """
-        SELECT sr.id
+        SELECT sr.id AS id, sr.regionName AS name
         FROM backend_scrapregion sr
         WHERE ST_Contains(
             sr.geometry,
             ST_SRID(POINT(:lon, :lat), :srid)
         )
     """)
-    Set<Long> findIdsContainingGeometry(
+    List<IScrapRegionResponse> findIdsContainingGeometry(
             @Param("lat") double lat,
             @Param("lon") double lon,
             @Param("srid") int srid

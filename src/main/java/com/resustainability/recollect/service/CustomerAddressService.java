@@ -7,6 +7,7 @@ import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.AddCustomerAddressRequest;
 import com.resustainability.recollect.dto.request.UpdateCustomerAddressRequest;
+import com.resustainability.recollect.dto.response.BoundariesResponse;
 import com.resustainability.recollect.dto.response.ICustomerAddressResponse;
 import com.resustainability.recollect.dto.response.IUserContext;
 import com.resustainability.recollect.entity.backend.Customer;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
@@ -82,16 +84,23 @@ public class CustomerAddressService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public Set<Long> listAllContainingGeometry(String latitude, String longitude) {
+    public BoundariesResponse listAllContainingGeometry(String latitude, String longitude) {
         final double[] coordinates = ValidationUtils
                 .validateAndParseCoordinates(latitude, longitude);
-
-        return scrapRegionRepository
-                .findIdsContainingGeometry(
-                        coordinates[0],
-                        coordinates[1],
-                        GeometryNormalizer.SRID
-                );
+        return new BoundariesResponse(
+                scrapRegionRepository
+                        .findIdsContainingGeometry(
+                                coordinates[0],
+                                coordinates[1],
+                                GeometryNormalizer.SRID
+                        ),
+                localBodyRepository
+                        .findIdsContainingGeometry(
+                                coordinates[0],
+                                coordinates[1],
+                                GeometryNormalizer.SRID
+                        )
+        );
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)

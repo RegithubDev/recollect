@@ -15,7 +15,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 @Repository
@@ -150,6 +152,20 @@ public interface LocalBodyRepository extends JpaRepository<LocalBody, Long> {
         WHERE lb.id = :localBodyId
     """)
 	Optional<IGeometryResponse> findBorderByLocalBodyId(@Param("localBodyId") Long localBodyId);
+
+	@Query(nativeQuery = true, value = """
+        SELECT lb.id, lb.localBodyName AS localBodyName
+        FROM backend_localbody lb
+        WHERE ST_Contains(
+            lb.geometry,
+            ST_SRID(POINT(:lon, :lat), :srid)
+        )
+    """)
+	List<ILocalBodyResponse> findIdsContainingGeometry(
+			@Param("lat") double lat,
+			@Param("lon") double lon,
+			@Param("srid") int srid
+	);
 
 	@Query("""
         SELECT lb.geometry
