@@ -5,6 +5,7 @@ import com.resustainability.recollect.dto.commons.APIResponse;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.PlaceOrderRequest;
+import com.resustainability.recollect.dto.request.UpdateOrderScheduleDateRequest;
 import com.resustainability.recollect.dto.request.CancelOrderRequest;
 import com.resustainability.recollect.dto.response.*;
 import com.resustainability.recollect.service.OrderService;
@@ -97,6 +98,14 @@ public class OrderController {
     ) {
         return new APIResponse<>(
                 orderService.getById(orderId)
+        );
+    }
+    
+    @PutMapping("/reschedule")
+    public APIResponse<Void> updateScheduledDate(@RequestBody UpdateOrderScheduleDateRequest request) {
+    	orderService.updateScheduledDate(request);
+        return new APIResponse<>(
+                Default.SUCCESS_UPDATE_ORDER_SCHEDULE_DATE
         );
     }
 

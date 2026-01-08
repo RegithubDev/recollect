@@ -409,13 +409,79 @@ public class BwgOrdersService {
          */
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+  /*  @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void updateScheduledDate(UpdateBwgOrderScheduleDateRequest request) {
         ValidationUtils.validateRequestBody(request);
         if (ordersRepository.updateScheduledDate(request.id(), request.scheduleDate()) == 0) {
             throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
         }
+    }*/
+    
+  /*  @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public void updateScheduledDate(UpdateBwgOrderScheduleDateRequest request) {
+
+        ValidationUtils.validateRequestBody(request);
+
+        int updatedOrders = ordersRepository
+                .updateScheduledDate(request.id(), request.scheduleDate());
+
+        if (updatedOrders == 0) {
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
+        }
+
+        completeOrdersRepository
+                .updateScheduledDateByBwgOrderId(
+                        request.id(),
+                        request.scheduleDate()
+                );
+    }*/
+    
+    
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public void updateScheduledDate(UpdateBwgOrderScheduleDateRequest request) {
+
+        ValidationUtils.validateRequestBody(request);
+
+      
+        int updated = ordersRepository.updateScheduledDate(
+                request.id(),
+                request.scheduleDate()
+        );
+
+        if (updated == 0) {
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
+        }
+
+     
+        CompleteOrders completeOrder =
+                completeOrdersRepository.findByBwgOrder_Id(request.id())
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException("Complete order not found"));
+
+        completeOrdersRepository.updateScheduledDateByBwgOrderId(
+                request.id(),
+                request.scheduleDate()
+        );
+
+ 
+        CompleteOrderLog log = new CompleteOrderLog();
+        log.setOrder(completeOrder);
+        log.setDoneBy("Server");
+        log.setCreatedAt(LocalDateTime.now());
+        log.setClient(completeOrder.getClient());
+
+        String description =
+                "Order Schedule Date Updated to " + request.scheduleDate()
+                + " and Order Status Updated to "
+                + completeOrder.getOrderStatus()
+                + " by";
+
+        log.setDescription(description);
+
+        completeOrderLogRepository.save(log);
     }
+
+
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void softDelete(Long id, boolean isDeleted) {

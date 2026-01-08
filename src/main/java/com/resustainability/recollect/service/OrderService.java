@@ -5,6 +5,8 @@ import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.CancelOrderRequest;
 import com.resustainability.recollect.dto.request.PlaceOrderRequest;
+import com.resustainability.recollect.dto.request.UpdateBwgOrderScheduleDateRequest;
+import com.resustainability.recollect.dto.request.UpdateOrderScheduleDateRequest;
 import com.resustainability.recollect.dto.response.*;
 import com.resustainability.recollect.entity.backend.*;
 import com.resustainability.recollect.exception.InvalidDataException;
@@ -52,6 +54,7 @@ public class OrderService {
     private final CustomerRepository customerRepository;
     private final ProviderRepository providerRepository;
     private final ProviderDistrictRepository providerDistrictRepository;
+    
 
     @Autowired
     public OrderService(
@@ -499,6 +502,60 @@ public class OrderService {
 
         return completeOrder.getId();
     }
+    
+   /* @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public void updateScheduledDate(UpdateOrderScheduleDateRequest request) {
+        ValidationUtils.validateRequestBody(request);
+        if (completeOrdersRepository.updateScheduledDate(request.id(), request.scheduleDate()) == 0) {
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
+        }
+    }*/
+    
+    
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public void updateScheduledDate(UpdateOrderScheduleDateRequest request) {
+
+        ValidationUtils.validateRequestBody(request);
+
+        
+        CompleteOrders completeOrder =
+                completeOrdersRepository.findById(request.id())
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
+
+        
+        int updated =
+                completeOrdersRepository.updateScheduledDate(
+                        request.id(),
+                        request.scheduleDate()
+                );
+
+        if (updated == 0) {
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
+        }
+
+        
+        CompleteOrderLog log = new CompleteOrderLog();
+        log.setOrder(completeOrder);
+        log.setCustomer(completeOrder.getCustomer());
+        log.setDoneBy("Server");
+        log.setCreatedAt(LocalDateTime.now());
+
+        String description =
+                "Order Schedule Date Updated to " + request.scheduleDate()
+                + " and Order Status Updated to "
+                + completeOrder.getOrderStatus()
+                + " by";
+
+        log.setDescription(description);
+
+        completeOrderLogRepository.save(log);
+    }
+
+    
+    
+    
+    
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Long selfAssign(Long completeOrderId) {

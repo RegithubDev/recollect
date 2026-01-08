@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -29,7 +30,12 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
 			d.districtName AS districtName,
 			d.districtCode AS districtCode, 
 			sr.id AS scrapRegionId,
-			sr.regionName AS scrapRegionName,        
+			sr.regionName AS scrapRegionName, 
+			w.id AS wardId,
+		    w.wardNo AS wardNo,
+		    w.wardName AS wardName,
+		    lb.id AS localBodyId,
+		    lb.localBodyName AS localBodyName,       
 			COALESCE(so.orderCode, bo.orderCode) AS code,
 			o.orderType AS type,
 			o.scheduleDate AS scheduleDate,
@@ -44,6 +50,8 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
 			bo.billType AS dhbillType
 		FROM CompleteOrders o
 		JOIN o.customer c
+		LEFT JOIN c.ward w
+		LEFT JOIN w.localbody lb
 		LEFT JOIN c.scrapRegion sr
 		LEFT JOIN c.district d
 		LEFT JOIN o.scrapOrder so
@@ -68,6 +76,8 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
 			Pageable pageable
 	);
     
+	
+
     @Query("""
 		SELECT
 			o.id AS id,
@@ -533,4 +543,32 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
             @Param("expectedOrderStatus") String expectedOrderStatus,
             @Param("newOrderStatus") String newOrderStatus
     );
+
+
+    @Modifying
+	@Query("""
+        UPDATE CompleteOrders o
+        SET o.scheduleDate = :scheduledDate
+        WHERE o.id = :id
+    """)
+	int updateScheduledDate(
+			@Param("id") Long id,
+			@Param("scheduledDate") LocalDate scheduledDate
+	);
+    
+    
+    @Modifying
+    @Query("""
+        UPDATE CompleteOrders o
+        SET o.scheduleDate = :scheduleDate
+        WHERE o.bwgOrder.id = :orderId
+    """)
+    int updateScheduledDateByBwgOrderId(
+            @Param("orderId") Long orderId,
+            @Param("scheduleDate") LocalDate scheduleDate
+    );
+    
+
+    
+    Optional<CompleteOrders> findByBwgOrder_Id(Long bwgOrderId);
 }

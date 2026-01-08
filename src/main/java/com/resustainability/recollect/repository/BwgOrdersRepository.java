@@ -99,6 +99,8 @@ public interface BwgOrdersRepository extends JpaRepository<BwgOrders, Long> {
 			@Param("id") Long id,
 			@Param("scheduledDate") LocalDate scheduledDate
 	);
+	
+	
 
     @Modifying
     @Query("""

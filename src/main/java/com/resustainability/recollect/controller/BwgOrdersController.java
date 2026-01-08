@@ -81,7 +81,7 @@ public class BwgOrdersController {
         	);
     }
 
-    @PatchMapping("/reschedule")
+    @PutMapping("/reschedule")
     public APIResponse<Void> updateScheduledDate(@RequestBody UpdateBwgOrderScheduleDateRequest request) {
         ordersService.updateScheduledDate(request);
         return new APIResponse<>(
