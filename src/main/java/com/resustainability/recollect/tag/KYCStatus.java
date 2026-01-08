@@ -1,9 +1,5 @@
 package com.resustainability.recollect.tag;
 
-import com.resustainability.recollect.commons.Default;
-import com.resustainability.recollect.commons.StringUtils;
-
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -17,49 +13,29 @@ public enum KYCStatus {
 	REJECTED(5, "KYC failed");
 
 	private final int ordinal;
-	private final String abbreviation;
+	private final String description;
 
-	KYCStatus(int ordinal, String abbreviation) {
+	KYCStatus(int ordinal, String description) {
 		this.ordinal = ordinal;
-		this.abbreviation = abbreviation;
-	}
+        this.description = description;
+    }
 
 	public int getOrdinal() {
 		return ordinal;
 	}
 
-	public String getAbbreviation() {
-		return abbreviation;
-	}
-
-	public static KYCStatus fromAbbreviation(String abbreviation) {
-		for (KYCStatus role : values()) {
-			if (is(abbreviation, role)) {
-				return role;
-			}
-		}
-		throw new IllegalArgumentException("Unknown abbreviation: " + abbreviation);
-	}
-
-	public static boolean is(String abbreviation, KYCStatus value) {
-		return null != value && StringUtils.isNotBlank(abbreviation) && value
-				.getAbbreviation()
-				.equalsIgnoreCase(abbreviation.replace(Default.ROLE_PREFIX, Default.EMPTY));
-	}
-
-	public static boolean is(String abbreviation, KYCStatus... values) {
-		return StringUtils.isNotBlank(abbreviation) && Arrays.stream(values)
-				.anyMatch(value -> is(abbreviation, value));
+	public String getDescription() {
+		return description;
 	}
 
 	public static List<String> list() {
 		return Stream.of(values())
-				.map(KYCStatus::getAbbreviation)
+				.map(KYCStatus::name)
 				.toList();
 	}
 
 	@Override
 	public String toString() {
-		return abbreviation;
+		return name();
 	}
 }

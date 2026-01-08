@@ -308,6 +308,7 @@ public class LocalBodyService {
         localBodyRepository.save(entity);
 
         geometryCache.requestLocalBodyRefresh();
+        geometryCache.requestAddressRefresh();
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)

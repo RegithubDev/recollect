@@ -249,6 +249,7 @@ public class ScrapRegionService {
         scrapRegionRepository.save(entity);
 
         geometryCache.requestScrapRegionRefresh();
+        geometryCache.requestAddressRefresh();
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)

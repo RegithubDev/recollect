@@ -1,5 +1,6 @@
 package com.resustainability.recollect.service;
 
+import com.resustainability.recollect.commons.CollectionUtils;
 import com.resustainability.recollect.commons.Default;
 import com.resustainability.recollect.commons.StringUtils;
 import com.resustainability.recollect.commons.ValidationUtils;
@@ -17,19 +18,26 @@ import com.resustainability.recollect.exception.UnauthorizedException;
 import com.resustainability.recollect.repository.*;
 import com.resustainability.recollect.util.GeometryNormalizer;
 
+import org.locationtech.jts.geom.MultiPolygon;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomerAddressService {
+    private final GeometryNormalizer geometryNormalizer;
     private final SecurityService securityService;
     private final CustomerAddressRepository customerAddressRepository;
     private final ScrapRegionRepository scrapRegionRepository;
@@ -39,6 +47,7 @@ public class CustomerAddressService {
 
     @Autowired
     public CustomerAddressService(
+            GeometryNormalizer geometryNormalizer,
             SecurityService securityService,
             CustomerAddressRepository customerAddressRepository,
             ScrapRegionRepository scrapRegionRepository,
@@ -46,12 +55,101 @@ public class CustomerAddressService {
             WardRepository wardRepository,
             CustomerRepository customerRepository
     ) {
+        this.geometryNormalizer = geometryNormalizer;
         this.securityService = securityService;
         this.customerAddressRepository = customerAddressRepository;
         this.scrapRegionRepository = scrapRegionRepository;
         this.localBodyRepository = localBodyRepository;
         this.wardRepository = wardRepository;
         this.customerRepository = customerRepository;
+    }
+
+    @Transactional(readOnly = true)
+    public MultiPolygon loadMergedScrapRegionBoundaries() {
+        try (var stream = scrapRegionRepository.streamAllActiveGeometries()) {
+            return geometryNormalizer.merge(
+                    stream.filter(Objects::nonNull)
+                            .map(geometryNormalizer::toMultiPolygon)
+                            .toList()
+            );
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public MultiPolygon loadMergedLocalBodyBoundaries() {
+        try (var stream = localBodyRepository.streamAllActiveGeometries()) {
+            return geometryNormalizer.merge(
+                    stream.filter(Objects::nonNull)
+                            .map(geometryNormalizer::toMultiPolygon)
+                            .toList()
+            );
+        }
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public Void evaluateAddressesUsingBoundaryGeometry(
+            MultiPolygon scrapRegionBoundaries,
+            MultiPolygon localBodyBoundaries
+    ) {
+        final int FETCH_CHUNK_SIZE = 500;
+        final int MAX_BATCH_SIZE = 50_00_000;
+
+        long processedCount = 0;
+        final PageRequest pageRequest = PageRequest.of(0, FETCH_CHUNK_SIZE);
+        while (processedCount < MAX_BATCH_SIZE) {
+            final Page<CustomerAddress> page = customerAddressRepository
+                    .findAll(pageRequest);
+
+            if (!page.hasContent()) {
+                break;
+            }
+
+            final Map<Long, CustomerAddress> indexedEntities = page.get()
+                    .filter(entity -> StringUtils.isNotBlank(entity.getLatitude()) && StringUtils.isNotBlank(entity.getLongitude()))
+                    .collect(Collectors.toMap(
+                            CustomerAddress::getId,
+                            Function.identity(),
+                            (existing, replacement) -> existing
+                    ));
+
+            if (indexedEntities.isEmpty()) {
+                break;
+            }
+
+            final List<CustomerAddress> entitiesToSave = indexedEntities
+                    .values()
+                    .stream()
+                    .peek(entity -> {
+                        final double[] coordinates = ValidationUtils
+                                .validateAndParseCoordinates(
+                                        entity.getLatitude(),
+                                        entity.getLongitude()
+                                );
+
+                        entity.setScrapService(
+                                geometryNormalizer.isPointInsideBoundary(
+                                        coordinates[0],
+                                        coordinates[1],
+                                        scrapRegionBoundaries
+                                )
+                        );
+                        entity.setBioWasteService(
+                                geometryNormalizer.isPointInsideBoundary(
+                                        coordinates[0],
+                                        coordinates[1],
+                                        localBodyBoundaries
+                                )
+                        );
+                    })
+                    .toList();
+
+            if (CollectionUtils.isNonBlank(entitiesToSave)) {
+                customerAddressRepository.saveAll(entitiesToSave);
+            }
+
+            processedCount += page.getNumberOfElements();
+        }
+        return null;
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
@@ -81,6 +179,11 @@ public class CustomerAddressService {
         }
 
         return Pager.empty(pageable);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public List<ICustomerAddressResponse> listAllTrackData(String searchTerm) {
+        return customerAddressRepository.findAllTrackData(searchTerm);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)

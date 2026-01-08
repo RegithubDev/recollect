@@ -1,71 +1,51 @@
 package com.resustainability.recollect.service;
 
 import com.resustainability.recollect.commons.RateLimitedRefresher;
-import com.resustainability.recollect.repository.LocalBodyRepository;
-import com.resustainability.recollect.repository.ScrapRegionRepository;
-import com.resustainability.recollect.util.GeometryNormalizer;
 
 import org.locationtech.jts.geom.MultiPolygon;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.util.Objects;
 
 @Service
 public class GeometryCache {
+    public static final Duration DEFAULT_DEBOUNCE = Duration.ofSeconds(5);
+    public static final Duration DEFAULT_MAX_STALENESS = Duration.ofSeconds(30);
+
     private final RateLimitedRefresher<MultiPolygon> scrapRegionRefresher;
     private final RateLimitedRefresher<MultiPolygon> localBodyRefresher;
+    private final RateLimitedRefresher<Void> addressRefresher;
 
     @Autowired
     public GeometryCache(
-            ScrapRegionRepository scrapRegionRepository,
-            LocalBodyRepository localBodyRepository,
-            GeometryNormalizer geometryNormalizer
+            CustomerAddressService customerAddressService
     ) {
         this.scrapRegionRefresher =
                 new RateLimitedRefresher<>(
-                        Duration.ofSeconds(5),
-                        Duration.ofSeconds(30),
-                        () -> loadScrapRegion(scrapRegionRepository, geometryNormalizer)
+                        DEFAULT_DEBOUNCE,
+                        DEFAULT_MAX_STALENESS,
+                        customerAddressService::loadMergedScrapRegionBoundaries
                 );
 
         this.localBodyRefresher =
                 new RateLimitedRefresher<>(
-                        Duration.ofSeconds(5),
-                        Duration.ofSeconds(30),
-                        () -> loadLocalBody(localBodyRepository, geometryNormalizer)
+                        DEFAULT_DEBOUNCE,
+                        DEFAULT_MAX_STALENESS,
+                        customerAddressService::loadMergedLocalBodyBoundaries
                 );
-    }
 
-    @Transactional(readOnly = true)
-    protected MultiPolygon loadScrapRegion(
-            ScrapRegionRepository repo,
-            GeometryNormalizer normalizer
-    ) {
-        try (var stream = repo.streamAllActiveGeometries()) {
-            return normalizer.merge(
-                    stream.filter(Objects::nonNull)
-                            .map(normalizer::toMultiPolygon)
-                            .toList()
-            );
-        }
-    }
-
-    @Transactional(readOnly = true)
-    protected MultiPolygon loadLocalBody(
-            LocalBodyRepository repo,
-            GeometryNormalizer normalizer
-    ) {
-        try (var stream = repo.streamAllActiveGeometries()) {
-            return normalizer.merge(
-                    stream.filter(Objects::nonNull)
-                            .map(normalizer::toMultiPolygon)
-                            .toList()
-            );
-        }
+        this.addressRefresher =
+                new RateLimitedRefresher<>(
+                        DEFAULT_DEBOUNCE,
+                        DEFAULT_MAX_STALENESS,
+                        () -> customerAddressService
+                                .evaluateAddressesUsingBoundaryGeometry(
+                                        getScrapRegionGeometry(),
+                                        getLocalBodyGeometry()
+                                )
+                );
     }
 
     public void requestScrapRegionRefresh() {
@@ -74,6 +54,10 @@ public class GeometryCache {
 
     public void requestLocalBodyRefresh() {
         localBodyRefresher.requestRefresh();
+    }
+
+    public void requestAddressRefresh() {
+        addressRefresher.requestRefresh();
     }
 
     public MultiPolygon getScrapRegionGeometry() {

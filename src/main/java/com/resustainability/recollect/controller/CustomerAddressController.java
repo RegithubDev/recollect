@@ -10,12 +10,11 @@ import com.resustainability.recollect.dto.response.BoundariesResponse;
 import com.resustainability.recollect.dto.response.ICustomerAddressResponse;
 import com.resustainability.recollect.service.CustomerAddressService;
 
-import java.util.List;
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/customer/address")
@@ -35,6 +34,16 @@ public class CustomerAddressController {
     ) {
         return new APIResponse<>(
                 customerAddressService.list(customerId, searchCriteria)
+        );
+    }
+
+    @GetMapping("/list-track-data")
+    @PreAuthorize("hasRole('ADMIN')")
+    public APIResponse<List<ICustomerAddressResponse>> listAllTrackData(
+            @RequestParam(value = "q", required = false) String q
+    ) {
+        return new APIResponse<>(
+                customerAddressService.listAllTrackData(q)
         );
     }
 

@@ -18,6 +18,7 @@ public interface ICustomerAddressResponse {
 
     Long getCustomerId();
     String getFullName();
+    String getPhoneNumber();
 
     Long getScrapRegionId();
     String getScrapRegionName();

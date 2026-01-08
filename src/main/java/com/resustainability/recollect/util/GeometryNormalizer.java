@@ -130,4 +130,34 @@ public class GeometryNormalizer {
                         unioned.getGeometryType()
         );
     }
+
+    /**
+     * Checks whether the given latitude & longitude
+     * lies within the provided MultiPolygon boundary.
+     */
+    public boolean isPointInsideBoundary(
+            double latitude,
+            double longitude,
+            MultiPolygon boundary
+    ) {
+        if (boundary == null) {
+            throw new IllegalArgumentException("Boundary geometry must not be null");
+        }
+
+        // JTS uses (lon, lat)
+        Point point = geometryFactory.createPoint(
+                new Coordinate(longitude, latitude)
+        );
+        point.setSRID(SRID);
+
+        boundary.setSRID(SRID);
+
+        Geometry fixedBoundary = boundary.isValid()
+                ? boundary
+                : boundary.buffer(0);
+
+        // covers() includes boundary points as well
+        return fixedBoundary.covers(point);
+    }
+
 }
