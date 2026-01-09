@@ -1,8 +1,8 @@
 package com.resustainability.recollect.dto.response;
 
-import java.util.List;
+import java.util.Set;
 
 public record BoundariesResponse(
-		List<IScrapRegionResponse> scrapRegions,
-		List<ILocalBodyResponse> localBodies
+		Set<Long> scrapRegions,
+		Set<Long> wards
 ) {}

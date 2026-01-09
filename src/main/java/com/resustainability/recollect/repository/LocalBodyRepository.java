@@ -154,14 +154,20 @@ public interface LocalBodyRepository extends JpaRepository<LocalBody, Long> {
 	Optional<IGeometryResponse> findBorderByLocalBodyId(@Param("localBodyId") Long localBodyId);
 
 	@Query(nativeQuery = true, value = """
-        SELECT lb.id, lb.localBodyName AS localBodyName
-        FROM backend_localbody lb
-        WHERE ST_Contains(
-            lb.geometry,
-            ST_SRID(POINT(:lon, :lat), :srid)
-        )
-    """)
-	List<ILocalBodyResponse> findIdsContainingGeometry(
+		SELECT w.id
+		FROM backend_ward w
+		INNER JOIN backend_localbody lb
+			ON lb.id = w.localbody_id
+		WHERE ST_Contains(
+			lb.geometry,
+			ST_SRID(POINT(:lon, :lat), :srid)
+		)
+		  AND w.is_active = true
+		  AND w.is_deleted = false
+		  AND lb.is_active = true
+		  AND lb.is_deleted = false
+	""")
+	Set<Long> findWardIdsContainingGeometry(
 			@Param("lat") double lat,
 			@Param("lon") double lon,
 			@Param("srid") int srid

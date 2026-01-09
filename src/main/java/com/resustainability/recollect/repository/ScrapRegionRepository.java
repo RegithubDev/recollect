@@ -130,14 +130,16 @@ public interface ScrapRegionRepository extends JpaRepository<ScrapRegion, Long> 
     );
 
     @Query(nativeQuery = true, value = """
-        SELECT sr.id AS id, sr.regionName AS name
+        SELECT sr.id
         FROM backend_scrapregion sr
         WHERE ST_Contains(
             sr.geometry,
             ST_SRID(POINT(:lon, :lat), :srid)
         )
+            AND sr.is_active = true
+	        AND sr.is_deleted = false
     """)
-    List<IScrapRegionResponse> findIdsContainingGeometry(
+    Set<Long> findIdsContainingGeometry(
             @Param("lat") double lat,
             @Param("lon") double lon,
             @Param("srid") int srid

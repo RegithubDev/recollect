@@ -198,7 +198,7 @@ public class CustomerAddressService {
                                 GeometryNormalizer.SRID
                         ),
                 localBodyRepository
-                        .findIdsContainingGeometry(
+                        .findWardIdsContainingGeometry(
                                 coordinates[0],
                                 coordinates[1],
                                 GeometryNormalizer.SRID
