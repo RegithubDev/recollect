@@ -9,6 +9,7 @@ import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.AddBwgOrderRequest;
 import com.resustainability.recollect.dto.request.UpdateBwgOrderRequest;
 import com.resustainability.recollect.dto.response.IBwgOrderResponse;
+import com.resustainability.recollect.dto.response.IUserContext;
 import com.resustainability.recollect.service.BwgOrdersService;
 import com.resustainability.recollect.tag.OrderType;
 
@@ -81,13 +82,25 @@ public class BwgOrdersController {
         	);
     }
 
-    @PutMapping("/reschedule")
+   /* @PutMapping("/reschedule")
     public APIResponse<Void> updateScheduledDate(@RequestBody UpdateBwgOrderScheduleDateRequest request) {
         ordersService.updateScheduledDate(request);
         return new APIResponse<>(
                 Default.SUCCESS_UPDATE_ORDER_SCHEDULE_DATE
         );
+    }*/
+    
+    @PutMapping("/reschedule")
+    public APIResponse<Void> updateScheduledDate(
+            @RequestBody UpdateBwgOrderScheduleDateRequest request,
+            IUserContext userContext
+    ) {
+        ordersService.updateScheduledDate(request, userContext);
+        return new APIResponse<>(
+                Default.SUCCESS_UPDATE_ORDER_SCHEDULE_DATE
+        );
     }
+
     
     @DeleteMapping("/delete/{orderId}")
     public APIResponse<Void> delete(@PathVariable Long orderId) {

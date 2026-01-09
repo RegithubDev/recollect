@@ -2,6 +2,8 @@ package com.resustainability.recollect.repository;
 
 import com.resustainability.recollect.entity.backend.ScrapOrders;
 
+import java.time.LocalDate;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -44,4 +46,16 @@ public interface ScrapOrdersRepository extends JpaRepository<ScrapOrders, Long> 
             @Param("id") Long scrapOrderId,
             @Param("isDeleted") boolean isDeleted
     );
+    
+    @Modifying
+    @Query("""
+        update ScrapOrders so
+        set so.scheduleDate = :scheduleDate
+        where so.id = :id
+    """)
+    int updateScheduleDate(
+            @Param("id") Long id,
+            @Param("scheduleDate") LocalDate scheduleDate
+    );
+
 }

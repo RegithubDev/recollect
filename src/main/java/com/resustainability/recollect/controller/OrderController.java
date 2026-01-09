@@ -6,6 +6,7 @@ import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.PlaceOrderRequest;
 import com.resustainability.recollect.dto.request.UpdateOrderScheduleDateRequest;
+import com.resustainability.recollect.dto.request.AddOrderRequest;
 import com.resustainability.recollect.dto.request.CancelOrderRequest;
 import com.resustainability.recollect.dto.response.*;
 import com.resustainability.recollect.service.OrderService;
@@ -13,6 +14,7 @@ import com.resustainability.recollect.tag.OrderType;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -63,6 +65,23 @@ public class OrderController {
         );
     }
     
+    
+    @PostMapping("/scrap-add")
+    public APIResponse<Long> addScrap(@RequestBody AddOrderRequest request) {
+        return new APIResponse<>(
+                Default.SUCCESS_ORDER_PLACED,
+                orderService.add(request, OrderType.SCRAP)
+        );
+    }
+
+    
+    @PostMapping("/biowaste-add")
+    public APIResponse<Long> addBioWaste(@RequestBody AddOrderRequest request) {
+        return new APIResponse<>(
+                Default.SUCCESS_ORDER_PLACED,
+                orderService.add(request, OrderType.BIO_WASTE)
+        );
+    }
     @GetMapping("/list-history-scrap")
     public APIResponse<Pager<IOrderHistoryResponse>> listHistoryScrap(
             @ModelAttribute SearchCriteria searchCriteria
@@ -102,12 +121,14 @@ public class OrderController {
     }
     
     @PutMapping("/reschedule")
-    public APIResponse<Void> updateScheduledDate(@RequestBody UpdateOrderScheduleDateRequest request) {
-    	orderService.updateScheduledDate(request);
-        return new APIResponse<>(
-                Default.SUCCESS_UPDATE_ORDER_SCHEDULE_DATE
-        );
+    public APIResponse<Void> updateScheduledDate(
+            @RequestBody UpdateOrderScheduleDateRequest request,
+            @AuthenticationPrincipal IUserContext userContext
+    ) {
+        orderService.updateScheduledDate(request, userContext);
+        return new APIResponse<>(Default.SUCCESS_UPDATE_ORDER_SCHEDULE_DATE);
     }
+
 
     @GetMapping("/invoice/{orderId}")
     public APIResponse<InvoiceResponse> getInvoiceById(

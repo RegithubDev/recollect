@@ -2,6 +2,8 @@ package com.resustainability.recollect.repository;
 
 import com.resustainability.recollect.entity.backend.BioWasteOrders;
 
+import java.time.LocalDate;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -44,4 +46,17 @@ public interface BioWasteOrdersRepository extends JpaRepository<BioWasteOrders, 
             @Param("id") Long bioWasteOrderId,
             @Param("isDeleted") boolean isDeleted
     );
+    
+    
+    @Modifying
+    @Query("""
+        update BioWasteOrders bo
+        set bo.scheduleDate = :scheduleDate
+        where bo.id = :id
+    """)
+    int updateScheduleDate(
+            @Param("id") Long id,
+            @Param("scheduleDate") LocalDate scheduleDate
+    );
+
 }

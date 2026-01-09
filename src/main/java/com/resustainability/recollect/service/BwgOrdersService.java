@@ -18,11 +18,14 @@ import com.resustainability.recollect.entity.backend.*;
 import com.resustainability.recollect.repository.*;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
+import com.resustainability.recollect.exception.BaseException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
 import com.resustainability.recollect.tag.OrderStatus;
 import com.resustainability.recollect.tag.OrderType;
+import com.resustainability.recollect.util.OrderLogUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -409,80 +412,8 @@ public class BwgOrdersService {
          */
     }
 
-  /*  @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public void updateScheduledDate(UpdateBwgOrderScheduleDateRequest request) {
-        ValidationUtils.validateRequestBody(request);
-        if (ordersRepository.updateScheduledDate(request.id(), request.scheduleDate()) == 0) {
-            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
-        }
-    }*/
-    
-  /*  @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public void updateScheduledDate(UpdateBwgOrderScheduleDateRequest request) {
-
-        ValidationUtils.validateRequestBody(request);
-
-        int updatedOrders = ordersRepository
-                .updateScheduledDate(request.id(), request.scheduleDate());
-
-        if (updatedOrders == 0) {
-            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
-        }
-
-        completeOrdersRepository
-                .updateScheduledDateByBwgOrderId(
-                        request.id(),
-                        request.scheduleDate()
-                );
-    }*/
-    
-    
-    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public void updateScheduledDate(UpdateBwgOrderScheduleDateRequest request) {
-
-        ValidationUtils.validateRequestBody(request);
-
-      
-        int updated = ordersRepository.updateScheduledDate(
-                request.id(),
-                request.scheduleDate()
-        );
-
-        if (updated == 0) {
-            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
-        }
-
-     
-        CompleteOrders completeOrder =
-                completeOrdersRepository.findByBwgOrder_Id(request.id())
-                        .orElseThrow(() ->
-                                new ResourceNotFoundException("Complete order not found"));
-
-        completeOrdersRepository.updateScheduledDateByBwgOrderId(
-                request.id(),
-                request.scheduleDate()
-        );
 
  
-        CompleteOrderLog log = new CompleteOrderLog();
-        log.setOrder(completeOrder);
-        log.setDoneBy("Server");
-        log.setCreatedAt(LocalDateTime.now());
-        log.setClient(completeOrder.getClient());
-
-        String description =
-                "Order Schedule Date Updated to " + request.scheduleDate()
-                + " and Order Status Updated to "
-                + completeOrder.getOrderStatus()
-                + " by";
-
-        log.setDescription(description);
-
-        completeOrderLogRepository.save(log);
-    }
-
-
-
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void softDelete(Long id, boolean isDeleted) {
 
@@ -494,5 +425,60 @@ public class BwgOrdersService {
             );
         }
     }
+    
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public void updateScheduledDate(
+            UpdateBwgOrderScheduleDateRequest request,
+            IUserContext userContext
+    ) {
+
+        ValidationUtils.validateRequestBody(request);
+
+        CompleteOrders completeOrder =
+                completeOrdersRepository.findByBwgOrder_Id(request.id())
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException("Complete order not found"));
+
+
+        if (request.scheduleDate().equals(completeOrder.getScheduleDate())) {
+            throw new BaseException(
+                    HttpStatus.BAD_REQUEST,
+                    Default.ERROR_SAMEDATE
+            );
+        }
+
+
+        int updated = ordersRepository.updateScheduledDate(
+                request.id(),
+                request.scheduleDate()
+        );
+
+        if (updated == 0) {
+            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
+        }
+
+        completeOrdersRepository.updateScheduledDateByBwgOrderId(
+                request.id(),
+                request.scheduleDate()
+        );
+
+
+        CompleteOrderLog log = new CompleteOrderLog();
+        log.setOrder(completeOrder);
+        log.setClient(completeOrder.getClient());
+        log.setDoneBy(OrderLogUtils.resolveDoneBy(userContext));
+        log.setCreatedAt(LocalDateTime.now());
+
+        log.setDescription(
+                "Order Schedule Date Updated to " + request.scheduleDate()
+                + " and Order Status Updated to "
+                + completeOrder.getOrderStatus()
+                + " by"
+        );
+
+        completeOrderLogRepository.save(log);
+    }
+
+
 
 }

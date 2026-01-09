@@ -251,4 +251,6 @@ public class ScrapOrders {
     public void setOrderAge(Integer orderAge) {
         this.orderAge = orderAge;
     }
+
+	
 }

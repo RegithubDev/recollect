@@ -1,6 +1,7 @@
 package com.resustainability.recollect.repository;
 
 import com.resustainability.recollect.dto.response.ICustomerAddressResponse;
+import com.resustainability.recollect.dto.response.IUserContext;
 import com.resustainability.recollect.entity.backend.CustomerAddress;
 
 import org.springframework.data.domain.Page;
@@ -388,4 +389,6 @@ public interface CustomerAddressRepository extends JpaRepository<CustomerAddress
             @Param("id") Long customerAddressId,
             @Param("isDeleted") boolean isDeleted
     );
+
+	
 }

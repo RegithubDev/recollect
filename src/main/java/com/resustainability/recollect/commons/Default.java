@@ -81,6 +81,12 @@ public class Default {
     
     public static final String ERROR_NOT_FOUND_BWG_CLIENT_STATE ="State Not mapped to client";
     
+    public static final String ERROR_NOT_FOUND_CUSTOMER ="Customer not found";
+    
+    public static final String ERROR_SAMEDATE ="Order is already scheduled for the same date";
+    
+   
+    
 
     public static final String SUCCESS_LOGIN = "Login success. Session created.";
     public static final String SUCCESS_LOGOUT = "You're logged out! Session has been terminated.";

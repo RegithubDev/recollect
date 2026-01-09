@@ -3,12 +3,13 @@ package com.resustainability.recollect.service;
 import com.resustainability.recollect.commons.*;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
+import com.resustainability.recollect.dto.request.AddOrderRequest;
 import com.resustainability.recollect.dto.request.CancelOrderRequest;
 import com.resustainability.recollect.dto.request.PlaceOrderRequest;
-import com.resustainability.recollect.dto.request.UpdateBwgOrderScheduleDateRequest;
 import com.resustainability.recollect.dto.request.UpdateOrderScheduleDateRequest;
 import com.resustainability.recollect.dto.response.*;
 import com.resustainability.recollect.entity.backend.*;
+import com.resustainability.recollect.exception.BaseException;
 import com.resustainability.recollect.exception.InvalidDataException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
 import com.resustainability.recollect.exception.UnauthorizedException;
@@ -16,9 +17,11 @@ import com.resustainability.recollect.repository.*;
 import com.resustainability.recollect.tag.OrderStatus;
 import com.resustainability.recollect.tag.OrderType;
 import com.resustainability.recollect.tag.Role;
+import com.resustainability.recollect.util.OrderLogUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -503,32 +506,30 @@ public class OrderService {
         return completeOrder.getId();
     }
     
-   /* @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public void updateScheduledDate(UpdateOrderScheduleDateRequest request) {
-        ValidationUtils.validateRequestBody(request);
-        if (completeOrdersRepository.updateScheduledDate(request.id(), request.scheduleDate()) == 0) {
-            throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
-        }
-    }*/
-    
-    
+   
+
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public void updateScheduledDate(UpdateOrderScheduleDateRequest request) {
+    public void updateScheduledDate(
+            UpdateOrderScheduleDateRequest request,
+            IUserContext userContext
+    ) {
 
         ValidationUtils.validateRequestBody(request);
 
-        
         CompleteOrders completeOrder =
                 completeOrdersRepository.findById(request.id())
                         .orElseThrow(() ->
                                 new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
 
-        
-        int updated =
-                completeOrdersRepository.updateScheduledDate(
-                        request.id(),
-                        request.scheduleDate()
-                );
+       
+        if (request.scheduleDate().equals(completeOrder.getScheduleDate())) {
+        	throw new BaseException(HttpStatus.BAD_REQUEST,Default.ERROR_SAMEDATE);
+        }
+
+        int updated = completeOrdersRepository.updateScheduledDate(
+                request.id(),
+                request.scheduleDate()
+        );
 
         if (updated == 0) {
             throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
@@ -538,21 +539,20 @@ public class OrderService {
         CompleteOrderLog log = new CompleteOrderLog();
         log.setOrder(completeOrder);
         log.setCustomer(completeOrder.getCustomer());
-        log.setDoneBy("Server");
+        log.setDoneBy(OrderLogUtils.resolveDoneBy(userContext));
         log.setCreatedAt(LocalDateTime.now());
 
-        String description =
+        log.setDescription(
                 "Order Schedule Date Updated to " + request.scheduleDate()
                 + " and Order Status Updated to "
                 + completeOrder.getOrderStatus()
-                + " by";
-
-        log.setDescription(description);
+                + " by"
+        );
 
         completeOrderLogRepository.save(log);
     }
 
-    
+
     
     
     
@@ -846,4 +846,287 @@ public class OrderService {
                         : Default.EMPTY
         );
     }
+    
+    
+    
+    
+    
+    
+ /*   @Transactional
+    public Long add(AddOrderRequest request, OrderType orderType) {
+
+        // 1️⃣ Validate request
+        ValidationUtils.validateRequestBody(request);
+
+        if (orderType == null) {
+            throw new IllegalArgumentException("Order type must not be null");
+        }
+
+        // 2️⃣ Fetch customer
+        Customer customer = customerRepository.findById(request.customerId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER)
+                );
+
+        // 3️⃣ Validate address ownership
+        customerAddressRepository
+                .findByCustomerAddressIdIfBelongs(
+                        request.customerId(),
+                        Long.valueOf(request.customerAddressId())
+                )
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER_ADDRESS)
+                );
+
+        CustomerAddress address = customerAddressRepository
+                .findById(Long.valueOf(request.customerAddressId()))
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER_ADDRESS)
+                );
+
+        ScrapOrders scrapOrder = null;
+        BioWasteOrders bioWasteOrder = null;
+        Long orderId;
+
+        // 4️⃣ SCRAP ORDER
+        if (orderType == OrderType.SCRAP) {
+
+            // 🔥 Fetch & validate scrap type
+            ScrapType scrapType = scrapTypeRepository
+                    .findByIdAndIsActiveTrue(Long.valueOf(request.scrapTypeId()))
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException("Invalid or inactive scrap type")
+                    );
+
+            ScrapOrders order = new ScrapOrders();
+            order.setOrderCode(IdGenerator.nextId());
+            order.setOrderDate(LocalDateTime.now());
+            order.setScheduleDate(request.scheduleDate());
+            order.setOrderStatus(OrderStatus.OPEN.getAbbreviation());
+            order.setPreferredPaymentMethod(request.preferredPaymentMethod());
+            order.setComment(request.comment());
+            order.setDeleted(false);
+
+            order.setCustomer(customer);
+            order.setAddress(address);
+           // order.setScrapType(scrapType); 
+
+            scrapOrder = scrapOrdersRepository.save(order);
+            orderId = scrapOrder.getId();
+
+        }
+        // 5️⃣ BIO-WASTE ORDER
+        else if (orderType == OrderType.BIO_WASTE) {
+
+            BioWasteOrders order = new BioWasteOrders();
+            order.setOrderCode(IdGenerator.nextId());
+            order.setOrderDate(LocalDateTime.now());
+            order.setScheduleDate(request.scheduleDate());
+            order.setOrderStatus(OrderStatus.OPEN.getAbbreviation());
+            order.setPreferredPaymentMethod(request.preferredPaymentMethod());
+            order.setComment(request.comment());
+            order.setDeleted(false);
+
+            order.setCustomer(customer);
+            order.setAddress(address);
+
+            bioWasteOrder = bioWasteOrdersRepository.save(order);
+            orderId = bioWasteOrder.getId();
+
+        } else {
+            throw new IllegalArgumentException("Unsupported order type");
+        }
+
+        // 6️⃣ COMPLETE ORDER
+        CompleteOrders completeOrder = completeOrdersRepository.save(
+                new CompleteOrders(
+                        null,
+                        request.scheduleDate(),
+                        orderType.getAbbreviation(),
+                        OrderStatus.OPEN.getAbbreviation(),
+                        null, null, null, null, null, null,
+                        null, null, 0.0,
+                        null, null, null, null, null,
+                        request.preferredPaymentMethod(),
+                        false,
+                        null,
+                        false,
+                        false,
+                        bioWasteOrder,
+                        null,
+                        null,
+                        customer.getDistrict(),
+                        null,
+                        null,
+                        scrapOrder,
+                        customer.getState(),
+                        customer,
+                        null
+                )
+        );
+
+        // 7️⃣ LOG ENTRY
+        completeOrderLogRepository.save(
+                new CompleteOrderLog(
+                        null,
+                        "Server",
+                        String.format(
+                                "Order Placed with Schedule Date %s",
+                                DateTimeFormatUtils.toIsoDate(request.scheduleDate())
+                        ),
+                        LocalDateTime.now(),
+                        null,
+                        null,
+                        completeOrder,
+                        null,
+                        null
+                )
+        );
+
+        return orderId;
+    }*/
+    
+    
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public Long add(AddOrderRequest request, OrderType orderType) {
+
+        
+        ValidationUtils.validateRequestBody(request);
+
+        if (orderType == null) {
+            throw new IllegalArgumentException("Order type must not be null");
+        }
+
+        
+        Customer customer = customerRepository.findById(request.customerId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER)
+                );
+
+        
+        customerAddressRepository
+                .findByCustomerAddressIdIfBelongs(
+                        request.customerId(),
+                        Long.valueOf(request.customerAddressId())
+                )
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER_ADDRESS)
+                );
+
+        CustomerAddress address = customerAddressRepository
+                .findById(Long.valueOf(request.customerAddressId()))
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER_ADDRESS)
+                );
+
+        ScrapOrders scrapOrder = null;
+        BioWasteOrders bioWasteOrder = null;
+        Long orderId;
+
+       
+        if (orderType == OrderType.SCRAP) {
+
+            ScrapOrders order = new ScrapOrders();
+            order.setOrderCode(IdGenerator.nextId());
+            order.setOrderDate(LocalDateTime.now());
+            order.setScheduleDate(request.scheduleDate());
+            order.setOrderStatus(OrderStatus.OPEN.getAbbreviation());
+            order.setPreferredPaymentMethod(request.preferredPaymentMethod());
+            order.setComment(request.comment());
+            order.setDeleted(false);
+            order.setOrderAge(1);
+            order.setOrderRating(0.0);
+            order.setCustomer(customer);
+            order.setAddress(address);
+            
+            order.setScrapRegion(address.getScrapRegion());
+            order.setState(customer.getState());
+
+            scrapOrder = scrapOrdersRepository.save(order);
+            orderId = scrapOrder.getId();
+        }
+        
+        else if (orderType == OrderType.BIO_WASTE) {
+
+            BioWasteOrders order = new BioWasteOrders();
+            order.setOrderCode(IdGenerator.nextId());
+            order.setOrderDate(LocalDateTime.now());
+            order.setScheduleDate(request.scheduleDate());
+            order.setOrderStatus(OrderStatus.OPEN.getAbbreviation());
+            order.setPreferredPaymentMethod(request.preferredPaymentMethod());
+            order.setComment(request.comment());
+            order.setDeleted(false);
+
+            order.setCustomer(customer);
+            order.setAddress(address);
+
+            bioWasteOrder = bioWasteOrdersRepository.save(order);
+            orderId = bioWasteOrder.getId();
+        }
+        else {
+            throw new IllegalArgumentException("Unsupported order type");
+        }
+
+        
+        CompleteOrders completeOrder = completeOrdersRepository.save(
+                new CompleteOrders(
+                        null,
+                        request.scheduleDate(),
+                        orderType.getAbbreviation(),
+                        OrderStatus.OPEN.getAbbreviation(),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        0.0,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        request.preferredPaymentMethod(),
+                        false,
+                        null,
+                        false,
+                        false,
+                        bioWasteOrder,
+                        null,
+                        null,
+                        customer.getDistrict(),
+                        null,
+                        null,
+                        scrapOrder,
+                        customer.getState(),
+                        customer,
+                        null
+                )
+        );
+
+        
+        completeOrderLogRepository.save(
+                new CompleteOrderLog(
+                        null,
+                        "Server",
+                        String.format(
+                                "Order Placed with Schedule Date %s",
+                                DateTimeFormatUtils.toIsoDate(request.scheduleDate())
+                        ),
+                        LocalDateTime.now(),
+                        null,
+                        null,
+                        completeOrder,
+                        null,
+                        customer
+                )
+        );
+
+        return orderId;
+    }
+
+
+
 }
