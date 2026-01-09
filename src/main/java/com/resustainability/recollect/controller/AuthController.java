@@ -2,12 +2,14 @@ package com.resustainability.recollect.controller;
 
 import com.resustainability.recollect.commons.Default;
 import com.resustainability.recollect.dto.commons.APIResponse;
+import com.resustainability.recollect.dto.request.AddCustomerRequest;
 import com.resustainability.recollect.dto.request.LoginViaCredentialsRequest;
 import com.resustainability.recollect.dto.request.LoginViaPhoneNumberRequest;
 import com.resustainability.recollect.dto.response.IUserContext;
 import com.resustainability.recollect.dto.response.TokenResponse;
 import com.resustainability.recollect.exception.UnauthorizedException;
 import com.resustainability.recollect.service.AuthService;
+import com.resustainability.recollect.service.CustomerService;
 import com.resustainability.recollect.service.SecurityService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +21,17 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
     private final SecurityService securityService;
+    private final CustomerService customerService;
 
 	@Autowired
     public AuthController(
             AuthService authService,
-            SecurityService securityService
+            SecurityService securityService,
+            CustomerService customerService
     ) {
         this.authService = authService;
         this.securityService = securityService;
+        this.customerService = customerService;
     }
 
     @GetMapping("/whoami")
@@ -67,5 +72,14 @@ public class AuthController {
                 Default.SUCCESS,
                 authService.adminLogin(request)
         );
+    }
+    
+    
+    @PostMapping("/register")
+    public APIResponse<Void> register(
+            @RequestBody(required = false) AddCustomerRequest request
+    ) {
+        customerService.add(request);
+        return new APIResponse<>(Default.SUCCESS_ADD_USER);
     }
 }
