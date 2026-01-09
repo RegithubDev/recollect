@@ -10,6 +10,6 @@ public interface IOrderCartItemResponse {
     Long getTypeId();
     String getTypeName();
     String getTypeIcon();
-    Boolean getTypeIsActive();
+    Byte getTypeIsActive();
     Double getTypePrice();
 }
