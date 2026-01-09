@@ -101,6 +101,8 @@ EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
 
+
+
 SET @exists := (
     SELECT COUNT(*)
     FROM INFORMATION_SCHEMA.COLUMNS
@@ -118,6 +120,9 @@ SET @sql := IF(
 PREPARE stmt FROM @sql;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
+
+
+
 
 SET @exists := (
     SELECT COUNT(*)
@@ -137,6 +142,9 @@ PREPARE stmt FROM @sql;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
+
+
+
 SET @exists := (
     SELECT COUNT(*)
     FROM INFORMATION_SCHEMA.COLUMNS
@@ -155,6 +163,9 @@ PREPARE stmt FROM @sql;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
+
+
+
 SET @exists := (
     SELECT COUNT(*)
     FROM INFORMATION_SCHEMA.COLUMNS
@@ -172,3 +183,46 @@ SET @sql := IF(
 PREPARE stmt FROM @sql;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
+
+
+
+/*
+SET @exists := (
+    SELECT COUNT(*)
+    FROM INFORMATION_SCHEMA.STATISTICS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'backend_scrapregion'
+      AND INDEX_NAME = 'idx_sr_geometry'
+);
+
+SET @sql := IF(
+    @exists = 0,
+    'ALTER TABLE backend_scrapregion ADD SPATIAL INDEX idx_sr_geometry (geometry)',
+    'SELECT 1'
+);
+
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+
+
+
+SET @exists := (
+    SELECT COUNT(*)
+    FROM INFORMATION_SCHEMA.STATISTICS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'backend_localbody'
+      AND INDEX_NAME = 'idx_lb_geometry'
+);
+
+SET @sql := IF(
+    @exists = 0,
+    'ALTER TABLE backend_localbody ADD SPATIAL INDEX idx_lb_geometry (geometry)',
+    'SELECT 1'
+);
+
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+ */

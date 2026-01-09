@@ -192,13 +192,13 @@ public class CustomerAddressService {
                 .validateAndParseCoordinates(latitude, longitude);
         return new BoundariesResponse(
                 scrapRegionRepository
-                        .findIdsContainingGeometry(
+                        .findScrapRegionsContainingGeometry(
                                 coordinates[0],
                                 coordinates[1],
                                 GeometryNormalizer.SRID
                         ),
                 localBodyRepository
-                        .findWardIdsContainingGeometry(
+                        .findWardsContainingGeometry(
                                 coordinates[0],
                                 coordinates[1],
                                 GeometryNormalizer.SRID

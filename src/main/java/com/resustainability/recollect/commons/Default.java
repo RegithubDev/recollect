@@ -83,7 +83,7 @@ public class Default {
     
     public static final String ERROR_NOT_FOUND_CUSTOMER ="Customer not found";
     
-    public static final String ERROR_SAMEDATE ="Order is already scheduled for the same date";
+    public static final String ERROR_ORDER_RESCHEDULE_SAME_DATE ="Order is already scheduled for the same date";
     
    
     

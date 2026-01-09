@@ -9,7 +9,6 @@ import com.resustainability.recollect.dto.request.PlaceOrderRequest;
 import com.resustainability.recollect.dto.request.UpdateOrderScheduleDateRequest;
 import com.resustainability.recollect.dto.response.*;
 import com.resustainability.recollect.entity.backend.*;
-import com.resustainability.recollect.exception.BaseException;
 import com.resustainability.recollect.exception.InvalidDataException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
 import com.resustainability.recollect.exception.UnauthorizedException;
@@ -17,11 +16,10 @@ import com.resustainability.recollect.repository.*;
 import com.resustainability.recollect.tag.OrderStatus;
 import com.resustainability.recollect.tag.OrderType;
 import com.resustainability.recollect.tag.Role;
-import com.resustainability.recollect.util.OrderLogUtils;
+import com.resustainability.recollect.commons.OrderLogUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -212,24 +210,40 @@ public class OrderService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public Pager<IOrderLogResponse> listTimeline(Long completeOrderId, SearchCriteria searchCriteria) {
+        ValidationUtils.validateId(completeOrderId);
+        return Pager.of(
+                completeOrderLogRepository.findLogsByCompleteOrderId(
+                        completeOrderId,
+                        searchCriteria.getQ(),
+                        searchCriteria.toPageRequest()
+                )
+        );
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public IOrderHistoryResponse getById(Long completeOrderId) {
         ValidationUtils.validateId(completeOrderId);
 
-        /*
         final IUserContext user = securityService
                 .getCurrentUser()
                 .orElseThrow(UnauthorizedException::new);
 
-        if (!Boolean.TRUE.equals(user.getIsAdmin())) {
+        if (Boolean.TRUE.equals(user.getIsAdmin())) {
             return completeOrdersRepository
-                    .findByCompleteOrderIdIfBelongs(user.getId(), completeOrderId)
+                    .findByCompleteOrderId(completeOrderId)
+                    .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
+        } else if (Boolean.TRUE.equals(user.getIsCustomer())) {
+            return completeOrdersRepository
+                    .findByCompleteOrderIdIfBelongsToCustomer(user.getId(), completeOrderId)
+                    .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
+        } else if (Boolean.TRUE.equals(user.getIsProvider())) {
+            return completeOrdersRepository
+                    .findByCompleteOrderIdIfBelongsToProvider(user.getId(), completeOrderId)
                     .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
         }
-         */
 
-        return completeOrdersRepository
-                .findByCompleteOrderId(completeOrderId)
-                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
+        throw  new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
@@ -523,7 +537,7 @@ public class OrderService {
 
        
         if (request.scheduleDate().equals(completeOrder.getScheduleDate())) {
-        	throw new BaseException(HttpStatus.BAD_REQUEST,Default.ERROR_SAMEDATE);
+        	throw new InvalidDataException(Default.ERROR_ORDER_RESCHEDULE_SAME_DATE);
         }
 
         int updated = completeOrdersRepository.updateScheduledDate(
@@ -551,11 +565,6 @@ public class OrderService {
 
         completeOrderLogRepository.save(log);
     }
-
-
-    
-    
-    
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Long selfAssign(Long completeOrderId) {
@@ -621,7 +630,7 @@ public class OrderService {
                 .orElseThrow(UnauthorizedException::new);
 
         final IOrderHistoryResponse order = completeOrdersRepository
-                .findByCompleteOrderId(completeOrderId)
+                .findByCompleteOrderIdIfBelongsToProvider(user.getId(), completeOrderId)
                 .filter(ord -> null != ord.getType())
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
 
@@ -689,7 +698,7 @@ public class OrderService {
                 .orElseThrow(UnauthorizedException::new);
 
         final IOrderHistoryResponse order = completeOrdersRepository
-                .findByCompleteOrderId(completeOrderId)
+                .findByCompleteOrderIdIfBelongsToProvider(user.getId(), completeOrderId)
                 .filter(ord -> null != ord.getType())
                 .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
 

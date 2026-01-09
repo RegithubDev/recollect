@@ -18,8 +18,6 @@ public interface WardRepository extends JpaRepository<Ward, Long> {
             w.id AS id,
             w.wardNo AS wardNo,
             w.wardName AS wardName,
-            w.wardWeekdayCurrent AS wardWeekdayCurrent,
-            w.wardWeekdayNext AS wardWeekdayNext,
             w.isActive AS isActive,
             w.isDeleted AS isDeleted,
             lb.id AS localBodyId,

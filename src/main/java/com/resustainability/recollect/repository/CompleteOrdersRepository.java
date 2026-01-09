@@ -397,10 +397,62 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
         AND o.id = :id
         AND c.id = :customerId
     """)
-    Optional<IOrderHistoryResponse> findByCompleteOrderIdIfBelongs(
+    Optional<IOrderHistoryResponse> findByCompleteOrderIdIfBelongsToCustomer(
             @Param("customerId") Long customerId,
             @Param("id") Long completeOrderId
     );
+
+	@Query("""
+        SELECT
+            o.id AS id,
+            so.id AS scrapOrderId,
+            sr.id AS scrapRegionId,
+            sr.regionName AS scrapRegionName,
+            w.id AS wardId,
+            w.wardNo AS wardNo,
+            w.wardName AS wardName,
+            lb.id AS localBodyId,
+            lb.localBodyName AS localBodyName,
+            d.id AS districtId,
+            d.districtName AS districtName,
+            d.districtCode AS districtCode,
+            p.id AS providerId,
+            p.fullName AS providerName,
+            bo.id AS bioWasteOrderId,
+            c.id AS customerId,
+            c.fullName AS fullName,
+            c.phoneNumber AS customerPhoneNumber,
+            COALESCE(so.orderCode, bo.orderCode) AS code,
+            o.orderType AS type,
+            o.scheduleDate AS scheduleDate,
+            COALESCE(so.orderDate, bo.orderDate) AS orderDate,
+            o.orderStatus AS status,
+            COALESCE(aso.id, abo.id) AS addressId,
+            COALESCE(aso.residenceType, abo.residenceType) AS residenceType,
+            COALESCE(aso.residenceDetails, abo.residenceDetails) AS residenceDetails,
+            COALESCE(aso.landmark, abo.landmark) AS landmark,
+            COALESCE(aso.latitude, abo.latitude) AS latitude,
+            COALESCE(aso.longitude, abo.longitude) AS longitude,
+            COALESCE(aso.isDeleted, abo.isDeleted) AS isAddressDeleted
+        FROM CompleteOrders o
+        JOIN o.customer c
+        JOIN o.district d
+        JOIN o.provider p
+        LEFT JOIN o.scrapOrder so
+        LEFT JOIN so.address aso
+        LEFT JOIN so.scrapRegion sr
+        LEFT JOIN o.bioWasteOrder bo
+        LEFT JOIN bo.address abo
+        LEFT JOIN abo.ward w
+        LEFT JOIN w.localbody lb
+        WHERE (so.id IS NOT NULL OR bo.id IS NOT NULL)
+        AND o.id = :id
+        AND p.id = :providerId
+    """)
+	Optional<IOrderHistoryResponse> findByCompleteOrderIdIfBelongsToProvider(
+			@Param("providerId") Long providerId,
+			@Param("id") Long completeOrderId
+	);
 
     @Query("""
         SELECT

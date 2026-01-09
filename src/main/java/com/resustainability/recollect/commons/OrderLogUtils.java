@@ -1,4 +1,4 @@
-package com.resustainability.recollect.util;
+package com.resustainability.recollect.commons;
 
 import com.resustainability.recollect.dto.response.IUserContext;
 import com.resustainability.recollect.tag.Role;

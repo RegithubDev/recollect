@@ -1,8 +1,6 @@
 package com.resustainability.recollect.service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +20,7 @@ import com.resustainability.recollect.exception.BaseException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
 import com.resustainability.recollect.tag.OrderStatus;
 import com.resustainability.recollect.tag.OrderType;
-import com.resustainability.recollect.util.OrderLogUtils;
+import com.resustainability.recollect.commons.OrderLogUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -443,7 +441,7 @@ public class BwgOrdersService {
         if (request.scheduleDate().equals(completeOrder.getScheduleDate())) {
             throw new BaseException(
                     HttpStatus.BAD_REQUEST,
-                    Default.ERROR_SAMEDATE
+                    Default.ERROR_ORDER_RESCHEDULE_SAME_DATE
             );
         }
 

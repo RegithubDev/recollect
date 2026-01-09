@@ -101,13 +101,22 @@ public class OrderController {
         );
     }
 
-
     @GetMapping("/list-assignable")
     public APIResponse<Pager<IOrderHistoryResponse>> listAssignable(
             @ModelAttribute SearchCriteria searchCriteria
     ) {
         return new APIResponse<>(
                 orderService.listAssignable(searchCriteria)
+        );
+    }
+
+    @GetMapping("/list-timeline/{orderId}")
+    public APIResponse<Pager<IOrderLogResponse>> listTimeline(
+            @PathVariable(value = "orderId", required = false) Long orderId,
+            @ModelAttribute SearchCriteria searchCriteria
+    ) {
+        return new APIResponse<>(
+                orderService.listTimeline(orderId, searchCriteria)
         );
     }
 

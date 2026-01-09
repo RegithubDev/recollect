@@ -3,6 +3,7 @@ package com.resustainability.recollect.repository;
 import com.resustainability.recollect.dto.response.IGeometryResponse;
 import com.resustainability.recollect.dto.response.ILocalBodyResponse;
 import com.resustainability.recollect.dto.response.ILocalBodyResponseByDistrictId;
+import com.resustainability.recollect.dto.response.IWardResponse;
 import com.resustainability.recollect.entity.backend.LocalBody;
 
 import org.locationtech.jts.geom.MultiPolygon;
@@ -55,7 +56,7 @@ public interface LocalBodyRepository extends JpaRepository<LocalBody, Long> {
             JOIN lb.district d
             JOIN d.state s
             JOIN s.country c
-            JOIN lb.localBodyType lbt
+            LEFT JOIN lb.localBodyType lbt
 
             WHERE lb.isDeleted = false
               AND (:districtId IS NULL OR d.id = :districtId)
@@ -135,7 +136,7 @@ public interface LocalBodyRepository extends JpaRepository<LocalBody, Long> {
             JOIN lb.district d
             JOIN d.state s
             JOIN s.country c
-            JOIN lb.localBodyType lbt
+            LEFT JOIN lb.localBodyType lbt
 
             WHERE lb.id = :id
             """)
@@ -154,10 +155,31 @@ public interface LocalBodyRepository extends JpaRepository<LocalBody, Long> {
 	Optional<IGeometryResponse> findBorderByLocalBodyId(@Param("localBodyId") Long localBodyId);
 
 	@Query(nativeQuery = true, value = """
-		SELECT w.id
+		SELECT
+			w.id AS id,
+			w.ward_no AS wardNo,
+			w.ward_name AS wardName,
+	
+			lb.id AS localBodyId,
+			lb.localbody_name AS localBodyName,
+	
+			d.id AS districtId,
+			d.district_name AS districtName,
+	
+			s.id AS stateId,
+			s.state_name AS stateName,
+	
+			c.id AS countryId,
+			c.country_name AS countryName
 		FROM backend_ward w
 		INNER JOIN backend_localbody lb
 			ON lb.id = w.localbody_id
+		INNER JOIN backend_district d
+			ON d.id = lb.district_id
+		INNER JOIN backend_state s
+			ON s.id = d.state_id
+		INNER JOIN backend_country c
+			ON c.id = s.country_id
 		WHERE ST_Contains(
 			lb.geometry,
 			ST_SRID(POINT(:lon, :lat), :srid)
@@ -167,7 +189,7 @@ public interface LocalBodyRepository extends JpaRepository<LocalBody, Long> {
 		  AND lb.is_active = true
 		  AND lb.is_deleted = false
 	""")
-	Set<Long> findWardIdsContainingGeometry(
+	List<IWardResponse> findWardsContainingGeometry(
 			@Param("lat") double lat,
 			@Param("lon") double lon,
 			@Param("srid") int srid
