@@ -107,6 +107,27 @@ SET @exists := (
     SELECT COUNT(*)
     FROM INFORMATION_SCHEMA.COLUMNS
     WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'backend_servicecategory'
+      AND COLUMN_NAME = 'schedule_url'
+);
+
+SET @sql := IF(
+    @exists = 0,
+    'ALTER TABLE backend_servicecategory ADD COLUMN schedule_url VARCHAR(255) NULL',
+    'SELECT 1'
+);
+
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+
+
+
+SET @exists := (
+    SELECT COUNT(*)
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
       AND TABLE_NAME = 'backend_bwgbagprice'
       AND COLUMN_NAME = 'is_active'
 );

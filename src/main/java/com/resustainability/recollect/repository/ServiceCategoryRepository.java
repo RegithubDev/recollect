@@ -26,7 +26,8 @@ public interface ServiceCategoryRepository extends JpaRepository<ServiceCategory
             sc.isActive AS isActive,
             sc.isDisabled AS isDisabled,
             sc.categoryUrl AS categoryUrl,
-            sc.orderUrl AS orderUrl
+            sc.orderUrl AS orderUrl,
+            sc.scheduleUrl AS scheduleUrl
         FROM ServiceCategory sc
         WHERE sc.isActive = true
         AND sc.isDisabled = false
@@ -44,7 +45,8 @@ public interface ServiceCategoryRepository extends JpaRepository<ServiceCategory
                 sc.isActive AS isActive,
                 sc.isDisabled AS isDisabled,
                 sc.categoryUrl AS categoryUrl,
-                sc.orderUrl AS orderUrl
+                sc.orderUrl AS orderUrl,
+                sc.scheduleUrl AS scheduleUrl
             FROM ServiceCategory sc
             WHERE
                 (:q IS NULL OR :q = '' OR
@@ -67,7 +69,8 @@ public interface ServiceCategoryRepository extends JpaRepository<ServiceCategory
                 sc.isActive AS isActive,
                 sc.isDisabled AS isDisabled,
                 sc.categoryUrl AS categoryUrl,
-                sc.orderUrl AS orderUrl
+                sc.orderUrl AS orderUrl,
+                sc.scheduleUrl AS scheduleUrl
             FROM ServiceCategory sc
             WHERE sc.id = :id
         """)

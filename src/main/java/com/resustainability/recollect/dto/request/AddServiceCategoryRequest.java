@@ -8,7 +8,8 @@ public record AddServiceCategoryRequest(
         String title,
         String subtitle,
         String categoryUrl,
-        String orderUrl
+        String orderUrl,
+        String scheduleUrl
 ) implements RequestBodyValidator {
 
     @Override

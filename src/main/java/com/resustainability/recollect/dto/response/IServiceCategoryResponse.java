@@ -10,4 +10,5 @@ public interface IServiceCategoryResponse {
     Boolean getIsDisabled();
     String getCategoryUrl();
     String getOrderUrl();
+    String getScheduleUrl();
 }

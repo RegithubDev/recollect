@@ -73,7 +73,8 @@ public class ServiceCategoryService {
                         true,
                         false,
                         request.categoryUrl(),
-                        request.orderUrl()
+                        request.orderUrl(),
+                        request.scheduleUrl()
                 )
         ).getId();
     }
@@ -90,6 +91,7 @@ public class ServiceCategoryService {
         entity.setServiceSubtitle(request.subtitle());
         entity.setCategoryUrl(request.categoryUrl());
         entity.setOrderUrl(request.orderUrl());
+        entity.setScheduleUrl(request.scheduleUrl());
         entity.setActive(Boolean.TRUE.equals(request.isActive()));
 
         repository.save(entity);

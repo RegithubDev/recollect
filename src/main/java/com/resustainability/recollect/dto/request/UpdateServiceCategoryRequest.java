@@ -10,7 +10,8 @@ public record UpdateServiceCategoryRequest(
         String subtitle,
         Boolean isActive,
         String categoryUrl,
-        String orderUrl
+        String orderUrl,
+        String scheduleUrl
 ) implements RequestBodyValidator {
 
     @Override
