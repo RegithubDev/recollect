@@ -6,6 +6,9 @@ import com.google.firebase.messaging.*;
 
 import com.resustainability.recollect.commons.CollectionUtils;
 import com.resustainability.recollect.commons.Default;
+import com.resustainability.recollect.commons.StringUtils;
+import com.resustainability.recollect.commons.ValidationUtils;
+import com.resustainability.recollect.dto.request.PushNotificationRequest;
 import com.resustainability.recollect.repository.UserFcmTokenRepository;
 
 import org.slf4j.Logger;
@@ -51,6 +54,18 @@ public class PushNotificationService {
         final List<String> tokens = userFcmTokenRepository
                 .findActiveTokensByProviderId(providerId);
         send(tokens, title, body, imageUrl);
+    }
+
+    public void send(PushNotificationRequest request) {
+        ValidationUtils.validateRequestBody(request);
+        send(request.token(), request.title(), request.body(), request.image());
+    }
+
+    private void send(String token, String title, String body, String imageUrl) {
+        if (StringUtils.isBlank(token)) {
+            return;
+        }
+        sendBatch(List.of(token), title, body, imageUrl);
     }
 
     private void send(List<String> tokens, String title, String body, String imageUrl) {

@@ -21,6 +21,7 @@ public class Default {
     public static final String HEADER_SHEETS_CONTENT_DISPOSITION_VALUE = "attachment; filename=%s.xlsx";
 
 
+
     public static final String ERROR_ALREADY_ALLOTED ="This ward is already allotted to the team";
     public static final String ERROR_INVALID_SHEET_ROW = "Row numbers must be >= 1";
     public static final String ERROR_ACCOUNT_DISABLED = "Your account has been disabled. Please contact support for assistance";
@@ -84,8 +85,7 @@ public class Default {
     public static final String ERROR_NOT_FOUND_CUSTOMER ="Customer not found";
     
     public static final String ERROR_ORDER_RESCHEDULE_SAME_DATE ="Order is already scheduled for the same date";
-    
-   
+
     
 
     public static final String SUCCESS_LOGIN = "Login success. Session created.";
@@ -97,6 +97,7 @@ public class Default {
     public static final String SUCCESS_FORGOT_PASSWORD_RESET = "Your password has been reset successfully. Please proceed to log in.";
     public static final String SUCCESS_UPDATED_NOTICE = "Notice updated";
     public static final String SUCCESS_UPDATE_STATUS = "Status updated.";
+    public static final String SUCCESS_NOTIFICATION_TITLE = "Update on your order!";
 
     public static final String SUCCESS_ADD_USER = "User created.";
     public static final String SUCCESS_UPDATE_USER_DETAILS = "User details have been updated successfully.";
@@ -223,6 +224,8 @@ public class Default {
     public static final String SUCCESS_UNDELETE_BWG_CLIENT = "All done! Client restored successfully";
     public static final String SUCCESS_UPLOAD_BWG_CONTRACT = "BWG Contract file uploaded Successfully.";
     public static final String SUCCESS_REMOVE_BWG_CONTRACT = "BWG Contract file Removed Successfully.";
+
+
 
     public static final String EXECUTOR_PUSH = "pushTaskExecutor";
     public static final String EXECUTOR_MAIL = "mailTaskExecutor";

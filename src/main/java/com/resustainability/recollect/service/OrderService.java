@@ -39,6 +39,7 @@ public class OrderService {
     private final ScrapRegionAvailabilityService scrapRegionAvailabilityService;
     private final LocalBodyAvailabilityService localBodyAvailabilityService;
     private final MobileService mobileService;
+    private final PushNotificationService pushNotificationService;
 
     private final CustomerAddressRepository customerAddressRepository;
     private final OrderCancelReasonRepository orderCancelReasonRepository;
@@ -66,6 +67,7 @@ public class OrderService {
             ScrapRegionAvailabilityService scrapRegionAvailabilityService,
             LocalBodyAvailabilityService localBodyAvailabilityService,
             MobileService mobileService,
+            PushNotificationService pushNotificationService,
             CustomerAddressRepository customerAddressRepository,
             OrderCancelReasonRepository orderCancelReasonRepository,
             CompleteOrdersRepository completeOrdersRepository,
@@ -89,6 +91,7 @@ public class OrderService {
         this.scrapRegionAvailabilityService = scrapRegionAvailabilityService;
         this.localBodyAvailabilityService = localBodyAvailabilityService;
         this.mobileService = mobileService;
+        this.pushNotificationService = pushNotificationService;
         this.customerAddressRepository = customerAddressRepository;
         this.orderCancelReasonRepository = orderCancelReasonRepository;
         this.completeOrdersRepository = completeOrdersRepository;
@@ -602,21 +605,27 @@ public class OrderService {
         final LocalDateTime now = LocalDateTime.now();
         final String userRole = Role.fromUserContext(user);
 
-        completeOrderLogRepository.save(
-                new CompleteOrderLog(
-                        null,
-                        toFormattedDoneBy(user, userRole),
-                        String.format(
-                                "Order Accepted on %s by ",
-                                DateTimeFormatUtils.toDbTimestamp(now)
-                        ),
-                        now,
-                        null,
-                        null,
-                        completeOrdersRepository.getReferenceById(order.getId()),
-                        providerRepository.getReferenceById(user.getId()),
-                        null != order.getCustomerId() ? customerRepository.getReferenceById(order.getCustomerId()) : null
-                )
+        final CompleteOrderLog orderLog = new CompleteOrderLog(
+                null,
+                toFormattedDoneBy(user, userRole),
+                String.format(
+                        "Order Accepted on %s by ",
+                        DateTimeFormatUtils.toDbTimestamp(now)
+                ),
+                now,
+                null,
+                null,
+                completeOrdersRepository.getReferenceById(order.getId()),
+                providerRepository.getReferenceById(user.getId()),
+                null != order.getCustomerId() ? customerRepository.getReferenceById(order.getCustomerId()) : null
+        );
+        completeOrderLogRepository.save(orderLog);
+
+        pushNotificationService.sendToCustomer(
+                order.getCustomerId(),
+                Default.SUCCESS_NOTIFICATION_TITLE,
+                (orderLog.getDescription() + orderLog.getDoneBy()),
+                null
         );
 
         return order.getId();
