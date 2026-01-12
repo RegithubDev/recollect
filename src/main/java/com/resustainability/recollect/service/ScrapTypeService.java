@@ -1,5 +1,7 @@
 package com.resustainability.recollect.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -13,10 +15,14 @@ import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.AddScrapTypeRequest;
 import com.resustainability.recollect.dto.request.UpdateScrapTypeRequest;
 import com.resustainability.recollect.dto.response.IScrapTypeResponse;
+import com.resustainability.recollect.entity.backend.District;
 import com.resustainability.recollect.entity.backend.ScrapCategory;
 import com.resustainability.recollect.entity.backend.ScrapType;
+import com.resustainability.recollect.entity.backend.ScrapTypeLocationAndPrice;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
+import com.resustainability.recollect.repository.DistrictRepository;
 import com.resustainability.recollect.repository.ScrapCategoryRepository;
+import com.resustainability.recollect.repository.ScrapTypeLocationAndPriceRepository;
 import com.resustainability.recollect.repository.ScrapTypeRepository;
 
 @Service
@@ -27,15 +33,22 @@ public class ScrapTypeService {
     private final ScrapTypeRepository repository;
     private final ScrapCategoryRepository categoryRepository;
     private final UploadService uploadService;
+    private final DistrictRepository districtRepository ;
+    private final ScrapTypeLocationAndPriceRepository scrapTypeLocationAndPriceRepository;
+   
 
     public ScrapTypeService(
             ScrapTypeRepository repository,
             ScrapCategoryRepository categoryRepository,
-            UploadService uploadService
+            UploadService uploadService,
+            DistrictRepository districtRepository,
+            ScrapTypeLocationAndPriceRepository scrapTypeLocationAndPriceRepository
     ) {
         this.repository = repository;
         this.categoryRepository = categoryRepository;
         this.uploadService = uploadService;
+        this.districtRepository = districtRepository;
+        this.scrapTypeLocationAndPriceRepository = scrapTypeLocationAndPriceRepository;
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
@@ -63,7 +76,7 @@ public class ScrapTypeService {
                         new ResourceNotFoundException("Scrap type not found"));
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+   /* @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Long add(AddScrapTypeRequest request) {
         ValidationUtils.validateRequestBody(request);
 
@@ -82,7 +95,64 @@ public class ScrapTypeService {
         );
 
         return repository.save(entity).getId();
+    }*/
+    
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public Long add(AddScrapTypeRequest request) {
+
+        ValidationUtils.validateRequestBody(request);
+
+        ScrapCategory category =
+                categoryRepository.findById(request.scrapCategoryId())
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException("Scrap category not found"));
+
+        
+        ScrapType scrapType = repository.save(
+                new ScrapType(
+                        null,
+                        request.scrapName(),
+                        null,
+                        request.isPayable(),
+                        request.isKg(),
+                        true,
+                        category
+                )
+        );
+
+        
+        if (request.districtPrices() != null && !request.districtPrices().isEmpty()) {
+
+            List<ScrapTypeLocationAndPrice> prices =
+                    request.districtPrices()
+                            .stream()
+                            .map(dp -> {
+
+                                District district =
+                                        districtRepository.findById(dp.districtId())
+                                                .orElseThrow(() ->
+                                                        new ResourceNotFoundException(
+                                                                "District not found: " + dp.districtId()
+                                                        ));
+
+                                return new ScrapTypeLocationAndPrice(
+                                        null,
+                                        dp.scrapPrice(),
+                                        true,
+                                        district,
+                                        scrapType,
+                                        dp.scrapCgst(),
+                                        dp.scrapSgst()
+                                );
+                            })
+                            .toList();
+
+            scrapTypeLocationAndPriceRepository.saveAll(prices);
+        }
+
+        return scrapType.getId();
     }
+
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void update(UpdateScrapTypeRequest request) {
