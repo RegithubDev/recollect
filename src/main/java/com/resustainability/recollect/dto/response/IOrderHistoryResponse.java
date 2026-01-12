@@ -13,6 +13,7 @@ public interface IOrderHistoryResponse {
 	LocalDate getScheduleDate();
 	LocalDateTime getOrderDate(); 
 	String getStatus();
+	Double getAmount();
 
 	Long getScrapOrderId();
 	Long getBioWasteOrderId();
