@@ -1,3 +1,39 @@
+CREATE TABLE IF NOT EXISTS backend_user_fcm_token (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    fcm_token VARCHAR(255) NOT NULL,
+    platform VARCHAR(20),
+    admin_id BIGINT,
+    client_id BIGINT,
+    provider_id BIGINT,
+    customer_id BIGINT,
+    created_at DATETIME(6),
+    is_active TINYINT(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB;
+
+
+
+
+SET @exists := (
+    SELECT COUNT(*)
+    FROM INFORMATION_SCHEMA.STATISTICS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'backend_user_fcm_token'
+      AND INDEX_NAME = 'uk_fcm_token'
+);
+
+SET @sql := IF(
+    @exists = 0,
+    'ALTER TABLE backend_user_fcm_token ADD CONSTRAINT uk_fcm_token UNIQUE (fcm_token)',
+    'SELECT 1'
+);
+
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+
+
+
 SET @exists := (
     SELECT COUNT(*)
     FROM INFORMATION_SCHEMA.COLUMNS

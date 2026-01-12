@@ -223,8 +223,8 @@ public class Default {
     public static final String SUCCESS_UNDELETE_BWG_CLIENT = "All done! Client restored successfully";
     public static final String SUCCESS_UPLOAD_BWG_CONTRACT = "BWG Contract file uploaded Successfully.";
     public static final String SUCCESS_REMOVE_BWG_CONTRACT = "BWG Contract file Removed Successfully.";
-    
-    
+
+    public static final String EXECUTOR_PUSH = "pushTaskExecutor";
     public static final String EXECUTOR_MAIL = "mailTaskExecutor";
     public static final String EXECUTOR_ASYNC = "asyncTaskExecutor";
 

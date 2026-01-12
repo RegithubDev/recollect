@@ -194,6 +194,10 @@ public class ValidationUtils {
         validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_20_LENGTH, "User type");
     }
 
+    public static void validateToken(String value) {
+        validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_DEFAULT_LENGTH, "token");
+    }
+
     public static void validatePlatform(String value) {
         validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_20_LENGTH, "Platform");
     }

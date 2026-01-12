@@ -45,14 +45,13 @@ public class StateService {
 
     public Pager<IStateResponse> list(Long countryId, SearchCriteria searchCriteria) {
         return Pager.of(
-            stateRepository.findAllPaged(
-                searchCriteria.getQ(),
-                countryId,
-                searchCriteria.toPageRequest()
-            )
+                stateRepository.findAllPaged(
+                        searchCriteria.getQ(),
+                        countryId,
+                        searchCriteria.toPageRequest()
+                )
         );
     }
-
 
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
