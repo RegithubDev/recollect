@@ -8,6 +8,8 @@ import com.resustainability.recollect.dto.request.CancelOrderRequest;
 import com.resustainability.recollect.dto.request.PlaceOrderRequest;
 import com.resustainability.recollect.dto.request.UpdateOrderScheduleDateRequest;
 import com.resustainability.recollect.dto.response.*;
+import com.resustainability.recollect.entity.backend.BioWasteOrders;
+
 import com.resustainability.recollect.entity.backend.*;
 import com.resustainability.recollect.exception.InvalidDataException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
@@ -856,233 +858,213 @@ public class OrderService {
         );
     }
     
-    
-    
-    
-    
-    
- /*   @Transactional
+ 
+
+   /* @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Long add(AddOrderRequest request, OrderType orderType) {
 
-        // 1️⃣ Validate request
+        Objects.requireNonNull(orderType, "Order type is required");
         ValidationUtils.validateRequestBody(request);
 
-        if (orderType == null) {
-            throw new IllegalArgumentException("Order type must not be null");
-        }
-
-        // 2️⃣ Fetch customer
-        Customer customer = customerRepository.findById(request.customerId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER)
-                );
-
-        // 3️⃣ Validate address ownership
-        customerAddressRepository
-                .findByCustomerAddressIdIfBelongs(
-                        request.customerId(),
-                        Long.valueOf(request.customerAddressId())
-                )
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER_ADDRESS)
-                );
-
-        CustomerAddress address = customerAddressRepository
-                .findById(Long.valueOf(request.customerAddressId()))
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER_ADDRESS)
-                );
-
-        ScrapOrders scrapOrder = null;
-        BioWasteOrders bioWasteOrder = null;
-        Long orderId;
-
-        // 4️⃣ SCRAP ORDER
-        if (orderType == OrderType.SCRAP) {
-
-            // 🔥 Fetch & validate scrap type
-            ScrapType scrapType = scrapTypeRepository
-                    .findByIdAndIsActiveTrue(Long.valueOf(request.scrapTypeId()))
-                    .orElseThrow(() ->
-                            new ResourceNotFoundException("Invalid or inactive scrap type")
-                    );
-
-            ScrapOrders order = new ScrapOrders();
-            order.setOrderCode(IdGenerator.nextId());
-            order.setOrderDate(LocalDateTime.now());
-            order.setScheduleDate(request.scheduleDate());
-            order.setOrderStatus(OrderStatus.OPEN.getAbbreviation());
-            order.setPreferredPaymentMethod(request.preferredPaymentMethod());
-            order.setComment(request.comment());
-            order.setDeleted(false);
-
-            order.setCustomer(customer);
-            order.setAddress(address);
-           // order.setScrapType(scrapType); 
-
-            scrapOrder = scrapOrdersRepository.save(order);
-            orderId = scrapOrder.getId();
-
-        }
-        // 5️⃣ BIO-WASTE ORDER
-        else if (orderType == OrderType.BIO_WASTE) {
-
-            BioWasteOrders order = new BioWasteOrders();
-            order.setOrderCode(IdGenerator.nextId());
-            order.setOrderDate(LocalDateTime.now());
-            order.setScheduleDate(request.scheduleDate());
-            order.setOrderStatus(OrderStatus.OPEN.getAbbreviation());
-            order.setPreferredPaymentMethod(request.preferredPaymentMethod());
-            order.setComment(request.comment());
-            order.setDeleted(false);
-
-            order.setCustomer(customer);
-            order.setAddress(address);
-
-            bioWasteOrder = bioWasteOrdersRepository.save(order);
-            orderId = bioWasteOrder.getId();
-
-        } else {
-            throw new IllegalArgumentException("Unsupported order type");
-        }
-
-        // 6️⃣ COMPLETE ORDER
-        CompleteOrders completeOrder = completeOrdersRepository.save(
-                new CompleteOrders(
-                        null,
-                        request.scheduleDate(),
-                        orderType.getAbbreviation(),
-                        OrderStatus.OPEN.getAbbreviation(),
-                        null, null, null, null, null, null,
-                        null, null, 0.0,
-                        null, null, null, null, null,
-                        request.preferredPaymentMethod(),
-                        false,
-                        null,
-                        false,
-                        false,
-                        bioWasteOrder,
-                        null,
-                        null,
-                        customer.getDistrict(),
-                        null,
-                        null,
-                        scrapOrder,
-                        customer.getState(),
-                        customer,
-                        null
-                )
-        );
-
-        // 7️⃣ LOG ENTRY
-        completeOrderLogRepository.save(
-                new CompleteOrderLog(
-                        null,
-                        "Server",
-                        String.format(
-                                "Order Placed with Schedule Date %s",
-                                DateTimeFormatUtils.toIsoDate(request.scheduleDate())
-                        ),
-                        LocalDateTime.now(),
-                        null,
-                        null,
-                        completeOrder,
-                        null,
-                        null
-                )
-        );
-
-        return orderId;
-    }*/
-    
-    
-    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public Long add(AddOrderRequest request, OrderType orderType) {
-
-        
-        ValidationUtils.validateRequestBody(request);
-
-        if (orderType == null) {
-            throw new IllegalArgumentException("Order type must not be null");
-        }
-
-        
-        Customer customer = customerRepository.findById(request.customerId())
+      
+        final Customer customer = customerRepository.findById(request.customerId())
                 .orElseThrow(() ->
                         new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER)
                 );
 
         
-        customerAddressRepository
-                .findByCustomerAddressIdIfBelongs(
-                        request.customerId(),
-                        Long.valueOf(request.customerAddressId())
-                )
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER_ADDRESS)
-                );
+        final ICustomerAddressResponse addressResponse =
+                customerAddressRepository.findByCustomerAddressIdIfBelongs(
+                                request.customerId(),
+                                Long.valueOf(request.customerAddressId())
+                        )
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER_ADDRESS)
+                        );
 
-        CustomerAddress address = customerAddressRepository
-                .findById(Long.valueOf(request.customerAddressId()))
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(Default.ERROR_NOT_FOUND_CUSTOMER_ADDRESS)
-                );
+        final CustomerAddress customerAddress =
+                customerAddressRepository.getReferenceById(addressResponse.getId());
+
+        final District district = addressResponse.getDistrictId() != null
+                ? districtRepository.getReferenceById(addressResponse.getDistrictId())
+                : null;
+
+        final State state = addressResponse.getStateId() != null
+                ? stateRepository.getReferenceById(addressResponse.getStateId())
+                : null;
+
+        final double defaultDoubleValue = 0.0d;
+        final String defaultOrderStatus = OrderStatus.OPEN.getAbbreviation();
 
         ScrapOrders scrapOrder = null;
         BioWasteOrders bioWasteOrder = null;
-        Long orderId;
 
        
-        if (orderType == OrderType.SCRAP) {
+        if (OrderType.SCRAP.equals(orderType)) {
 
-            ScrapOrders order = new ScrapOrders();
-            order.setOrderCode(IdGenerator.nextId());
-            order.setOrderDate(LocalDateTime.now());
-            order.setScheduleDate(request.scheduleDate());
-            order.setOrderStatus(OrderStatus.OPEN.getAbbreviation());
-            order.setPreferredPaymentMethod(request.preferredPaymentMethod());
-            order.setComment(request.comment());
-            order.setDeleted(false);
-            order.setOrderAge(1);
-            order.setOrderRating(0.0);
-            order.setCustomer(customer);
-            order.setAddress(address);
+            if (addressResponse.getScrapRegionId() == null) {
+                throw new InvalidDataException("Scrap region is required, set region in customer address");
+            }
+
+            if (!customerAddressService.isInScrapRegionBoundaries(
+                    addressResponse.getLatitude(),
+                    addressResponse.getLongitude(),
+                    addressResponse.getScrapRegionId()
+            )) {
+                throw new InvalidDataException("Address is outside the scrap service area");
+            }
+
+            if (!scrapRegionAvailabilityService.bookSlot(
+                    addressResponse.getScrapRegionId(),
+                    request.scheduleDate()
+            )) {
+                throw new InvalidDataException(
+                        String.format(
+                                "Booking slot full for date %s",
+                                DateTimeFormatUtils.toDateShortText(request.scheduleDate())
+                        )
+                );
+            }
+
+            final ScrapRegion scrapRegion =
+                    scrapRegionRepository.getReferenceById(addressResponse.getScrapRegionId());
             
-            order.setScrapRegion(address.getScrapRegion());
-            order.setState(customer.getState());
+            ScrapOrders savedScrapOrder = scrapOrdersRepository.save(
+                    new ScrapOrders(
+                            null,
+                            IdGenerator.nextId(),
+                            LocalDateTime.now(),
+                            request.scheduleDate(),
+                            request.phoneNumber(),
+                            null,
+                            request.preferredPaymentMethod(),
+                            request.comment(),
+                            defaultDoubleValue,
+                            defaultOrderStatus,
+                            "ADMIN",
+                            false,
+                            customerAddress,
+                            null,
+                            scrapRegion,
+                            customer.getState(),
+                            customer,
+                            1
+                    )
+            );
 
-            scrapOrder = scrapOrdersRepository.save(order);
-            orderId = scrapOrder.getId();
+            
+            scrapOrder = savedScrapOrder;
+
+            List<ScrapOrderCart> carts = request.typeIds()
+                    .stream()
+                    .map(id -> scrapTypeRepository.findByIdAndIsActiveTrue(id)
+                            .orElseThrow(() ->
+                                    new ResourceNotFoundException("Scrap type not found: " + id)
+                            )
+                    )
+                    .map(type -> new ScrapOrderCart(
+                            null,
+                            0.0,
+                            0.0,
+                            0.0,
+                            false,
+                            savedScrapOrder,   
+                            type
+                    ))
+                    .toList();
+
+            scrapOrderCartRepository.saveAll(carts);
         }
+
         
-        else if (orderType == OrderType.BIO_WASTE) {
+        else if (OrderType.BIO_WASTE.equals(orderType)) {
 
-            BioWasteOrders order = new BioWasteOrders();
-            order.setOrderCode(IdGenerator.nextId());
-            order.setOrderDate(LocalDateTime.now());
-            order.setScheduleDate(request.scheduleDate());
-            order.setOrderStatus(OrderStatus.OPEN.getAbbreviation());
-            order.setPreferredPaymentMethod(request.preferredPaymentMethod());
-            order.setComment(request.comment());
-            order.setDeleted(false);
+            if (addressResponse.getWardId() == null) {
+                throw new InvalidDataException("Ward is required, set ward in customer address");
+            }
 
-            order.setCustomer(customer);
-            order.setAddress(address);
+            if (!customerAddressService.isInLocalBodyBoundaries(
+                    addressResponse.getLatitude(),
+                    addressResponse.getLongitude(),
+                    addressResponse.getLocalBodyId()
+            )) {
+                throw new InvalidDataException("Address is outside local body service area");
+            }
 
-            bioWasteOrder = bioWasteOrdersRepository.save(order);
-            orderId = bioWasteOrder.getId();
+            if (!localBodyAvailabilityService.bookSlot(
+                    addressResponse.getLocalBodyId(),
+                    request.scheduleDate()
+            )) {
+                throw new InvalidDataException(
+                        String.format(
+                                "Booking slot full for date %s",
+                                DateTimeFormatUtils.toDateShortText(request.scheduleDate())
+                        )
+                );
+            }
+
+            final Ward ward =
+                    wardRepository.getReferenceById(addressResponse.getWardId());
+
+            BioWasteOrders savedBioWasteOrder = bioWasteOrdersRepository.save(
+                    new BioWasteOrders(
+                            null,
+                            IdGenerator.nextId(),
+                            LocalDateTime.now(),
+                            request.scheduleDate(),
+                            defaultDoubleValue,
+                            request.phoneNumber(),
+                            null,
+                            request.preferredPaymentMethod(),
+                            request.comment(),
+                            defaultOrderStatus,
+                            "ADMIN",
+                            false,
+                            customerAddress,
+                            null,
+                            state,
+                            ward,
+                            customer,
+                            0,
+                            defaultDoubleValue,
+                            null,
+                            defaultDoubleValue
+                    )
+            );
+
+           
+            bioWasteOrder = savedBioWasteOrder;
+
+            List<BioWasteOrderCart> carts = request.typeIds()
+                    .stream()
+                    .map(id -> bioWasteTypeRepository.findById(id)
+                            .orElseThrow(() ->
+                                    new ResourceNotFoundException("Biowaste type not found: " + id)
+                            )
+                    )
+                    .map(type -> new BioWasteOrderCart(
+                            null,
+                            false,
+                            savedBioWasteOrder, 
+                            type
+                    ))
+                    .toList();
+
+            bioWasteOrderCartRepository.saveAll(carts);
+
         }
+
         else {
-            throw new IllegalArgumentException("Unsupported order type");
+            throw new InvalidDataException("Unsupported order type");
         }
 
         
-        CompleteOrders completeOrder = completeOrdersRepository.save(
+        final CompleteOrders completeOrder = completeOrdersRepository.save(
                 new CompleteOrders(
                         null,
                         request.scheduleDate(),
                         orderType.getAbbreviation(),
-                        OrderStatus.OPEN.getAbbreviation(),
+                        defaultOrderStatus,
                         null,
                         null,
                         null,
@@ -1091,7 +1073,7 @@ public class OrderService {
                         null,
                         null,
                         null,
-                        0.0,
+                        defaultDoubleValue,
                         null,
                         null,
                         null,
@@ -1105,11 +1087,11 @@ public class OrderService {
                         bioWasteOrder,
                         null,
                         null,
-                        customer.getDistrict(),
+                        district,
                         null,
                         null,
                         scrapOrder,
-                        customer.getState(),
+                        state,
                         customer,
                         null
                 )
@@ -1119,9 +1101,9 @@ public class OrderService {
         completeOrderLogRepository.save(
                 new CompleteOrderLog(
                         null,
-                        "Server",
+                        "ADMIN",
                         String.format(
-                                "Order Placed with Schedule Date %s",
+                                "Order placed by admin with schedule date %s",
                                 DateTimeFormatUtils.toIsoDate(request.scheduleDate())
                         ),
                         LocalDateTime.now(),
@@ -1133,9 +1115,367 @@ public class OrderService {
                 )
         );
 
-        return orderId;
-    }
+        return completeOrder.getId();
+    }*/
 
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public Long add(AddOrderRequest request, OrderType orderType) {
+
+        Objects.requireNonNull(orderType, "Order type is required");
+        ValidationUtils.validateRequestBody(request);
+
+       
+        Customer customer = customerRepository.findById(request.customerId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                Default.ERROR_NOT_FOUND_CUSTOMER
+                        )
+                );
+
+        final double defaultDoubleValue = 0.0d;
+        final String defaultOrderStatus =
+                OrderStatus.OPEN.getAbbreviation();
+
+        CustomerAddress customerAddress;
+        District district = null;
+        State state = customer.getState();
+
+       
+
+      
+        if (request.customerAddressId() != null) {
+
+            ICustomerAddressResponse addressResponse =
+                    customerAddressRepository
+                            .findByCustomerAddressIdIfBelongs(
+                                    request.customerId(),
+                                    request.customerAddressId()
+                            )
+                            .orElseThrow(() ->
+                                    new ResourceNotFoundException(
+                                            Default.ERROR_NOT_FOUND_CUSTOMER_ADDRESS
+                                    )
+                            );
+
+            customerAddress =
+                    customerAddressRepository.getReferenceById(
+                            addressResponse.getId()
+                    );
+
+            if (addressResponse.getDistrictId() != null) {
+                district =
+                        districtRepository.getReferenceById(
+                                addressResponse.getDistrictId()
+                        );
+            }
+        }
+
+        
+        else {
+
+            if (OrderType.SCRAP.equals(orderType)) {
+
+                if (request.scrapRegionId() == null) {
+                    throw new InvalidDataException(
+                            "Scrap region is required"
+                    );
+                }
+
+                ScrapRegion scrapRegion =
+                        scrapRegionRepository.getReferenceById(
+                                request.scrapRegionId()
+                        );
+
+                customerAddress =
+                        customerAddressRepository.save(
+                                new CustomerAddress(
+                                        null,
+                                        true,
+                                        true,
+                                        false,
+                                        false,
+                                        request.addressType(),
+                                        request.address(),
+                                        request.landmark(),
+                                        "0",
+                                        "0",
+                                        false,
+                                        scrapRegion,
+                                        null,
+                                        customer
+                                )
+                        );
+            }
+
+            else if (OrderType.BIO_WASTE.equals(orderType)) {
+
+                if (request.wardId() == null) {
+                    throw new InvalidDataException(
+                            "Ward is required"
+                    );
+                }
+
+                Ward ward =
+                        wardRepository.getReferenceById(
+                                request.wardId()
+                        );
+
+                customerAddress =
+                        customerAddressRepository.save(
+                                new CustomerAddress(
+                                        null,
+                                        false,
+                                        false,
+                                        true,
+                                        true,
+                                        request.addressType(),
+                                        request.address(),
+                                        request.landmark(),
+                                        "0",
+                                        "0",
+                                        false,
+                                        null,
+                                        ward,
+                                        customer
+                                )
+                        );
+            }
+
+            else {
+                throw new InvalidDataException(
+                        "Unsupported order type"
+                );
+            }
+        }
+
+        ScrapOrders scrapOrder = null;
+        BioWasteOrders bioWasteOrder = null;
+
+        
+        if (OrderType.SCRAP.equals(orderType)) {
+
+            ScrapRegion scrapRegion =
+                    customerAddress.getScrapRegion();
+
+            if (request.customerAddressId() != null && !customerAddressService.isInScrapRegionBoundaries(
+                    customerAddress.getLatitude(),
+                    customerAddress.getLongitude(),
+                    scrapRegion.getId()
+            )) {
+                throw new InvalidDataException(
+                        "Address is outside scrap service area"
+                );
+            }
+
+            if (!scrapRegionAvailabilityService.bookSlot(
+                    scrapRegion.getId(),
+                    request.scheduleDate()
+            )) {
+                throw new InvalidDataException(
+                        "Booking slot full for selected date"
+                );
+            }
+
+            ScrapOrders savedScrapOrder = scrapOrdersRepository.save(
+                    new ScrapOrders(
+                            null,
+                            IdGenerator.nextId(),
+                            LocalDateTime.now(),
+                            request.scheduleDate(),
+                            request.phoneNumber(),
+                            null,
+                            request.preferredPaymentMethod(),
+                            request.comment(),
+                            defaultDoubleValue,
+                            defaultOrderStatus,
+                            "ADMIN",
+                            false,
+                            customerAddress,
+                            null,
+                            scrapRegion,
+                            customer.getState(),
+                            customer,
+                            1
+                    )
+            );
+            
+            scrapOrder = savedScrapOrder;
+
+            List<ScrapOrderCart> carts =
+                    request.typeIds().stream()
+                            .map(id ->
+                                    scrapTypeRepository
+                                            .findByIdAndIsActiveTrue(id)
+                                            .orElseThrow(() ->
+                                                    new ResourceNotFoundException(
+                                                            "Scrap type not found: " + id
+                                                    )
+                                            )
+                            )
+                            .map(type ->
+                                    new ScrapOrderCart(
+                                            null,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            false,
+                                            savedScrapOrder,
+                                            type
+                                    )
+                            )
+                            .toList();
+            
+            if (carts.isEmpty()) {
+                throw new InvalidDataException(
+                        "At least one valid scrap type must be selected"
+                );
+            }
+
+
+            scrapOrderCartRepository.saveAll(carts);
+        }
+
+        
+        else if (OrderType.BIO_WASTE.equals(orderType)) {
+
+            Ward ward = customerAddress.getWard();
+
+            if (request.customerAddressId() != null && !customerAddressService.isInLocalBodyBoundaries(
+                    customerAddress.getLatitude(),
+                    customerAddress.getLongitude(),
+                    ward.getLocalbody().getId()
+            )) {
+                throw new InvalidDataException(
+                        "Address outside service area"
+                );
+            }
+
+            if (!localBodyAvailabilityService.bookSlot(
+                    ward.getLocalbody().getId(),
+                    request.scheduleDate()
+            )) {
+                throw new InvalidDataException(
+                        "Booking slot full for selected date"
+                );
+            }
+
+            BioWasteOrders savedBioWasteOrder = bioWasteOrdersRepository.save(
+                    new BioWasteOrders(
+                            null,
+                            IdGenerator.nextId(),
+                            LocalDateTime.now(),
+                            request.scheduleDate(),
+                            defaultDoubleValue,
+                            request.phoneNumber(),
+                            null,
+                            request.preferredPaymentMethod(),
+                            request.comment(),
+                            defaultOrderStatus,
+                            "ADMIN",
+                            false,
+                            customerAddress,
+                            null,
+                            state,
+                            ward,
+                            customer,
+                            0,
+                            defaultDoubleValue,
+                            null,
+                            defaultDoubleValue
+                    )
+            );
+
+            bioWasteOrder = savedBioWasteOrder;
+            
+
+
+            List<BioWasteOrderCart> carts =
+                    request.typeIds().stream()
+                            .map(id ->
+                                    bioWasteTypeRepository
+                                            .findById(id)
+                                            .orElseThrow(() ->
+                                                    new ResourceNotFoundException(
+                                                            "Bio-waste type not found: " + id
+                                                    )
+                                            )
+                            )
+                            .map(type ->
+                                    new BioWasteOrderCart(
+                                            null,
+                                            false,
+                                            savedBioWasteOrder,
+                                            type
+                                    )
+                            )
+                            .toList();
+            
+            if (carts.isEmpty()) {
+                throw new InvalidDataException(
+                        "At least one valid bio type must be selected"
+                );
+            }
+
+
+            bioWasteOrderCartRepository.saveAll(carts);
+        }
+
+        
+        CompleteOrders completeOrder =
+                completeOrdersRepository.save(
+                        new CompleteOrders(
+                                null,
+                                request.scheduleDate(),
+                                orderType.getAbbreviation(),
+                                defaultOrderStatus,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                defaultDoubleValue,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                request.preferredPaymentMethod(),
+                                false,
+                                null,
+                                false,
+                                false,
+                                bioWasteOrder,
+                                null,
+                                null,
+                                district,
+                                null,
+                                null,
+                                scrapOrder,
+                                state,
+                                customer,
+                                null
+                        )
+                );
+
+        completeOrderLogRepository.save(
+                new CompleteOrderLog(
+                        null,
+                        "ADMIN",
+                        "Order placed by admin",
+                        LocalDateTime.now(),
+                        null,
+                        null,
+                        completeOrder,
+                        null,
+                        customer
+                )
+        );
+
+        return completeOrder.getId();
+    }
 
 
 }

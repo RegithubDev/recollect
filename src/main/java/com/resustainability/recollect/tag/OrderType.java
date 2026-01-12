@@ -10,7 +10,8 @@ import java.util.stream.Stream;
 public enum OrderType {
 	SCRAP(0, "scrap"),
 	BIO_WASTE(1, "biowaste"),
-	BWG(2, "bwg");
+	BWG(2, "bwg"),
+	DISPOSALS(3, "disposals");
 
 	private final int ordinal;
 	private final String abbreviation;

@@ -66,7 +66,8 @@ public class OrderController {
     }
     
     
-    @PostMapping("/scrap-add")
+    @PostMapping("/add-scraop-order")
+    @PreAuthorize("hasRole('ADMIN')")
     public APIResponse<Long> addScrap(@RequestBody AddOrderRequest request) {
         return new APIResponse<>(
                 Default.SUCCESS_ORDER_PLACED,
@@ -75,7 +76,8 @@ public class OrderController {
     }
 
     
-    @PostMapping("/biowaste-add")
+    @PostMapping("/add-bio-order")
+    @PreAuthorize("hasRole('ADMIN')")
     public APIResponse<Long> addBioWaste(@RequestBody AddOrderRequest request) {
         return new APIResponse<>(
                 Default.SUCCESS_ORDER_PLACED,
