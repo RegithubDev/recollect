@@ -100,7 +100,7 @@ public class ScrapCategoryService {
         ScrapCategory entity = new ScrapCategory(
                 null,
                 request.categoryName(),
-                "Disposal",     
+                "Disposals",     
                 null,
                 true,
                 "123456"
@@ -120,7 +120,7 @@ public class ScrapCategoryService {
         entity.setCategoryName(request.categoryName());
         entity.setSubcategoryName(request.subcategoryName());
         entity.setActive(Boolean.TRUE.equals(request.isActive()));
-        entity.setHsnCode(request.hsnCode());
+        entity.setHsnCode("123456");
 
         repository.save(entity);
     }

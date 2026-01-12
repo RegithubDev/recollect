@@ -1,5 +1,7 @@
 package com.resustainability.recollect.dto.response;
 
+
+
 public interface IScrapTypeResponse {
     Long getId();
     String getScrapName();
@@ -9,4 +11,7 @@ public interface IScrapTypeResponse {
     Boolean getIsActive();
     Long getCategoryId();
     String getCategoryName();
+    
 }
+
+

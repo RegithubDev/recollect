@@ -21,6 +21,7 @@ import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.AddScrapTypeRequest;
 import com.resustainability.recollect.dto.request.UpdateScrapTypeRequest;
 import com.resustainability.recollect.dto.response.IScrapTypeResponse;
+import com.resustainability.recollect.dto.response.ScrapTypeDetailResponse;
 import com.resustainability.recollect.service.ScrapTypeService;
 
 @RestController
@@ -44,12 +45,23 @@ public class ScrapTypeController {
         );
     }
 
-    @GetMapping("/details/{scraptypeId}")
-    public APIResponse<IScrapTypeResponse> get(@PathVariable Long id) {
+   /* @GetMapping("/details/{scraptypeId}")
+    public APIResponse<IScrapTypeResponse> get(@PathVariable Long scraptypeId) {
         return new APIResponse<>(
-        		service.getById(id)
+        		service.getById(scraptypeId)
+        );
+    }*/
+    
+    
+    @GetMapping("/details/{scraptypeId}")
+    public APIResponse<ScrapTypeDetailResponse> get(
+            @PathVariable Long scraptypeId
+    ) {
+        return new APIResponse<>(
+                service.getById(scraptypeId)
         );
     }
+
 
     @PostMapping("/add")
     public APIResponse<Long> add(

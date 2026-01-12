@@ -13,8 +13,11 @@ import com.resustainability.recollect.commons.ValidationUtils;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.AddScrapTypeRequest;
+import com.resustainability.recollect.dto.request.UpdateScrapPriceRequest;
 import com.resustainability.recollect.dto.request.UpdateScrapTypeRequest;
+import com.resustainability.recollect.dto.response.IScrapTypeDistrictPriceResponse;
 import com.resustainability.recollect.dto.response.IScrapTypeResponse;
+import com.resustainability.recollect.dto.response.ScrapTypeDetailResponse;
 import com.resustainability.recollect.entity.backend.District;
 import com.resustainability.recollect.entity.backend.ScrapCategory;
 import com.resustainability.recollect.entity.backend.ScrapType;
@@ -67,14 +70,48 @@ public class ScrapTypeService {
         );
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public IScrapTypeResponse getById(Long id) {
-        ValidationUtils.validateId(id);
+   /* @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public IScrapTypeResponse getById(Long scraptypeId) {
+        ValidationUtils.validateId(scraptypeId);
 
-        return repository.findByScrapTypeId(id)
+        return repository.findByScrapTypeId(scraptypeId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Scrap type not found"));
+    }*/
+    @Transactional(readOnly = true)
+    public ScrapTypeDetailResponse getById(Long scrapTypeId) {
+
+        ValidationUtils.validateId(scrapTypeId);
+
+        IScrapTypeResponse scrap =
+                repository.findByScrapTypeId(scrapTypeId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException("Scrap type not found")
+                        );
+
+        List<IScrapTypeDistrictPriceResponse> prices =
+                scrapTypeLocationAndPriceRepository
+                        .findByScrapTypeId(scrapTypeId);
+
+        ScrapTypeDetailResponse response = new ScrapTypeDetailResponse();
+
+        response.setId(scrap.getId());
+        response.setScrapName(scrap.getScrapName());
+        response.setImage(scrap.getImage());
+        response.setIsPayable(scrap.getIsPayable());
+        response.setIsKg(scrap.getIsKg());
+        response.setIsActive(scrap.getIsActive());
+        response.setCategoryId(scrap.getCategoryId());
+        response.setCategoryName(scrap.getCategoryName());
+        response.setDistrictPrices(prices);
+
+        return response;
     }
+
+    
+    
+    
+    
 
    /* @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Long add(AddScrapTypeRequest request) {
@@ -154,7 +191,7 @@ public class ScrapTypeService {
     }
 
 
-    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+   /* @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void update(UpdateScrapTypeRequest request) {
         ValidationUtils.validateRequestBody(request);
 
@@ -168,7 +205,80 @@ public class ScrapTypeService {
         entity.setActive(Boolean.TRUE.equals(request.isActive()));
 
         repository.save(entity);
+    }*/
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public void update(UpdateScrapTypeRequest request) {
+
+        ValidationUtils.validateRequestBody(request);
+
+        
+        ScrapType entity = repository.findById(request.id())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Scrap type not found"));
+
+        entity.setScrapName(request.scrapName());
+        entity.setPayable(request.isPayable());
+        entity.setKg(request.isKg());
+        entity.setActive(Boolean.TRUE.equals(request.isActive()));
+
+        repository.save(entity);
+
+       
+        if (request.districtPrices() == null || request.districtPrices().isEmpty()) {
+            return;
+        }
+
+        for (UpdateScrapPriceRequest priceReq : request.districtPrices()) {
+
+            District district = districtRepository.findById(priceReq.districtId())
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(
+                                    "District not found: " + priceReq.districtId()
+                            ));
+
+            ScrapTypeLocationAndPrice priceEntity =
+                    scrapTypeLocationAndPriceRepository
+                            .findByScrapTypeAndDistrict(entity.getId(), district.getId())
+                            .orElse(null);
+
+            
+            if (priceEntity != null) {
+
+                if (priceReq.scrapPrice() != null) {
+                    priceEntity.setScrapPrice(priceReq.scrapPrice());
+                }
+                if (priceReq.scrapCgst() != null) {
+                    priceEntity.setScrapCgst(priceReq.scrapCgst());
+                }
+                if (priceReq.scrapSgst() != null) {
+                    priceEntity.setScrapSgst(priceReq.scrapSgst());
+                }
+                if (priceReq.isActive() != null) {
+                    priceEntity.setActive(priceReq.isActive());
+                }
+
+                scrapTypeLocationAndPriceRepository.save(priceEntity);
+            }
+
+            
+            else {
+
+                ScrapTypeLocationAndPrice newPrice =
+                        new ScrapTypeLocationAndPrice(
+                                null,
+                                priceReq.scrapPrice(),
+                                Boolean.TRUE.equals(priceReq.isActive()),
+                                district,
+                                entity,
+                                priceReq.scrapCgst(),
+                                priceReq.scrapSgst()
+                        );
+
+                scrapTypeLocationAndPriceRepository.save(newPrice);
+            }
+        }
     }
+
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public String uploadImage(Long id, MultipartFile file) {
