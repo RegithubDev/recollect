@@ -23,7 +23,6 @@ import com.resustainability.recollect.service.DistrictService;
 
 @RestController
 @RequestMapping("/api/v1/district")
-@PreAuthorize("hasRole('ADMIN')")
 public class DistrictController {
 	
 	 private final DistrictService districtService;
@@ -46,6 +45,7 @@ public class DistrictController {
 	    
 
 	    @GetMapping("/details/{districtId}")
+		@PreAuthorize("hasRole('ADMIN')")
 	    public APIResponse<IDistrictResponse> getById(
 	            @PathVariable Long districtId
 	    ) {
@@ -55,6 +55,7 @@ public class DistrictController {
 	    }
 
 	    @PostMapping("/add")
+		@PreAuthorize("hasRole('ADMIN')")
 	    public APIResponse<Long> add(
 	            @RequestBody(required = false) AddDistrictRequest request
 	    ) {
@@ -65,6 +66,7 @@ public class DistrictController {
 	    }
 
 	    @PutMapping("/update")
+		@PreAuthorize("hasRole('ADMIN')")
 	    public APIResponse<Void> update(
 	            @RequestBody(required = false) UpdateDistrictRequest request
 	    ) {
@@ -73,6 +75,7 @@ public class DistrictController {
 	    }
 
 	    @DeleteMapping("/delete/{districtId}")
+		@PreAuthorize("hasRole('ADMIN')")
 	    public APIResponse<Void> deleteById(
 	            @PathVariable Long districtId
 	    ) {
@@ -82,6 +85,7 @@ public class DistrictController {
 	    
 	    
 	    @DeleteMapping("/un-delete/{districtId}")
+		@PreAuthorize("hasRole('ADMIN')")
 	    public APIResponse<Void> undeleteById(
 	            @PathVariable Long districtId
 	    ) {
