@@ -6,10 +6,12 @@ import com.resustainability.recollect.commons.ValidationUtils;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
 import com.resustainability.recollect.dto.request.AddCustomerRequest;
+import com.resustainability.recollect.dto.request.RegisterRequest;
 import com.resustainability.recollect.dto.request.UpdateCustomerProfileRequest;
 import com.resustainability.recollect.dto.request.UpdateCustomerRequest;
 import com.resustainability.recollect.dto.response.ICustomerResponse;
 import com.resustainability.recollect.entity.backend.Customer;
+import com.resustainability.recollect.entity.backend.District;
 import com.resustainability.recollect.exception.DataAlreadyExistException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
 import com.resustainability.recollect.exception.UnauthorizedException;
@@ -140,6 +142,47 @@ public class CustomerService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public void registerCustomer(RegisterRequest request) {
+        ValidationUtils.validateRequestBody(request);
+
+        // TODO: DELETE SCENARIO
+
+        if (customerRepository.existsByPhoneNumber(request.phoneNumber())) {
+            throw new DataAlreadyExistException(
+                    String.format("Customer with (%s) already exists", request.phoneNumber())
+            );
+        }
+
+        final District district = districtRepository
+                .findById(request.districtId())
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_DISTRICT));
+
+        customerRepository.save(
+                new Customer(
+                        null,
+                        Default.EMPTY,
+                        null,
+                        false,
+                        false,
+                        true,
+                        LocalDateTime.now(),
+                        request.name(),
+                        null,
+                        request.phoneNumber(),
+                        request.email(),
+                        request.userType(),
+                        request.platform(),
+                        false,
+                        district,
+                        null,
+                        null == district ? null : district.getState(),
+                        null,
+                        LocalDateTime.now()
+                )
+        );
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void update(UpdateCustomerRequest request) {
         ValidationUtils.validateRequestBody(request);
 
@@ -249,6 +292,8 @@ public class CustomerService {
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void deleteById(Long customerId) {
         ValidationUtils.validateUserId(customerId);
+
+        // TODO: DELETE SCENARIO
 
         final Customer entity = customerRepository
                 .findById(customerId)

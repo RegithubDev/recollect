@@ -100,6 +100,7 @@ public class Default {
     public static final String SUCCESS_NOTIFICATION_TITLE = "Update on your order!";
 
     public static final String SUCCESS_ADD_USER = "User created.";
+    public static final String SUCCESS_ADD_CUSTOMER = "Customer registered.";
     public static final String SUCCESS_UPDATE_USER_DETAILS = "User details have been updated successfully.";
     public static final String SUCCESS_UPDATE_PROFILE_DETAILS = "Your profile details have been updated successfully.";
     public static final String SUCCESS_DELETE_USER = "All done! The account's been deleted.";

@@ -5,6 +5,7 @@ import com.resustainability.recollect.dto.commons.APIResponse;
 import com.resustainability.recollect.dto.request.AddCustomerRequest;
 import com.resustainability.recollect.dto.request.LoginViaCredentialsRequest;
 import com.resustainability.recollect.dto.request.LoginViaPhoneNumberRequest;
+import com.resustainability.recollect.dto.request.RegisterRequest;
 import com.resustainability.recollect.dto.response.IUserContext;
 import com.resustainability.recollect.dto.response.TokenResponse;
 import com.resustainability.recollect.exception.UnauthorizedException;
@@ -75,11 +76,11 @@ public class AuthController {
     }
     
     
-    @PostMapping("/register")
-    public APIResponse<Void> register(
-            @RequestBody(required = false) AddCustomerRequest request
+    @PostMapping("/register-customer")
+    public APIResponse<Void> registerCustomer(
+            @RequestBody(required = false) RegisterRequest request
     ) {
-        customerService.add(request);
-        return new APIResponse<>(Default.SUCCESS_ADD_USER);
+        customerService.registerCustomer(request);
+        return new APIResponse<>(Default.SUCCESS_ADD_CUSTOMER);
     }
 }
