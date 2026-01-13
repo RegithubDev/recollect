@@ -526,44 +526,40 @@ public class OrderService {
    
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public void updateScheduledDate(
-            UpdateOrderScheduleDateRequest request,
-            IUserContext userContext
-    ) {
-
+    public void updateScheduledDate(UpdateOrderScheduleDateRequest request) {
         ValidationUtils.validateRequestBody(request);
 
-        CompleteOrders completeOrder =
-                completeOrdersRepository.findById(request.id())
-                        .orElseThrow(() ->
-                                new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
+        final IUserContext user = securityService
+                .getCurrentUser()
+                .orElseThrow(UnauthorizedException::new);
 
-       
+        final CompleteOrders completeOrder = completeOrdersRepository
+                .findById(request.id())
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
+
         if (request.scheduleDate().equals(completeOrder.getScheduleDate())) {
         	throw new InvalidDataException(Default.ERROR_ORDER_RESCHEDULE_SAME_DATE);
         }
 
-        int updated = completeOrdersRepository.updateScheduledDate(
+        if (0 == completeOrdersRepository.updateScheduledDate(
                 request.id(),
                 request.scheduleDate()
-        );
-
-        if (updated == 0) {
+        )) {
             throw new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER);
         }
 
-        
-        CompleteOrderLog log = new CompleteOrderLog();
+        final CompleteOrderLog log = new CompleteOrderLog();
         log.setOrder(completeOrder);
         log.setCustomer(completeOrder.getCustomer());
-        log.setDoneBy(OrderLogUtils.resolveDoneBy(userContext));
+        log.setDoneBy(OrderLogUtils.resolveDoneBy(user));
         log.setCreatedAt(LocalDateTime.now());
 
         log.setDescription(
-                "Order Schedule Date Updated to " + request.scheduleDate()
-                + " and Order Status Updated to "
-                + completeOrder.getOrderStatus()
-                + " by"
+                String.format(
+                        "Order Re-Schedule Date Updated to %s and Order Status is %s by ",
+                        DateTimeFormatUtils.toIsoDate(request.scheduleDate()),
+                        completeOrder.getOrderStatus()
+                )
         );
 
         completeOrderLogRepository.save(log);

@@ -133,10 +133,9 @@ public class OrderController {
     
     @PutMapping("/reschedule")
     public APIResponse<Void> updateScheduledDate(
-            @RequestBody UpdateOrderScheduleDateRequest request,
-            @AuthenticationPrincipal IUserContext userContext
+            @RequestBody UpdateOrderScheduleDateRequest request
     ) {
-        orderService.updateScheduledDate(request, userContext);
+        orderService.updateScheduledDate(request);
         return new APIResponse<>(Default.SUCCESS_UPDATE_ORDER_SCHEDULE_DATE);
     }
 

@@ -13,6 +13,7 @@ import com.resustainability.recollect.commons.*;
 import com.resustainability.recollect.dto.request.*;
 import com.resustainability.recollect.dto.response.*;
 import com.resustainability.recollect.entity.backend.*;
+import com.resustainability.recollect.exception.UnauthorizedException;
 import com.resustainability.recollect.repository.*;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
@@ -39,6 +40,7 @@ public class BwgOrdersService {
     private final BwgClientRepository clientRepository;
     private final CompleteOrdersRepository completeOrdersRepository;
     private final CompleteOrderLogRepository completeOrderLogRepository;
+    private final SecurityService securityService;
 
     @Autowired
     public BwgOrdersService(
@@ -49,7 +51,8 @@ public class BwgOrdersService {
             ScrapTypeRepository scrapTypeRepository,
             BwgOrderUsedBagRepository bwgOrderUsedBagRepository,
             CompleteOrdersRepository completeOrdersRepository,
-            CompleteOrderLogRepository completeOrderLogRepository
+            CompleteOrderLogRepository completeOrderLogRepository,
+            SecurityService securityService
     ) {
         this.ordersRepository = ordersRepository;
         this.bioWasteTypeRepository = bioWasteTypeRepository;
@@ -59,6 +62,7 @@ public class BwgOrdersService {
         this.bwgOrderUsedBagRepository = bwgOrderUsedBagRepository;
         this.completeOrdersRepository = completeOrdersRepository;
         this.completeOrderLogRepository = completeOrderLogRepository;
+        this.securityService = securityService;
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
@@ -425,12 +429,13 @@ public class BwgOrdersService {
     }
     
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public void updateScheduledDate(
-            UpdateBwgOrderScheduleDateRequest request,
-            IUserContext userContext
-    ) {
+    public void updateScheduledDate(UpdateBwgOrderScheduleDateRequest request) {
 
         ValidationUtils.validateRequestBody(request);
+
+        final IUserContext user = securityService
+                .getCurrentUser()
+                .orElseThrow(UnauthorizedException::new);
 
         CompleteOrders completeOrder =
                 completeOrdersRepository.findByBwgOrder_Id(request.id())
@@ -461,17 +466,18 @@ public class BwgOrdersService {
         );
 
 
-        CompleteOrderLog log = new CompleteOrderLog();
+        final CompleteOrderLog log = new CompleteOrderLog();
         log.setOrder(completeOrder);
         log.setClient(completeOrder.getClient());
-        log.setDoneBy(OrderLogUtils.resolveDoneBy(userContext));
+        log.setDoneBy(OrderLogUtils.resolveDoneBy(user));
         log.setCreatedAt(LocalDateTime.now());
 
         log.setDescription(
-                "Order Schedule Date Updated to " + request.scheduleDate()
-                + " and Order Status Updated to "
-                + completeOrder.getOrderStatus()
-                + " by"
+                String.format(
+                        "Order Re-Schedule Date Updated to %s and Order Status is %s by ",
+                        DateTimeFormatUtils.toIsoDate(request.scheduleDate()),
+                        completeOrder.getOrderStatus()
+                )
         );
 
         completeOrderLogRepository.save(log);

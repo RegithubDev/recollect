@@ -92,10 +92,9 @@ public class BwgOrdersController {
     
     @PutMapping("/reschedule")
     public APIResponse<Void> updateScheduledDate(
-            @RequestBody UpdateBwgOrderScheduleDateRequest request,
-            IUserContext userContext
+            @RequestBody UpdateBwgOrderScheduleDateRequest request
     ) {
-        ordersService.updateScheduledDate(request, userContext);
+        ordersService.updateScheduledDate(request);
         return new APIResponse<>(
                 Default.SUCCESS_UPDATE_ORDER_SCHEDULE_DATE
         );
