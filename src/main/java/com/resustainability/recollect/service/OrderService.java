@@ -234,17 +234,15 @@ public class OrderService {
                 .getCurrentUser()
                 .orElseThrow(UnauthorizedException::new);
 
-        if (Boolean.TRUE.equals(user.getIsAdmin())) {
-            return completeOrdersRepository
-                    .findByCompleteOrderId(completeOrderId)
-                    .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
-        } else if (Boolean.TRUE.equals(user.getIsCustomer())) {
+        if (Boolean.TRUE.equals(user.getIsCustomer())) {
             return completeOrdersRepository
                     .findByCompleteOrderIdIfBelongsToCustomer(user.getId(), completeOrderId)
                     .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
-        } else if (Boolean.TRUE.equals(user.getIsProvider())) {
+        }
+
+        else if (Boolean.TRUE.equals(user.getIsAdmin()) || Boolean.TRUE.equals(user.getIsProvider())) {
             return completeOrdersRepository
-                    .findByCompleteOrderIdIfBelongsToProvider(user.getId(), completeOrderId)
+                    .findByCompleteOrderId(completeOrderId)
                     .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
         }
 
