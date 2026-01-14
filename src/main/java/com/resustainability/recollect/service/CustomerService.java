@@ -12,6 +12,7 @@ import com.resustainability.recollect.dto.request.UpdateCustomerRequest;
 import com.resustainability.recollect.dto.response.ICustomerResponse;
 import com.resustainability.recollect.entity.backend.Customer;
 import com.resustainability.recollect.entity.backend.District;
+import com.resustainability.recollect.entity.backend.State;
 import com.resustainability.recollect.exception.DataAlreadyExistException;
 import com.resustainability.recollect.exception.ResourceNotFoundException;
 import com.resustainability.recollect.exception.UnauthorizedException;
@@ -153,9 +154,9 @@ public class CustomerService {
             );
         }
 
-        final District district = districtRepository
-                .findById(request.districtId())
-                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_DISTRICT));
+        final State state = stateRepository
+                .findById(request.stateId())
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_STATE));
 
         customerRepository.save(
                 new Customer(
@@ -173,9 +174,9 @@ public class CustomerService {
                         request.userType(),
                         request.platform(),
                         false,
-                        district,
                         null,
-                        null == district ? null : district.getState(),
+                        null,
+                        state,
                         null,
                         LocalDateTime.now()
                 )

@@ -120,6 +120,10 @@ public class ValidationUtils {
         validateNonNegative(id, "District ID");
     }
 
+    public static void validateStateId(Long id) {
+        validateNonNegative(id, "State ID");
+    }
+
     public static void validateScrapRegionAvailability(List<PayloadScrapRegionAvailability> availability) {
         if (CollectionUtils.isBlank(availability)) {
             throw new InvalidDataException("Provide availability pickup dates");

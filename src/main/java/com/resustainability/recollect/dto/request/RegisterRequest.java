@@ -9,7 +9,7 @@ public record RegisterRequest(
         String email,
         String userType,
         String platform,
-        Long districtId
+        Long stateId
 ) implements RequestBodyValidator {
     @Override
     public void validate() {
@@ -18,6 +18,6 @@ public record RegisterRequest(
         ValidationUtils.validateEmail(email);
         ValidationUtils.validateUserType(userType);
         ValidationUtils.validatePlatform(platform);
-        ValidationUtils.validateDistrictId(districtId);
+        ValidationUtils.validateStateId(stateId);
     }
 }
