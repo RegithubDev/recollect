@@ -3,13 +3,14 @@ package com.resustainability.recollect.dto.request;
 import com.resustainability.recollect.commons.ValidationUtils;
 import com.resustainability.recollect.dto.commons.RequestBodyValidator;
 
-public record RegisterRequest(
+public record RegisterCustomerRequest(
         String name,
         String phoneNumber,
         String email,
         String userType,
         String platform,
-        Long stateId
+        Long stateId,
+        Boolean isOptional
 ) implements RequestBodyValidator {
     @Override
     public void validate() {

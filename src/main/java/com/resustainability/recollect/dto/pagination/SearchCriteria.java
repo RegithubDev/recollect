@@ -8,7 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
@@ -34,18 +34,18 @@ public class SearchCriteria {
     @Schema(description = "Ignore paging and return all results")
     private Boolean unpaged;
 
-    @Schema(description = "Filter start timestamp (ISO-8601)", example = "2023-01-01T00:00:00Z")
-    private Instant start;
+    @Schema(description = "Filter start local date-time format (ISO-8601)", example = "2023-01-01T00:00:00")
+    private LocalDateTime start;
 
-    @Schema(description = "Filter end timestamp (ISO-8601)", example = "2060-12-31T23:59:59Z")
-    private Instant end;
+    @Schema(description = "Filter end local date-time format (ISO-8601)", example = "2060-12-31T23:59:59")
+    private LocalDateTime end;
 
     @Schema(description = "Disable sorting")
     private boolean sortDisabled;
 
     public SearchCriteria() {}
 
-    public SearchCriteria(Integer size, Integer page, String sort, Sort.Direction direction, String q, Boolean unpaged, Instant start, Instant end, boolean sortDisabled) {
+    public SearchCriteria(Integer size, Integer page, String sort, Sort.Direction direction, String q, Boolean unpaged, LocalDateTime start, LocalDateTime end, boolean sortDisabled) {
         this.size = size;
         this.page = page;
         this.sort = sort;
@@ -151,11 +151,11 @@ public class SearchCriteria {
         return unpaged;
     }
 
-    public Instant getStart() {
+    public LocalDateTime getStart() {
         return start;
     }
 
-    public Instant getEnd() {
+    public LocalDateTime getEnd() {
         return end;
     }
 
@@ -187,11 +187,11 @@ public class SearchCriteria {
         this.unpaged = unpaged;
     }
 
-    public void setStart(Instant start) {
+    public void setStart(LocalDateTime start) {
         this.start = start;
     }
 
-    public void setEnd(Instant end) {
+    public void setEnd(LocalDateTime end) {
         this.end = end;
     }
 

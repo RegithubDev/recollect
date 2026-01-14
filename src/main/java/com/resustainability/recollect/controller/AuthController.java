@@ -2,10 +2,9 @@ package com.resustainability.recollect.controller;
 
 import com.resustainability.recollect.commons.Default;
 import com.resustainability.recollect.dto.commons.APIResponse;
-import com.resustainability.recollect.dto.request.AddCustomerRequest;
 import com.resustainability.recollect.dto.request.LoginViaCredentialsRequest;
 import com.resustainability.recollect.dto.request.LoginViaPhoneNumberRequest;
-import com.resustainability.recollect.dto.request.RegisterRequest;
+import com.resustainability.recollect.dto.request.RegisterCustomerRequest;
 import com.resustainability.recollect.dto.response.IUserContext;
 import com.resustainability.recollect.dto.response.TokenResponse;
 import com.resustainability.recollect.exception.UnauthorizedException;
@@ -78,7 +77,7 @@ public class AuthController {
     
     @PostMapping("/register-customer")
     public APIResponse<Void> registerCustomer(
-            @RequestBody(required = false) RegisterRequest request
+            @RequestBody(required = false) RegisterCustomerRequest request
     ) {
         customerService.registerCustomer(request);
         return new APIResponse<>(Default.SUCCESS_ADD_CUSTOMER);
