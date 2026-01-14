@@ -76,10 +76,13 @@ public class AuthController {
     
     
     @PostMapping("/register-customer")
-    public APIResponse<Void> registerCustomer(
+    public APIResponse<TokenResponse> registerCustomer(
             @RequestBody(required = false) RegisterCustomerRequest request
     ) {
         customerService.registerCustomer(request);
-        return new APIResponse<>(Default.SUCCESS_ADD_CUSTOMER);
+        return new APIResponse<>(
+                Default.SUCCESS_ADD_CUSTOMER,
+                authService.customerLogin(new LoginViaPhoneNumberRequest(request.phoneNumber()))
+        );
     }
 }
