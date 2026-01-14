@@ -111,7 +111,7 @@ public class SecurityConfiguration {
                         "/api/v1/auth/get-provider-token",
                         "/api/v1/auth/get-admin-token",
                         "/api/v1/auth/register",
-                        "/api/v1/district/list",
+                        "/api/v1/state/list",
                         "/swagger-ui/**",
                         (actuatorEndpoint + "/**"),
                         (swaggerUiEndpoint + "/**"),

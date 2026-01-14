@@ -43,6 +43,7 @@ public class StateService {
     }
 
 
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Pager<IStateResponse> list(Long countryId, SearchCriteria searchCriteria) {
         return Pager.of(
                 stateRepository.findAllPaged(

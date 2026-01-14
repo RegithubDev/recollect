@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/state")
-@PreAuthorize("hasRole('ADMIN')")
 public class StateController {
 
     private final StateService stateService;
@@ -38,6 +37,7 @@ public class StateController {
     }
 
     @GetMapping("/details/{stateId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public APIResponse<IStateResponse> getById(
             @PathVariable(value = "stateId", required = false) Long stateId
     ) {
@@ -47,6 +47,7 @@ public class StateController {
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasRole('ADMIN')")
     public APIResponse<Long> add(
             @RequestBody(required = false) AddStateRequest request
     ) {
@@ -57,6 +58,7 @@ public class StateController {
     }
 
     @PostMapping(value = "/upload-file/{stateId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
     public APIResponse<String> uploadImage(
             @PathVariable(value = "stateId", required = false) Long stateId,
             @RequestParam(value = "file", required = false) MultipartFile file
@@ -69,6 +71,7 @@ public class StateController {
     }
 
     @PutMapping("/update")
+    @PreAuthorize("hasRole('ADMIN')")
     public APIResponse<Void> update(
             @RequestBody(required = false) UpdateStateRequest request
     ) {
@@ -77,6 +80,7 @@ public class StateController {
     }
 
     @DeleteMapping("/delete/{stateId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public APIResponse<Void> deleteById(
             @PathVariable(value = "stateId", required = false) Long stateId
     ) {
@@ -85,6 +89,7 @@ public class StateController {
     }
     
     @DeleteMapping("/un-delete/{stateId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public APIResponse<Void> undeleteById(
             @PathVariable(value = "stateId", required = false) Long stateId
     ) {
@@ -93,6 +98,7 @@ public class StateController {
     }
 
     @DeleteMapping("/remove-file/{stateId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public APIResponse<String> removeImage(
             @PathVariable(value = "stateId", required = false) Long stateId
     ) {

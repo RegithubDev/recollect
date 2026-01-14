@@ -33,6 +33,7 @@ public class DistrictController {
 	    }
 
 	    @GetMapping("/list")
+		@PreAuthorize("hasRole('ADMIN')")
 	    public APIResponse<Pager<IDistrictResponse>> list(
 	            @RequestParam(required = false) Long stateId,
 	            @RequestParam(required = false) Long countryId,
