@@ -3,10 +3,8 @@ package com.resustainability.recollect.service;
 import com.resustainability.recollect.commons.*;
 import com.resustainability.recollect.dto.pagination.Pager;
 import com.resustainability.recollect.dto.pagination.SearchCriteria;
-import com.resustainability.recollect.dto.request.AddOrderRequest;
-import com.resustainability.recollect.dto.request.CancelOrderRequest;
-import com.resustainability.recollect.dto.request.PlaceOrderRequest;
-import com.resustainability.recollect.dto.request.UpdateOrderScheduleDateRequest;
+import com.resustainability.recollect.dto.payload.PayloadSelectedItem;
+import com.resustainability.recollect.dto.request.*;
 import com.resustainability.recollect.dto.response.*;
 import com.resustainability.recollect.entity.backend.BioWasteOrders;
 
@@ -27,6 +25,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
@@ -522,8 +522,6 @@ public class OrderService {
 
         return completeOrder.getId();
     }
-    
-   
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void updateScheduledDate(UpdateOrderScheduleDateRequest request) {
@@ -563,6 +561,235 @@ public class OrderService {
         );
 
         completeOrderLogRepository.save(log);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public void captureWeights(Long completeOrderId, CaptureItemsWeightRequest request) {
+        ValidationUtils.validateId(completeOrderId);
+        ValidationUtils.validateRequestBody(request);
+
+        final IOrderHistoryResponse order = completeOrdersRepository
+                .findByCompleteOrderId(completeOrderId)
+                .filter(ord -> StringUtils.isNotBlank(ord.getType()))
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
+
+        final Map<Long, Double> itemsToUpdate = request
+                .items()
+                .stream()
+                .collect(Collectors.toMap(
+                        PayloadSelectedItem::id,
+                        PayloadSelectedItem::weight,
+                        (existing, replacement) -> replacement
+                ));
+
+        if (OrderType.is(order.getType(), OrderType.SCRAP)) {
+            final List<ScrapOrderCart> entities = scrapOrderCartRepository
+                    .findAllById(itemsToUpdate.keySet())
+                    .stream()
+                    .peek(entity -> entity.setCapturedWeight(
+                            itemsToUpdate.getOrDefault(entity.getId(), null)
+                    ))
+                    .toList();
+
+            if (CollectionUtils.isNonBlank(entities)) {
+                scrapOrderCartRepository.saveAll(entities);
+            }
+        } else if (OrderType.is(order.getType(), OrderType.BIO_WASTE)) {
+            final List<BioWasteOrderCart> entities = bioWasteOrderCartRepository
+                    .findAllById(itemsToUpdate.keySet())
+                    .stream()
+                    .peek(entity -> entity.setCapturedWeight(
+                            itemsToUpdate.getOrDefault(entity.getId(), null)
+                    ))
+                    .toList();
+
+            if (CollectionUtils.isNonBlank(entities)) {
+                bioWasteOrderCartRepository.saveAll(entities);
+            }
+        }
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public void computeInvoice(Long completeOrderId) {
+        ValidationUtils.validateId(completeOrderId);
+
+        final IOrderHistoryResponse order = completeOrdersRepository
+                .findByCompleteOrderId(completeOrderId)
+                .filter(ord -> StringUtils.isNotBlank(ord.getType()))
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
+
+        if (OrderStatus.is(order.getStatus(), OrderStatus.COMPLETED, OrderStatus.CANCELLED)) {
+            return;
+        }
+
+        final CompleteOrders entity = completeOrdersRepository
+                .findById(completeOrderId)
+                .filter(ord -> StringUtils.isNotBlank(ord.getOrderType()))
+                .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_ORDER));
+
+        if (OrderType.is(order.getType(), OrderType.SCRAP)) {
+            final List<ScrapOrderCart> cartItems = scrapOrderCartRepository
+                    .findByScrapOrderId(order.getScrapOrderId())
+                    .stream()
+                    .filter(item -> !Boolean.TRUE.equals(item.getDeleted()))
+                    .toList();
+
+            if (cartItems.stream().anyMatch(item -> null == item.getCapturedWeight())) {
+                return;
+            }
+
+            // Compute
+            BigDecimal totalBill = BigDecimal.ZERO;
+
+            for (ScrapOrderCart item : cartItems) {
+
+                // capturedWeight × scrapPrice
+                BigDecimal weight = BigDecimal.valueOf(
+                        null == item.getCapturedWeight()
+                                ? 1.0
+                                : item.getCapturedWeight()
+                );
+                BigDecimal price = BigDecimal.valueOf(
+                        null == item.getScrapPrice()
+                                ? 0.0
+                                : item.getScrapPrice()
+                );
+
+                BigDecimal itemTotal = weight.multiply(price)
+                        .setScale(2, RoundingMode.HALF_UP);
+
+                // TODO - persist item total if required
+                // item.setTotalPrice(itemTotal.doubleValue());
+
+                totalBill = totalBill.add(itemTotal);
+            }
+
+            // No service charge (as specified)
+            BigDecimal serviceCharge = BigDecimal.ZERO;
+
+            // Grand total before rounding
+            BigDecimal grossAmount = totalBill.add(serviceCharge);
+
+            // Rounded final bill (2 decimals)
+            BigDecimal roundedFinal = grossAmount.setScale(2, RoundingMode.HALF_UP);
+
+            // Round-off difference
+            BigDecimal roundOff = roundedFinal.subtract(grossAmount);
+
+            entity.setScrapTotalBill(totalBill.doubleValue());
+            entity.setScrapServiceCharge(serviceCharge.doubleValue());
+            entity.setScrapRoundoff(roundOff.doubleValue());
+            entity.setFinalBill(roundedFinal.doubleValue());
+
+        } else if (OrderType.is(order.getType(), OrderType.BIO_WASTE)) {
+            final List<BioWasteOrderCart> cartItems = bioWasteOrderCartRepository
+                    .findByBioWasteOrderId(order.getBioWasteOrderId())
+                    .stream()
+                    .filter(item -> !Boolean.TRUE.equals(item.getDeleted()))
+                    .toList();
+
+            if (cartItems.stream().anyMatch(item -> null == item.getCapturedWeight())) {
+                return;
+            }
+
+            final LocalBody localBody = bioWasteOrdersRepository
+                    .findLocalBodyById(order.getBioWasteOrderId())
+                    .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCAL_BODY));
+
+            BigDecimal weight = cartItems
+                    .stream()
+                    .map(BioWasteOrderCart::getCapturedWeight)
+                    .filter(Objects::nonNull)
+                    .map(BigDecimal::valueOf)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add)
+                    .setScale(3, RoundingMode.HALF_UP);
+
+            // Select price based on customer type
+            BigDecimal pricePerKg;
+//            if ("individual".equalsIgnoreCase(order.getUserType())) {
+                pricePerKg = BigDecimal.valueOf(
+                        null == localBody.getBioResidentialPrice()
+                                ? 0.0
+                                : localBody.getBioResidentialPrice()
+                );
+//            } else {
+//                pricePerKg = BigDecimal.valueOf(localBody.getBioCommercialPrice());
+//            }
+
+            // Base amount (weight × price)
+            BigDecimal baseAmount = weight.multiply(pricePerKg)
+                    .setScale(2, RoundingMode.HALF_UP);
+
+            // Charges
+            BigDecimal processingCharge =
+                    BigDecimal.valueOf(
+                            null == localBody.getBioProcessingCharge()
+                                    ? 0.0
+                                    : localBody.getBioProcessingCharge()
+                    );
+
+            BigDecimal serviceCharge =
+                    BigDecimal.valueOf(
+                            null == localBody.getBioServiceCharge()
+                                    ? 0.0
+                                    : localBody.getBioServiceCharge()
+                    );
+
+            BigDecimal subsidy =
+                    BigDecimal.valueOf(
+                            null == localBody.getBioSubsidyAmount()
+                                    ? 0.0
+                                    : localBody.getBioSubsidyAmount()
+                    );
+
+            // Taxable amount
+            BigDecimal taxableAmount = baseAmount
+                    .add(processingCharge)
+                    .add(serviceCharge)
+                    .subtract(subsidy);
+
+            // GST percentages
+            BigDecimal cgstPercent =
+                    BigDecimal.valueOf(localBody.getBioCgstPercentage());
+
+            BigDecimal sgstPercent =
+                    BigDecimal.valueOf(localBody.getBioSgstPercentage());
+
+            // GST calculation
+            BigDecimal cgstAmount = taxableAmount
+                    .multiply(cgstPercent)
+                    .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+
+            BigDecimal sgstAmount = taxableAmount
+                    .multiply(sgstPercent)
+                    .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+
+            // Bag charge (currently zero)
+            BigDecimal bagAmount = BigDecimal.ZERO;
+
+            // Total bill
+            BigDecimal totalBill = taxableAmount
+                    .add(cgstAmount)
+                    .add(sgstAmount)
+                    .add(bagAmount);
+
+            // Final rounded bill
+            BigDecimal finalBill = totalBill.setScale(2, RoundingMode.HALF_UP);
+
+            entity.setBioWeight(weight.doubleValue());
+            entity.setBioTotalBillAmount(baseAmount.doubleValue());
+            entity.setBioSubsidyAmount(subsidy.doubleValue());
+            entity.setBioBillAmount(taxableAmount.doubleValue());
+            entity.setBioCgstAmount(cgstAmount.doubleValue());
+            entity.setBioSgstAmount(sgstAmount.doubleValue());
+            entity.setBioBagAmount(bagAmount.doubleValue());
+            entity.setBioTotalBill(totalBill.doubleValue());
+            entity.setFinalBill(finalBill.doubleValue());
+        }
+
+        entity.setBilledAt(LocalDateTime.now());
+
+        completeOrdersRepository.save(entity);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
@@ -1481,6 +1708,4 @@ public class OrderService {
 
         return completeOrder.getId();
     }
-
-
 }

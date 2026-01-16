@@ -10,6 +10,7 @@ public interface IOrderHistoryResponse {
 	String getCustomerPhoneNumber();
 	String getCode();
 	String getType();
+	String getUserType();
 	LocalDate getScheduleDate();
 	LocalDateTime getOrderDate(); 
 	String getStatus();

@@ -3,7 +3,9 @@ package com.resustainability.recollect.repository;
 import com.resustainability.recollect.entity.backend.BioWasteOrders;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
+import com.resustainability.recollect.entity.backend.LocalBody;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -59,4 +61,14 @@ public interface BioWasteOrdersRepository extends JpaRepository<BioWasteOrders, 
             @Param("scheduleDate") LocalDate scheduleDate
     );
 
+    @Query(value = """
+        SELECT lb
+        FROM BioWasteOrders bo
+        JOIN bo.ward w
+        JOIN w.localbody lb
+        WHERE bo.id = :id
+    """)
+    Optional<LocalBody> findLocalBodyById(
+            @Param("id") Long bioWasteOrderId
+    );
 }

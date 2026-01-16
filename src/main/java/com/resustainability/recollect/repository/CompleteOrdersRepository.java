@@ -26,6 +26,7 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
 			c.id AS customerId,
 			c.fullName AS fullName,
 			c.phoneNumber AS customerPhoneNumber,
+			c.userType AS userType,
 			d.id AS districtId,
 			d.districtName AS districtName,
 			d.districtCode AS districtCode, 
@@ -85,6 +86,7 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
 			c.id AS customerId,
 			c.fullName AS fullName,
 			c.phoneNumber AS customerPhoneNumber,
+			c.userType AS userType,
 
 			COALESCE(so.orderCode, bo.orderCode) AS code,
 			o.orderType AS type,
@@ -325,6 +327,7 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
             c.id AS customerId,
             c.fullName AS fullName,
             c.phoneNumber AS customerPhoneNumber,
+            c.userType AS userType,
             COALESCE(so.orderCode, bo.orderCode) AS code,
             o.orderType AS type,
             o.scheduleDate AS scheduleDate,
@@ -376,6 +379,7 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
             c.id AS customerId,
             c.fullName AS fullName,
             c.phoneNumber AS customerPhoneNumber,
+            c.userType AS userType,
             COALESCE(so.orderCode, bo.orderCode) AS code,
             o.orderType AS type,
             o.scheduleDate AS scheduleDate,
@@ -429,6 +433,7 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
             c.id AS customerId,
             c.fullName AS fullName,
             c.phoneNumber AS customerPhoneNumber,
+            c.userType AS userType,
             COALESCE(so.orderCode, bo.orderCode) AS code,
             o.orderType AS type,
             o.scheduleDate AS scheduleDate,
@@ -512,7 +517,9 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
             st.scrap_name AS typeName,
             st.image AS typeIcon,
             st.is_active AS typeIsActive,
-            soc.scrap_price AS typePrice
+            soc.scrap_price AS typePrice,
+
+            soc.id AS cartId
         FROM backend_completeorders co
         JOIN backend_scraporders so
             ON so.id = co.scrap_order_id
@@ -537,7 +544,9 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
             bt.biowaste_name AS typeName,
             bt.image AS typeIcon,
             bt.is_active AS typeIsActive,
-            NULL AS typePrice
+            NULL AS typePrice,
+
+            boc.id AS cartId
         FROM backend_completeorders co
         JOIN backend_biowasteorders bo
             ON bo.id = co.biowaste_order_id
