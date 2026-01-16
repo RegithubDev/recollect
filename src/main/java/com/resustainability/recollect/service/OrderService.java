@@ -373,7 +373,8 @@ public class OrderService {
                                 type.kg() ? (price * quantity) : price,
                                 false,
                                 scrapOrder,
-                                scrapTypeRepository.getReferenceById(type.id())
+                                scrapTypeRepository.getReferenceById(type.id()),
+                                null
                         );
                     })
                     .toList();
@@ -451,7 +452,8 @@ public class OrderService {
                             null,
                             false,
                             bioWasteOrder,
-                            bioWasteTypeRepository.getReferenceById(item.id())
+                            bioWasteTypeRepository.getReferenceById(item.id()),
+                            null
                     ))
                     .toList();
             if (CollectionUtils.isNonBlank(orderItems)) {
@@ -1321,7 +1323,8 @@ public class OrderService {
                                             0.0,
                                             false,
                                             savedScrapOrder,
-                                            type
+                                            type,
+                                            null
                                     )
                             )
                             .toList();
@@ -1406,7 +1409,8 @@ public class OrderService {
                                             null,
                                             false,
                                             savedBioWasteOrder,
-                                            type
+                                            type,
+                                            null
                                     )
                             )
                             .toList();

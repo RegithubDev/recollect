@@ -24,14 +24,18 @@ public class BioWasteOrderCart {
     @JoinColumn(name = "biowaste_type_id", nullable = false)
     private BioWasteType biowasteType;
 
+    @Column(name = "captured_weight", nullable = false)
+    private Double capturedWeight;
+
     public BioWasteOrderCart() {
     }
 
-    public BioWasteOrderCart(Long id, Boolean isDeleted, BioWasteOrders biowasteOrder, BioWasteType biowasteType) {
+    public BioWasteOrderCart(Long id, Boolean isDeleted, BioWasteOrders biowasteOrder, BioWasteType biowasteType, Double capturedWeight) {
         this.id = id;
         this.isDeleted = isDeleted;
         this.biowasteOrder = biowasteOrder;
         this.biowasteType = biowasteType;
+        this.capturedWeight = capturedWeight;
     }
 
     @Override
@@ -76,5 +80,13 @@ public class BioWasteOrderCart {
 
     public void setBiowasteType(BioWasteType biowasteType) {
         this.biowasteType = biowasteType;
+    }
+
+    public Double getCapturedWeight() {
+        return capturedWeight;
+    }
+
+    public void setCapturedWeight(Double capturedWeight) {
+        this.capturedWeight = capturedWeight;
     }
 }
