@@ -492,11 +492,14 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
             o.orderType AS type,
             o.bioWeight AS weight,
             o.clientPrice AS clientPrice,
-            o.bioBillAmount AS subTotal,
+            COALESCE(o.bioBillAmount, o.scrapTotalBill) AS subTotal,
             o.bioCgstAmount AS cgstAmount,
             o.bioSgstAmount AS sgstAmount,
+            COALESCE(o.bioWalletDeduct, o.scrapWalletDeduct) AS walletDeduct,
             o.bioBagAmount AS bagAmount,
-            COALESCE(o.bioTotalBill, o.scrapTotalBill) AS totalBill
+            o.scrapServiceCharge AS serviceCharge,
+            COALESCE(o.bioTotalBill, o.scrapTotalBill) AS totalBill,
+            o.billedAt AS billedAt
         FROM CompleteOrders o
         WHERE o.id = :id
     """)
@@ -512,6 +515,7 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
             soc.scrap_price AS price,
             soc.total_price AS totalPrice,
             soc.captured_weight AS capturedWeight,
+			soc.captured_price AS capturedPrice,
 
             st.id AS typeId,
             st.scrap_name AS typeName,
@@ -539,6 +543,7 @@ public interface CompleteOrdersRepository extends JpaRepository<CompleteOrders, 
             NULL AS price,
             NULL AS totalPrice,
             boc.captured_weight AS capturedWeight,
+            boc.captured_price AS capturedPrice,
     
             bt.id AS typeId,
             bt.biowaste_name AS typeName,

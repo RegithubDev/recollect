@@ -374,6 +374,7 @@ public class OrderService {
                                 false,
                                 scrapOrder,
                                 scrapTypeRepository.getReferenceById(type.id()),
+                                null,
                                 null
                         );
                     })
@@ -453,6 +454,7 @@ public class OrderService {
                             false,
                             bioWasteOrder,
                             bioWasteTypeRepository.getReferenceById(item.id()),
+                            null,
                             null
                     ))
                     .toList();
@@ -586,8 +588,9 @@ public class OrderService {
             final List<ScrapOrderCart> entities = scrapOrderCartRepository
                     .findAllById(itemsToUpdate.keySet())
                     .stream()
+                    .filter(entity -> itemsToUpdate.containsKey(entity.getId()))
                     .peek(entity -> entity.setCapturedWeight(
-                            itemsToUpdate.getOrDefault(entity.getId(), null)
+                            itemsToUpdate.get(entity.getId())
                     ))
                     .toList();
 
@@ -598,8 +601,9 @@ public class OrderService {
             final List<BioWasteOrderCart> entities = bioWasteOrderCartRepository
                     .findAllById(itemsToUpdate.keySet())
                     .stream()
+                    .filter(entity -> itemsToUpdate.containsKey(entity.getId()))
                     .peek(entity -> entity.setCapturedWeight(
-                            itemsToUpdate.getOrDefault(entity.getId(), null)
+                            itemsToUpdate.get(entity.getId())
                     ))
                     .toList();
 
@@ -658,11 +662,12 @@ public class OrderService {
                 BigDecimal itemTotal = weight.multiply(price)
                         .setScale(2, RoundingMode.HALF_UP);
 
-                // TODO - persist item total if required
-                // item.setTotalPrice(itemTotal.doubleValue());
+                item.setCapturedPrice(itemTotal.doubleValue());
 
                 totalBill = totalBill.add(itemTotal);
             }
+
+            scrapOrderCartRepository.saveAll(cartItems);
 
             // No service charge (as specified)
             BigDecimal serviceCharge = BigDecimal.ZERO;
@@ -696,29 +701,46 @@ public class OrderService {
                     .findLocalBodyById(order.getBioWasteOrderId())
                     .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCAL_BODY));
 
-            BigDecimal weight = cartItems
-                    .stream()
-                    .map(BioWasteOrderCart::getCapturedWeight)
-                    .filter(Objects::nonNull)
-                    .map(BigDecimal::valueOf)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add)
-                    .setScale(3, RoundingMode.HALF_UP);
+            if (CollectionUtils.isNonBlank(cartItems)) {
+                bioWasteOrderCartRepository.saveAll(cartItems);
+            }
+
+            BigDecimal totalWeight = BigDecimal.ZERO;
+            BigDecimal baseAmount = BigDecimal.ZERO;
 
             // Select price based on customer type
             BigDecimal pricePerKg;
 //            if ("individual".equalsIgnoreCase(order.getUserType())) {
-                pricePerKg = BigDecimal.valueOf(
-                        null == localBody.getBioResidentialPrice()
-                                ? 0.0
-                                : localBody.getBioResidentialPrice()
-                );
+            pricePerKg = BigDecimal.valueOf(
+                    null == localBody.getBioResidentialPrice()
+                            ? 0.0
+                            : localBody.getBioResidentialPrice()
+            );
 //            } else {
 //                pricePerKg = BigDecimal.valueOf(localBody.getBioCommercialPrice());
 //            }
 
-            // Base amount (weight × price)
-            BigDecimal baseAmount = weight.multiply(pricePerKg)
-                    .setScale(2, RoundingMode.HALF_UP);
+            for (BioWasteOrderCart item : cartItems) {
+
+                BigDecimal weight = BigDecimal.valueOf(item.getCapturedWeight());
+
+                // price = capturedWeight × pricePerKg
+                BigDecimal itemPrice = weight
+                        .multiply(pricePerKg)
+                        .setScale(2, RoundingMode.HALF_UP);
+
+                // Persist per-item captured price
+                item.setCapturedPrice(itemPrice.doubleValue());
+
+                totalWeight = totalWeight.add(weight);
+                baseAmount = baseAmount.add(itemPrice);
+            }
+
+            bioWasteOrderCartRepository.saveAll(cartItems);
+
+            // Weight precision (kg)
+            totalWeight = totalWeight.setScale(3, RoundingMode.HALF_UP);
+            baseAmount = baseAmount.setScale(2, RoundingMode.HALF_UP);
 
             // Charges
             BigDecimal processingCharge =
@@ -776,7 +798,7 @@ public class OrderService {
             // Final rounded bill
             BigDecimal finalBill = totalBill.setScale(2, RoundingMode.HALF_UP);
 
-            entity.setBioWeight(weight.doubleValue());
+            entity.setBioWeight(totalWeight.doubleValue());
             entity.setBioTotalBillAmount(baseAmount.doubleValue());
             entity.setBioSubsidyAmount(subsidy.doubleValue());
             entity.setBioBillAmount(taxableAmount.doubleValue());
@@ -1551,6 +1573,7 @@ public class OrderService {
                                             false,
                                             savedScrapOrder,
                                             type,
+                                            null,
                                             null
                                     )
                             )
@@ -1637,6 +1660,7 @@ public class OrderService {
                                             false,
                                             savedBioWasteOrder,
                                             type,
+                                            null,
                                             null
                                     )
                             )

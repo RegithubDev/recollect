@@ -7,6 +7,7 @@ public interface IOrderCartItemResponse {
     Double getPrice();
     Double getTotalPrice();
     Double getCapturedWeight();
+    Double getCapturedPrice();
 
     Long getTypeId();
     String getTypeName();

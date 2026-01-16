@@ -36,10 +36,13 @@ public class ScrapOrderCart {
     @Column(name = "captured_weight", nullable = false)
     private Double capturedWeight;
 
+    @Column(name = "captured_price", nullable = false)
+    private Double capturedPrice;
+
     public ScrapOrderCart() {
     }
 
-    public ScrapOrderCart(Long id, Double scrapWeight, Double scrapPrice, Double totalPrice, Boolean isDeleted, ScrapOrders scrapOrder, ScrapType scrapType, Double capturedWeight) {
+    public ScrapOrderCart(Long id, Double scrapWeight, Double scrapPrice, Double totalPrice, Boolean isDeleted, ScrapOrders scrapOrder, ScrapType scrapType, Double capturedWeight, Double capturedPrice) {
         this.id = id;
         this.scrapWeight = scrapWeight;
         this.scrapPrice = scrapPrice;
@@ -48,6 +51,7 @@ public class ScrapOrderCart {
         this.scrapOrder = scrapOrder;
         this.scrapType = scrapType;
         this.capturedWeight = capturedWeight;
+        this.capturedPrice = capturedPrice;
     }
 
     @Override
@@ -124,5 +128,13 @@ public class ScrapOrderCart {
 
     public void setCapturedWeight(Double capturedWeight) {
         this.capturedWeight = capturedWeight;
+    }
+
+    public Double getCapturedPrice() {
+        return capturedPrice;
+    }
+
+    public void setCapturedPrice(Double capturedPrice) {
+        this.capturedPrice = capturedPrice;
     }
 }
