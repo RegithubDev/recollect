@@ -198,6 +198,14 @@ public class OrderController {
         );
     }
 
+    @PostMapping("/compute-invoice/{orderId}")
+    public APIResponse<Void> computeInvoice(
+            @PathVariable(value = "orderId", required = false) Long orderId
+    ) {
+        orderService.computeInvoice(orderId);
+        return new APIResponse<>(Default.SUCCESS_UPDATE_ORDER_INVOICE_DETAILS);
+    }
+
     @PutMapping("/reschedule")
     public APIResponse<Void> updateScheduledDate(
             @RequestBody UpdateOrderScheduleDateRequest request

@@ -798,6 +798,7 @@ public class OrderService {
             // Final rounded bill
             BigDecimal finalBill = totalBill.setScale(2, RoundingMode.HALF_UP);
 
+            entity.setScrapServiceCharge(serviceCharge.doubleValue());
             entity.setBioWeight(totalWeight.doubleValue());
             entity.setBioTotalBillAmount(baseAmount.doubleValue());
             entity.setBioSubsidyAmount(subsidy.doubleValue());
