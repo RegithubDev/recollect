@@ -5,7 +5,8 @@ import com.resustainability.recollect.dto.commons.RequestBodyValidator;
 
 public record LoginViaCredentialsRequest(
         String username,
-        String password
+        String password,
+        String fcmToken
 ) implements RequestBodyValidator {
     @Override
     public void validate() {

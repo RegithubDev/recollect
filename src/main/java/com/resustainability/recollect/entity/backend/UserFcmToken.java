@@ -17,6 +17,9 @@ public class UserFcmToken {
     @Column(name = "fcm_token", nullable = false, unique = true)
     private String fcmToken;
 
+    @Column(name = "device_id")
+    private String deviceId;
+
     @Column(name = "platform", length = 20)
     private String platform;
 
@@ -45,9 +48,10 @@ public class UserFcmToken {
     public UserFcmToken() {
     }
 
-    public UserFcmToken(Long id, String fcmToken, String platform, AdminUser admin, BwgClient client, Provider provider, Customer customer, LocalDateTime createdAt, Boolean isActive) {
+    public UserFcmToken(Long id, String fcmToken, String deviceId, String platform, AdminUser admin, BwgClient client, Provider provider, Customer customer, LocalDateTime createdAt, Boolean isActive) {
         this.id = id;
         this.fcmToken = fcmToken;
+        this.deviceId = deviceId;
         this.platform = platform;
         this.admin = admin;
         this.client = client;
@@ -84,6 +88,14 @@ public class UserFcmToken {
 
     public void setFcmToken(String fcmToken) {
         this.fcmToken = fcmToken;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
     }
 
     public String getPlatform() {

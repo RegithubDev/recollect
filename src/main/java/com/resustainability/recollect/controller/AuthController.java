@@ -82,7 +82,12 @@ public class AuthController {
         customerService.registerCustomer(request);
         return new APIResponse<>(
                 Default.SUCCESS_ADD_CUSTOMER,
-                authService.customerLogin(new LoginViaPhoneNumberRequest(request.phoneNumber()))
+                authService.customerLogin(
+                        new LoginViaPhoneNumberRequest(
+                                request.phoneNumber(),
+                                request.fcmToken()
+                        )
+                )
         );
     }
 }

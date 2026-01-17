@@ -10,6 +10,7 @@ public record RegisterCustomerRequest(
         String userType,
         String platform,
         Long stateId,
+        String fcmToken,
         Boolean isOptional
 ) implements RequestBodyValidator {
     @Override

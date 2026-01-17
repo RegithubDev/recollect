@@ -1,6 +1,7 @@
 package com.resustainability.recollect.service;
 
 import com.resustainability.recollect.commons.JwtUtil;
+import com.resustainability.recollect.commons.StringUtils;
 import com.resustainability.recollect.commons.ValidationUtils;
 import com.resustainability.recollect.dto.request.LoginViaCredentialsRequest;
 import com.resustainability.recollect.dto.request.LoginViaPhoneNumberRequest;
@@ -8,6 +9,7 @@ import com.resustainability.recollect.dto.response.TokenResponse;
 import com.resustainability.recollect.entity.backend.AdminUser;
 import com.resustainability.recollect.entity.backend.Customer;
 import com.resustainability.recollect.entity.backend.Provider;
+import com.resustainability.recollect.entity.backend.UserFcmToken;
 import com.resustainability.recollect.exception.BadCredentialsException;
 import com.resustainability.recollect.tag.Role;
 
@@ -18,12 +20,14 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class AuthService {
     private final CustomerService customerService;
     private final AdminUserService adminUserService;
     private final ProviderService providerService;
+    private final PushTokenService pushTokenService;
     private final JwtUtil jwtUtil;
 
     @Autowired
@@ -31,11 +35,13 @@ public class AuthService {
             CustomerService customerService,
             AdminUserService adminUserService,
             ProviderService providerService,
+            PushTokenService pushTokenService,
             JwtUtil jwtUtil
     ) {
         this.customerService = customerService;
         this.adminUserService = adminUserService;
         this.providerService = providerService;
+        this.pushTokenService = pushTokenService;
         this.jwtUtil = jwtUtil;
     }
 
@@ -57,6 +63,18 @@ public class AuthService {
 
         customerService.refreshLastLoginAtById(customer.getId());
 
+        final Optional<UserFcmToken> fcmEntity = pushTokenService
+                .getUserFcmTokenDetails(request.fcmToken());
+
+        final String deviceId = fcmEntity
+                .map(UserFcmToken::getDeviceId)
+                .filter(StringUtils::isNotBlank)
+                .orElse(null);
+        final String platform = fcmEntity
+                .map(UserFcmToken::getPlatform)
+                .filter(StringUtils::isNotBlank)
+                .orElse(null);
+
         return new TokenResponse(
                 customer.getActive(),
                 jwtUtil.generateToken(
@@ -70,7 +88,9 @@ public class AuthService {
                 customer.getUserType(),
                 customer.getId(),
                 customer.getPhoneNumber(),
-                customer.getPlatform()
+                platform,
+                StringUtils.isBlank(deviceId) ? null : request.fcmToken(),
+                deviceId
         );
     }
 
@@ -105,6 +125,8 @@ public class AuthService {
                 Role.ADMIN.getAbbreviation(),
                 adminUser.getId(),
                 adminUser.getPhoneNumber(),
+                null,
+                null,
                 null
         );
     }
@@ -127,6 +149,18 @@ public class AuthService {
 
         providerService.refreshLastLoginAtById(provider.getId());
 
+        final Optional<UserFcmToken> fcmEntity = pushTokenService
+                .getUserFcmTokenDetails(request.fcmToken());
+
+        final String deviceId = fcmEntity
+                .map(UserFcmToken::getDeviceId)
+                .filter(StringUtils::isNotBlank)
+                .orElse(null);
+        final String platform = fcmEntity
+                .map(UserFcmToken::getPlatform)
+                .filter(StringUtils::isNotBlank)
+                .orElse(null);
+
         return new TokenResponse(
                 provider.getActive(),
                 jwtUtil.generateToken(
@@ -140,8 +174,9 @@ public class AuthService {
                 Role.PROVIDER.getAbbreviation(),
                 provider.getId(),
                 provider.getPhoneNumber(),
-                null
-                
+                platform,
+                StringUtils.isBlank(deviceId) ? null : request.fcmToken(),
+                deviceId
         );
     }
 }

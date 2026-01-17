@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS backend_user_fcm_token (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     fcm_token VARCHAR(255) NOT NULL,
     platform VARCHAR(20),
+    device_id VARCHAR(255) NULL,
     admin_id BIGINT,
     client_id BIGINT,
     provider_id BIGINT,
@@ -24,6 +25,27 @@ SET @exists := (
 SET @sql := IF(
     @exists = 0,
     'ALTER TABLE backend_user_fcm_token ADD CONSTRAINT uk_fcm_token UNIQUE (fcm_token)',
+    'SELECT 1'
+);
+
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+
+
+
+SET @exists := (
+    SELECT COUNT(*)
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'backend_user_fcm_token'
+      AND COLUMN_NAME = 'device_id'
+);
+
+SET @sql := IF(
+    @exists = 0,
+    'ALTER TABLE backend_user_fcm_token ADD COLUMN device_id VARCHAR(255) NULL',
     'SELECT 1'
 );
 

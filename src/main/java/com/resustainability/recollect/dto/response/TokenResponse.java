@@ -8,5 +8,7 @@ public record TokenResponse(
         String userType,
         long id,
         String phoneNumber,
-        String platform
+        String platform,
+		String fcmToken,
+		String deviceId
 ) {}

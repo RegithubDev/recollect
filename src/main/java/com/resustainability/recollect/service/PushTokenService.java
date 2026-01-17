@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -47,6 +49,23 @@ public class PushTokenService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public Optional<UserFcmToken> getUserFcmTokenDetails(String fcmToken) {
+        return userFcmTokenRepository
+                .findByFcmToken(fcmToken)
+                .filter(model -> Boolean.TRUE.equals(model.getActive()));
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public List<String> getAllActiveTokensByCustomerId(Long customerId) {
+        return userFcmTokenRepository.findActiveTokensByCustomerId(customerId);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public List<String> getAllActiveTokensByProviderId(Long providerId) {
+        return userFcmTokenRepository.findActiveTokensByProviderId(providerId);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void registerToken(RegisterFcmTokenRequest request) {
         ValidationUtils.validateRequestBody(request);
 
@@ -55,14 +74,15 @@ public class PushTokenService {
                 .orElseThrow(UnauthorizedException::new);
 
         final UserFcmToken entity = userFcmTokenRepository
-                .findByFcmToken(request.token())
+                .findByFcmToken(request.fcmToken())
                 .map(model -> {
                     model.setActive(true);
                     return model;
                 })
                 .orElseGet(() -> new UserFcmToken(
                         null,
-                        request.token(),
+                        request.fcmToken(),
+                        request.deviceId(),
                         request.platform(),
                         null,
                         null,

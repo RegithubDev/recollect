@@ -9,7 +9,6 @@ import com.resustainability.recollect.commons.Default;
 import com.resustainability.recollect.commons.StringUtils;
 import com.resustainability.recollect.commons.ValidationUtils;
 import com.resustainability.recollect.dto.request.PushNotificationRequest;
-import com.resustainability.recollect.repository.UserFcmTokenRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,32 +26,29 @@ import java.util.concurrent.Executor;
 public class PushNotificationService {
     public static final int MAX_TOKEN_SIZE = 500;
 
-    private final UserFcmTokenRepository userFcmTokenRepository;
     private final PushTokenService pushTokenService;
     private final Executor pushExecutor;
     private final Logger log;
 
     @Autowired
     public PushNotificationService(
-            UserFcmTokenRepository userFcmTokenRepository,
             PushTokenService pushTokenService,
             @Qualifier(Default.EXECUTOR_PUSH) Executor pushExecutor
     ) {
-        this.userFcmTokenRepository = userFcmTokenRepository;
         this.pushTokenService = pushTokenService;
         this.pushExecutor = pushExecutor;
         this.log = LoggerFactory.getLogger(this.getClass());
     }
 
     public void sendToCustomer(Long customerId, String title, String body, String imageUrl) {
-        final List<String> tokens = userFcmTokenRepository
-                .findActiveTokensByCustomerId(customerId);
+        final List<String> tokens = pushTokenService
+                .getAllActiveTokensByCustomerId(customerId);
         send(tokens, title, body, imageUrl);
     }
 
     public void sendToProvider(Long providerId, String title, String body, String imageUrl) {
-        final List<String> tokens = userFcmTokenRepository
-                .findActiveTokensByProviderId(providerId);
+        final List<String> tokens = pushTokenService
+                .getAllActiveTokensByProviderId(providerId);
         send(tokens, title, body, imageUrl);
     }
 
@@ -128,7 +124,7 @@ public class PushNotificationService {
         }
 
         if (!invalidTokens.isEmpty()) {
-            pushTokenService.deleteTokens(invalidTokens);
+            pushTokenService.deactivateTokens(invalidTokens);
         }
     }
 

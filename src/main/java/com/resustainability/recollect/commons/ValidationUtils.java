@@ -199,11 +199,19 @@ public class ValidationUtils {
     }
 
     public static void validateToken(String value) {
-        validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_DEFAULT_LENGTH, "token");
+        validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_DEFAULT_LENGTH, "Token");
+    }
+
+    public static void validateFcmToken(String value) {
+        validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_DEFAULT_LENGTH, "Fcm Token");
     }
 
     public static void validatePlatform(String value) {
         validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_20_LENGTH, "Platform");
+    }
+
+    public static void validateDeviceId(String value) {
+        validateLength(value, Default.MIN_DEFAULT_LENGTH, Default.MAX_DEFAULT_LENGTH, "Device ID");
     }
 
     public static void validateScheduleDate(LocalDate value) {
