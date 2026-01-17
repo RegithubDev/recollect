@@ -644,6 +644,7 @@ public class OrderService {
 
             // Compute
             BigDecimal totalBill = BigDecimal.ZERO;
+            BigDecimal totalWeight = BigDecimal.ZERO;
 
             for (ScrapOrderCart item : cartItems) {
 
@@ -658,6 +659,8 @@ public class OrderService {
                                 ? 0.0
                                 : item.getScrapPrice()
                 );
+
+                totalWeight = totalWeight.add(weight);
 
                 BigDecimal itemTotal = weight.multiply(price)
                         .setScale(2, RoundingMode.HALF_UP);
@@ -681,6 +684,7 @@ public class OrderService {
             // Round-off difference
             BigDecimal roundOff = roundedFinal.subtract(grossAmount);
 
+            entity.setBioWeight(totalWeight.doubleValue());
             entity.setScrapTotalBill(totalBill.doubleValue());
             entity.setScrapServiceCharge(serviceCharge.doubleValue());
             entity.setScrapRoundoff(roundOff.doubleValue());
@@ -700,10 +704,6 @@ public class OrderService {
             final LocalBody localBody = bioWasteOrdersRepository
                     .findLocalBodyById(order.getBioWasteOrderId())
                     .orElseThrow(() -> new ResourceNotFoundException(Default.ERROR_NOT_FOUND_LOCAL_BODY));
-
-            if (CollectionUtils.isNonBlank(cartItems)) {
-                bioWasteOrderCartRepository.saveAll(cartItems);
-            }
 
             BigDecimal totalWeight = BigDecimal.ZERO;
             BigDecimal baseAmount = BigDecimal.ZERO;

@@ -128,13 +128,16 @@ public class OrderController {
         );
     }
 
-
     @GetMapping("/invoice/{orderId}")
-    public APIResponse<InvoiceResponse> getInvoiceById(
+    public APIResponse<OrderInvoiceDetailedResponse> getInvoiceById(
             @PathVariable(value = "orderId", required = false) Long orderId
     ) {
         return new APIResponse<>(
-                orderService.getInvoiceById(orderId)
+                new OrderInvoiceDetailedResponse(
+                        orderService.getById(orderId),
+                        orderService.listAllCartItems(orderId),
+                        orderService.getInvoiceById(orderId)
+                )
         );
     }
 
