@@ -102,6 +102,7 @@ public class BwgOrdersService {
                         null,
                         null,
                         null,
+                        null,
                         null
                 ));
 
@@ -166,6 +167,7 @@ public class BwgOrdersService {
                         request.scheduleDate(),
                         OrderType.BWG.getAbbreviation(),
                         OrderStatus.OPEN.getAbbreviation(),
+                        null,
                         null,
                         null,
                         null,

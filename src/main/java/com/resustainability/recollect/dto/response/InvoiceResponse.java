@@ -12,6 +12,7 @@ public record InvoiceResponse(
         Double sgstAmount,
         Double walletDeduct,
         Double bagAmount,
+        Double processingCharge,
         Double serviceCharge,
         Double totalBill,
         LocalDateTime billedAt

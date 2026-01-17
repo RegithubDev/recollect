@@ -27,6 +27,9 @@ public class CompleteOrders {
     @Column(name = "bio_total_bill_amount")
     private Double bioTotalBillAmount;
 
+    @Column(name = "bio_processing_charge")
+    private Double bioProcessingCharge;
+
     @Column(name = "bio_subsidy_amount")
     private Double bioSubsidyAmount;
 
@@ -124,12 +127,13 @@ public class CompleteOrders {
     public CompleteOrders() {
     }
 
-    public CompleteOrders(Long id, LocalDate scheduleDate, String orderType, String orderStatus, Double bioTotalBillAmount, Double bioSubsidyAmount, Double bioBillAmount, Double bioCgstAmount, Double bioSgstAmount, Double bioBagAmount, Double bioTotalBill, Double bioWalletDeduct, Double bioWeight, Double scrapTotalBill, Double scrapWalletDeduct, Double scrapServiceCharge, Double scrapRoundoff, Double finalBill, String paymentMethod, Boolean isSelected, LocalDateTime billedAt, Boolean isDeleted, Boolean cancelRequest, BioWasteOrders bioWasteOrder, BwgOrders bwgOrder, BwgClient client, District district, PickupVehicle vehicle, Provider provider, ScrapOrders scrapOrder, State state, Customer customer, Double clientPrice) {
+    public CompleteOrders(Long id, LocalDate scheduleDate, String orderType, String orderStatus, Double bioTotalBillAmount, Double bioProcessingCharge, Double bioSubsidyAmount, Double bioBillAmount, Double bioCgstAmount, Double bioSgstAmount, Double bioBagAmount, Double bioTotalBill, Double bioWalletDeduct, Double bioWeight, Double scrapTotalBill, Double scrapWalletDeduct, Double scrapServiceCharge, Double scrapRoundoff, Double finalBill, String paymentMethod, Boolean isSelected, LocalDateTime billedAt, Boolean isDeleted, Boolean cancelRequest, BioWasteOrders bioWasteOrder, BwgOrders bwgOrder, BwgClient client, District district, PickupVehicle vehicle, Provider provider, ScrapOrders scrapOrder, State state, Customer customer, Double clientPrice) {
         this.id = id;
         this.scheduleDate = scheduleDate;
         this.orderType = orderType;
         this.orderStatus = orderStatus;
         this.bioTotalBillAmount = bioTotalBillAmount;
+        this.bioProcessingCharge = bioProcessingCharge;
         this.bioSubsidyAmount = bioSubsidyAmount;
         this.bioBillAmount = bioBillAmount;
         this.bioCgstAmount = bioCgstAmount;
@@ -435,5 +439,13 @@ public class CompleteOrders {
 
     public void setClientPrice(Double clientPrice) {
         this.clientPrice = clientPrice;
+    }
+
+    public Double getBioProcessingCharge() {
+        return bioProcessingCharge;
+    }
+
+    public void setBioProcessingCharge(Double bioProcessingCharge) {
+        this.bioProcessingCharge = bioProcessingCharge;
     }
 }

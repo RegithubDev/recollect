@@ -479,6 +479,7 @@ public class OrderService {
                         null,
                         null,
                         null,
+                        null,
                         defaultDoubleValue,
                         null,
                         null,
@@ -801,6 +802,7 @@ public class OrderService {
             entity.setScrapServiceCharge(serviceCharge.doubleValue());
             entity.setBioWeight(totalWeight.doubleValue());
             entity.setBioTotalBillAmount(baseAmount.doubleValue());
+            entity.setBioProcessingCharge(processingCharge.doubleValue());
             entity.setBioSubsidyAmount(subsidy.doubleValue());
             entity.setBioBillAmount(taxableAmount.doubleValue());
             entity.setBioCgstAmount(cgstAmount.doubleValue());
@@ -1685,6 +1687,7 @@ public class OrderService {
                                 request.scheduleDate(),
                                 orderType.getAbbreviation(),
                                 defaultOrderStatus,
+                                null,
                                 null,
                                 null,
                                 null,

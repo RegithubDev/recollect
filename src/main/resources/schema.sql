@@ -270,6 +270,27 @@ SET @exists := (
     SELECT COUNT(*)
     FROM INFORMATION_SCHEMA.COLUMNS
     WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'backend_completeorders'
+      AND COLUMN_NAME = 'bio_processing_charge'
+);
+
+SET @sql := IF(
+    @exists = 0,
+    'ALTER TABLE backend_completeorders ADD COLUMN bio_processing_charge double NULL',
+    'SELECT 1'
+);
+
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+
+
+
+SET @exists := (
+    SELECT COUNT(*)
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
       AND TABLE_NAME = 'backend_scrapordercart'
       AND COLUMN_NAME = 'captured_weight'
 );
